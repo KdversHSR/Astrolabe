@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><title>Astrolabe — Honkai: Star Rail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Tier list, builds, cônes de lumière, reliques et end game de Honkai: Star Rail, regroupés et mis à jour chaque semaine.">
+<meta property="og:title" content="Astrolabe — Honkai: Star Rail"><meta property="og:type" content="website">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header><div class="w top"><span class="logo">Astrolabe<small id="ver"></small></span><div class="acct" id="acct"></div>
+<nav id="nav"><a data-p="tier" href="#/tier">Tier list</a><a data-p="perso" href="#/perso">Personnages</a><a data-p="lc" href="#/lc">Cônes</a><a data-p="rel" href="#/rel">Reliques</a><a data-p="end" href="#/end">End game</a><a data-p="aide" href="#/aide">Aides</a><a data-p="fav" href="#/fav">Favoris</a></nav></div></header>
+<main class="w" id="app"><p class="sub">Chargement…</p></main>
+<footer class="w"><p class="note">Données : StarRailRes (personnages, cônes, reliques, images), HSR Optimizer (builds, licence MIT) et Game8 (tier list et classements end game, résumé avec lien vers la source). Projet de fans non officiel, non affilié à HoYoverse. Les builds sont des recommandations de la communauté à adapter à votre compte.</p></footer>
+<dialog id="dlg"><h2>Compte</h2><p class="sub2">Pour retrouver vos favoris sur tous vos appareils.</p>
+<input type="email" id="em" placeholder="E-mail" autocomplete="email"><input type="password" id="pw" placeholder="Mot de passe (8 caractères min.)" autocomplete="current-password">
+<div class="msg" id="msg"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="bin">Se connecter</button><button class="btn" id="bup">Créer un compte</button><button class="btn" id="bfg">Mot de passe oublié</button><button class="btn" id="bcl">Fermer</button></div></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body></html>

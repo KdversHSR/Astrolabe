@@ -1,0 +1,67 @@
+{
+ "_comment": "Fichier à modifier à la main à chaque version (quelques lignes). Le reste du site se met à jour tout seul.",
+ "version": "4.6",
+ "schedule": [
+  [
+   "Anomaly Arbitration",
+   "28 septembre",
+   "11 novembre"
+  ],
+  [
+   "Memory of Chaos « Crossing the Afterlife »",
+   "28 septembre",
+   "2 novembre"
+  ],
+  [
+   "Apocalyptic Shadow",
+   "5 octobre",
+   "16 novembre"
+  ],
+  [
+   "Pure Fiction",
+   "19 octobre",
+   "30 novembre"
+  ],
+  [
+   "Memory of Chaos, 2e phase",
+   "2 novembre",
+   "14 décembre"
+  ]
+ ],
+ "modes": {
+  "moc": [
+   "Memory of Chaos",
+   "Combats chronométrés en cycles contre plusieurs vagues d’ennemis. Il faut deux équipes équilibrées, capables de gérer la durée et les cibles multiples."
+  ],
+  "pf": [
+   "Pure Fiction",
+   "Mode à score : on enchaîne les éliminations pour accumuler des points. Les dégâts de zone et les attaques de poursuite y sont très efficaces."
+  ],
+  "as": [
+   "Apocalyptic Shadow",
+   "Affrontements contre des boss avec des mécaniques à gérer. Le contrôle du rythme et de l’énergie de l’ultime compte beaucoup."
+  ]
+ },
+ "guides": [
+  {
+   "t": "Tier list complète (Game8)",
+   "u": "https://game8.co/games/Honkai-Star-Rail/archives/409604"
+  },
+  {
+   "t": "Meilleures équipes (Game8)",
+   "u": "https://game8.co/games/Honkai-Star-Rail/archives/409824"
+  },
+  {
+   "t": "Meilleurs cônes de lumière (Game8)",
+   "u": "https://game8.co/games/Honkai-Star-Rail/archives/410922"
+  },
+  {
+   "t": "Tier list de relance de compte (Game8)",
+   "u": "https://game8.co/games/Honkai-Star-Rail/archives/409825"
+  },
+  {
+   "t": "Accueil des guides Honkai: Star Rail (Game8)",
+   "u": "https://game8.co/games/Honkai-Star-Rail"
+  }
+ ]
+}

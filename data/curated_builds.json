@@ -1,0 +1,318 @@
+{
+ "Firefly": {
+  "rel": [
+   [
+    "Iron Cavalry Against the Scourge",
+    "Iron Cavalry Against the Scourge"
+   ]
+  ],
+  "orn": [
+   "Forge of the Kalpagni Lantern"
+  ],
+  "teams": [
+   [
+    "Firefly",
+    "Ruan Mei",
+    "Fugue",
+    "Lingsha"
+   ]
+  ]
+ },
+ "Acheron": {
+  "rel": [
+   [
+    "Pioneer Diver of Dead Waters",
+    "Pioneer Diver of Dead Waters"
+   ]
+  ],
+  "orn": [
+   "Izumo Gensei and Takama Divine Realm"
+  ],
+  "teams": [
+   [
+    "Acheron",
+    "Pela",
+    "Silver Wolf",
+    "Aventurine"
+   ]
+  ]
+ },
+ "Kafka": {
+  "rel": [
+   [
+    "Prisoner in Deep Confinement",
+    "Prisoner in Deep Confinement"
+   ]
+  ],
+  "orn": [
+   "Firmament Frontline: Glamoth"
+  ],
+  "teams": [
+   [
+    "Kafka",
+    "Black Swan",
+    "Sampo",
+    "Luocha"
+   ],
+   [
+    "Kafka",
+    "Black Swan",
+    "Gallagher",
+    "Huohuo"
+   ]
+  ]
+ },
+ "Seele": {
+  "rel": [
+   [
+    "Genius of Brilliant Stars",
+    "Genius of Brilliant Stars"
+   ]
+  ],
+  "orn": [
+   "Rutilant Arena"
+  ],
+  "teams": [
+   [
+    "Seele",
+    "Bronya",
+    "Tingyun",
+    "Fu Xuan"
+   ]
+  ]
+ },
+ "Robin": {
+  "rel": [
+   [
+    "Musketeer of Wild Wheat",
+    "Musketeer of Wild Wheat"
+   ]
+  ],
+  "orn": [
+   "Penacony, Land of the Dreams"
+  ],
+  "teams": [
+   [
+    "Robin",
+    "Topaz",
+    "Feixiao",
+    "Aventurine"
+   ]
+  ]
+ },
+ "Ruan Mei": {
+  "rel": [
+   [
+    "Messenger Traversing Hackerspace",
+    "Messenger Traversing Hackerspace"
+   ]
+  ],
+  "orn": [
+   "Fleet of the Ageless"
+  ],
+  "teams": [
+   [
+    "Ruan Mei",
+    "Firefly",
+    "Fugue",
+    "Lingsha"
+   ]
+  ]
+ },
+ "Huohuo": {
+  "rel": [
+   [
+    "Passerby of Wandering Cloud",
+    "Passerby of Wandering Cloud"
+   ]
+  ],
+  "orn": [
+   "Fleet of the Ageless"
+  ],
+  "teams": [
+   [
+    "Huohuo",
+    "Kafka",
+    "Black Swan",
+    "Gallagher"
+   ]
+  ]
+ },
+ "Fu Xuan": {
+  "rel": [
+   [
+    "Longevous Disciple",
+    "Longevous Disciple"
+   ]
+  ],
+  "orn": [
+   "Fleet of the Ageless"
+  ],
+  "teams": [
+   [
+    "Fu Xuan",
+    "Seele",
+    "Bronya",
+    "Tingyun"
+   ]
+  ]
+ },
+ "Aventurine": {
+  "rel": [
+   [
+    "Knight of Purity Palace",
+    "Knight of Purity Palace"
+   ]
+  ],
+  "orn": [
+   "Belobog of the Architects"
+  ],
+  "teams": [
+   [
+    "Aventurine",
+    "Acheron",
+    "Pela",
+    "Silver Wolf"
+   ],
+   [
+    "Aventurine",
+    "Topaz",
+    "Robin",
+    "Feixiao"
+   ]
+  ]
+ },
+ "Black Swan": {
+  "rel": [
+   [
+    "Prisoner in Deep Confinement",
+    "Prisoner in Deep Confinement"
+   ]
+  ],
+  "orn": [
+   "Pan-Cosmic Commercial Enterprise"
+  ],
+  "teams": [
+   [
+    "Black Swan",
+    "Kafka",
+    "Sampo",
+    "Luocha"
+   ]
+  ]
+ },
+ "Silver Wolf": {
+  "rel": [
+   [
+    "Prisoner in Deep Confinement",
+    "Prisoner in Deep Confinement"
+   ]
+  ],
+  "orn": [
+   "Pan-Cosmic Commercial Enterprise"
+  ],
+  "teams": [
+   [
+    "Silver Wolf",
+    "Acheron",
+    "Pela",
+    "Aventurine"
+   ]
+  ]
+ },
+ "Bronya": {
+  "rel": [
+   [
+    "Messenger Traversing Hackerspace",
+    "Messenger Traversing Hackerspace"
+   ]
+  ],
+  "orn": [
+   "Fleet of the Ageless"
+  ],
+  "teams": [
+   [
+    "Bronya",
+    "Seele",
+    "Tingyun",
+    "Fu Xuan"
+   ]
+  ]
+ },
+ "Pela": {
+  "rel": [
+   [
+    "Messenger Traversing Hackerspace",
+    "Messenger Traversing Hackerspace"
+   ]
+  ],
+  "orn": [
+   "Fleet of the Ageless"
+  ],
+  "teams": [
+   [
+    "Pela",
+    "Acheron",
+    "Silver Wolf",
+    "Aventurine"
+   ]
+  ]
+ },
+ "Luocha": {
+  "rel": [
+   [
+    "Passerby of Wandering Cloud",
+    "Passerby of Wandering Cloud"
+   ]
+  ],
+  "orn": [
+   "Fleet of the Ageless"
+  ],
+  "teams": [
+   [
+    "Luocha",
+    "Kafka",
+    "Black Swan",
+    "Sampo"
+   ]
+  ]
+ },
+ "Topaz": {
+  "rel": [
+   [
+    "Wastelander of Banditry Desert",
+    "Wastelander of Banditry Desert"
+   ]
+  ],
+  "orn": [
+   "Inert Salsotto"
+  ],
+  "teams": [
+   [
+    "Topaz",
+    "Robin",
+    "Feixiao",
+    "Aventurine"
+   ]
+  ]
+ },
+ "Feixiao": {
+  "rel": [
+   [
+    "Wastelander of Banditry Desert",
+    "Wastelander of Banditry Desert"
+   ]
+  ],
+  "orn": [
+   "Duran, Dynasty of Running Wolves"
+  ],
+  "teams": [
+   [
+    "Feixiao",
+    "Topaz",
+    "Robin",
+    "Lingsha"
+   ]
+  ]
+ }
+}
