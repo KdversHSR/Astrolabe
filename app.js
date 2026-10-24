@@ -97,7 +97,7 @@ function initAuth() {
   if (!CFG.SUPABASE_URL || !window.supabase) return acct();
   sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
   sb.auth.getSession().then(async ({ data }) => { user = data.session ? data.session.user : null; acct(); if (user && await mfaGate()) return; pullAll(); });
-  sb.auth.onAuthStateChange(async (_e, s) => { user = s ? s.user : null; if (!user) isAdmin = false; acct(); chrome(); if (user && await mfaGate()) return; pullAll(); });
+  sb.auth.onAuthStateChange((_e, s) => { user = s ? s.user : null; if (!user) isAdmin = false; acct(); chrome(); setTimeout(async () => { if (user && await mfaGate()) return; pullAll(); }, 0); }); // setTimeout : ne jamais attendre Supabase directement dans ce rappel (sinon la déconnexion se bloque)
 }
 const authMsg = t => { const m = $('#msg'); if (m) m.textContent = t; };
 const cred = () => ({ email: $('#em').value.trim(), password: $('#pw').value });
@@ -562,7 +562,7 @@ async function mfaDraw() {
   const prov = (user.app_metadata && user.app_metadata.providers) || [user.app_metadata && user.app_metadata.provider || 'email'], hasD = prov.includes('discord');
   const acc = `<p><b>${L('Connexion', 'Sign-in')}</b> : ${prov.map(p => p === 'email' ? L('e-mail + mot de passe', 'e-mail + password') : p[0].toUpperCase() + p.slice(1)).join(', ')} ${hasD ? '' : `<button class="btn dsc2" id="lkdc">${L('Lier mon compte Discord', 'Link my Discord account')}</button>`} <button class="btn" id="out2">${L('Me déconnecter', 'Log out')}</button></p><p class="sub" id="lkmsg"></p><hr style="border:0;border-top:1px solid var(--bd);margin:12px 0">`;
   const r = await sb.auth.mfa.listFactors(), all = (r.data && r.data.all) || [], on = all.filter(x => x.status === 'verified' && x.factor_type === 'totp');
-  el.innerHTML = acc + (on.length ? `<p>✅ ${L('Double authentification activée : un code vous sera demandé à chaque connexion.', 'Two-factor authentication is on: a code is asked at each login.')}</p><button class="btn" id="mfoff" data-f="${on[0].id}">${L('Désactiver', 'Turn off')}</button>`
+  el.innerHTML = acc + (on.length ? `<p>✅ ${L('Double authentification activée : un code vous sera demandé à chaque connexion.', 'Two-factor authentication is on: a code is asked at each login.')}</p><button class="btn" id="mfoff" data-fid="${on[0].id}">${L('Désactiver', 'Turn off')}</button>`
     : M.en ? `<p class="sub">${L('1. Scannez ce QR code avec une application (Google Authenticator, Authy, 2FAS…). 2. Entrez le code à 6 chiffres affiché.', '1. Scan this QR code with an app (Google Authenticator, Authy, 2FAS…). 2. Enter the 6-digit code shown.')}</p><img class="qr" src="${esc(M.en.qr)}" alt="QR" width="168" height="168"><p class="sub">${L('Ou saisissez cette clé : ', 'Or enter this key: ')}<code>${esc(M.en.secret)}</code></p><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="mfe" inputmode="numeric" maxlength="6" placeholder="123456" style="max-width:160px;margin:0"><button class="btn pri" id="mfok">${L('Confirmer', 'Confirm')}</button><button class="btn" id="mfno">${L('Annuler', 'Cancel')}</button></div>`
       : `<p class="sub">${L('Ajoute une protection : en plus du mot de passe, un code à 6 chiffres temporaire est demandé.', 'Adds protection: on top of the password, a temporary 6-digit code is required.')}</p><button class="btn" id="mfon">${L('Activer la double authentification', 'Enable two-factor authentication')}</button>`);
   el.innerHTML += `<p class="sub" id="mfmsg">${esc(M.msg)}</p>`;
@@ -577,7 +577,7 @@ async function mfaClick(id, b) {
     const code = ($('#mfe').value || '').replace(/\s/g, ''), { error } = await sb.auth.mfa.challengeAndVerify({ factorId: M.en.id, code });
     if (error) M.msg = L('Code incorrect, réessayez.', 'Wrong code, try again.'); else { M.en = null; M.msg = L('Double authentification activée.', 'Two-factor authentication enabled.'); }
   } else if (id === 'mfno') { if (M.en) await sb.auth.mfa.unenroll({ factorId: M.en.id }); M.en = null; }
-  else if (id === 'mfoff') { const { error } = await sb.auth.mfa.unenroll({ factorId: b.dataset.f }); M.msg = error ? error.message : L('Double authentification désactivée.', 'Two-factor authentication turned off.'); }
+  else if (id === 'mfoff') { const { error } = await sb.auth.mfa.unenroll({ factorId: b.dataset.fid }); M.msg = error ? error.message : L('Double authentification désactivée.', 'Two-factor authentication turned off.'); }
   mfaDraw();
 }
 async function delProfile() {
