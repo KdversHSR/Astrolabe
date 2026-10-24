@@ -103,3 +103,15 @@ Personnages, cônes, reliques, builds, équipes, tier list (Game8), images, flè
 - **Synergie d’équipe** (score indicatif, rôles, alternatives) sur la page d’une équipe.
 - **Application installable** (PWA : `manifest.webmanifest`, `sw.js`, icônes dans `img/`) avec mode hors-ligne.
 - **Succès** sur le profil (et sur les profils publics, d’après les statistiques publiées).
+
+## Équipes calculées (v7.2)
+Le site calcule lui-même des équipes à partir de la synergie des kits (éléments, voies, mots-clés des compétences : Allégresse, DoT, Rupture, mémosprites…), du niveau de tier et des équipes de HSR Optimizer. Elles s’affichent sur la fiche de chaque personnage (« Équipes calculées par le site »), avec l’étiquette « calculée », et complètent la tier list des équipes. Ce n’est pas une IA en ligne ni une simulation de combat.
+
+## Calendrier end game
+Le calendrier (Memory of Chaos, Pure Fiction, Apocalyptic Shadow, Anomaly Arbitration) est maintenant récupéré chaque lundi via l’API ; `manual.json › schedule` ne sert plus que de secours.
+
+## Prochaine version : teaser (v7.3)
+La carte « Prochaine version » de l’accueil affiche le personnage à venir ; un clic ouvre la page `#/next` (ce qui est confirmé ou non, contexte, compte à rebours, sources). Les infos viennent de `data/banners.json › next` (champs `name`, `path`, `element`, `rarity`, `confirmed`, `story_fr/en`, `sources`). Chaque lundi, le workflow : (1) prend la vraie date dès que l’API des bannières annonce la bannière ; (2) relie le personnage à la base dès qu’il y est ajouté, ce qui affiche son art et son kit. L’histoire de la version, elle, reste à écrire à la main quand elle est annoncée.
+
+## Aperçu de partage (v7.4)
+Quand on colle le lien du site sur Discord, X ou WhatsApp, une carte avec le logo s’affiche (`img/og.jpg`). L’adresse complète du site est insérée automatiquement par le workflow (remplace `__SITE_URL__` dans `index.html`).

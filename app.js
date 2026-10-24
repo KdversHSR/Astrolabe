@@ -438,7 +438,7 @@ pages.profil = tab => {
   <div class="g3"><div class="stat"><span class="lab">${L('Personnages', 'Characters')}</span><b>${own.length} / ${C.length}</b></div><div class="stat"><span class="lab">${L('5★ possédés', '5★ owned')}</span><b>${n5}</b></div><div class="stat"><span class="lab">${L('Éidolons cumulés', 'Total eidolons')}</span><b>${eids}</b></div><div class="stat"><span class="lab">${L('Favoris', 'Favourites')}</span><b>${fav.char.length + fav.build.length}</b></div></div>
   ${badgesHtml(myBadgeStats())}<div class="bigtabs">${tabs.map(t => `<a class="${tab === t[0] ? 'on' : ''}" href="#/profil/${t[0]}">${ico(t[2])}${t[1]}</a>`).join('')}</div>${body}`, res, () => { if (tab === 'set') mfaDraw(); }];
 };
-function verBanner() {
+function verBannerOld() {
   const nx = D.banners && D.banners.next; if (!nx) return '';
   const d = Math.ceil((new Date(nx.date) - Date.now()) / 864e5);
   return `<a class="vs" href="#/banners"><div><span class="lab">${L('Prochaine version', 'Next version')}</span><b>${L('Version ', 'Version ')}${esc(nx.version)}</b><span class="sub">${esc(LANG === 'en' && nx.headliner_en || nx.headliner || '')}</span></div><div class="vn"><b data-cdd="${nx.date}">${Math.max(0, d)}</b><span>${L('jours', 'days')}</span></div><div><span class="ct" data-cd="${nx.date}"></span><br><span class="sub">${nx.estimated ? L('Date estimée, à confirmer', 'Estimated date, to be confirmed') : L('Date confirmée', 'Confirmed date')}</span></div></a>`;
@@ -537,7 +537,7 @@ function buildView(c) {
   const src = b.curated ? L('Sets et équipes vérifiés à la main.', 'Sets and teams checked by hand.') : b.fallback ? L('Sets indicatifs : les plus utilisés par les personnages de la même voie.', 'Indicative sets: the most used by characters of the same path.') : L('Données communautaires HSR Optimizer.', 'Community data from HSR Optimizer.');
   return `<div class="g"><div class="card"><h2>${L('Cône de lumière', 'Light Cone')}</h2>${lc ? row(im('l', lc.id), lc.n, `${esc(lc.k)} — ${esc(lc.d)}`) : `<p class="sub">${L('Non renseigné.', 'Not provided.')}</p>`}<h2 style="margin-top:18px">${L('Reliques', 'Relics')}</h2>${rel || `<p class="sub">${L('Non renseigné.', 'Not provided.')}</p>`}<h2 style="margin-top:18px">${L('Ornements planaires', 'Planar ornaments')}</h2>${orn || `<p class="sub">${L('Non renseigné.', 'Not provided.')}</p>`}</div>
   <div class="card"><h2>${L('Stats à viser', 'Target stats')}</h2><div class="tw"><table><tr><th>${L('Pièce', 'Piece')}</th><th>${L('Stat principale', 'Main stat')}</th></tr>${Object.keys(slotName).map(k => `<tr><td>${slotName[k]}</td><td>${esc((b.parts[k] || []).map(stx).join(' / ') || '—')}</td></tr>`).join('')}</table></div><p class="lab" style="margin:14px 0 6px">${L('Sous-stats par priorité', 'Substats by priority')}</p>${(b.subs || []).map((s, i) => `<span class="pill">${i + 1}. ${esc(stx(s))}</span>`).join('')}</div></div>
-  ${sec(L('Équipes conseillées', 'Recommended teams'))}${teams || `<p class="sub">${L('Pas d’équipe renseignée pour l’instant.', 'No team listed yet.')}</p>`}${b.teams_from_others ? `<p class="note" style="margin-top:0">${L('Équipes tirées des builds d’autres personnages où celui-ci apparaît.', 'Teams taken from other characters’ builds where this one appears.')}</p>` : ''}<p class="note">${src} ${L('À adapter à vos pièces et à votre équipe.', 'Adapt to your pieces and your team.')}</p>`;
+  ${sec(L('Équipes conseillées', 'Recommended teams'))}${teams || `<p class="sub">${L('Pas d’équipe renseignée pour l’instant.', 'No team listed yet.')}</p>`}${calcTeamsHtml(c)}${b.teams_from_others ? `<p class="note" style="margin-top:0">${L('Équipes tirées des builds d’autres personnages où celui-ci apparaît.', 'Teams taken from other characters’ builds where this one appears.')}</p>` : ''}<p class="note">${src} ${L('À adapter à vos pièces et à votre équipe.', 'Adapt to your pieces and your team.')}</p>`;
 }
 function detail(id, tab) {
   const c = byId[id]; if (!c) return pages.notfound(); tab = tab || 'kit'; document.title = c.n + ' — Astrolabe';
@@ -651,6 +651,7 @@ function teamsAll() {
     else { e.sug = e.sug.filter(i => cp.sug.includes(i)); e.raw = Math.max(e.raw, raw); }
     e.votes.add(c.id); mem.forEach(m => { if (m.l && !e.lcs[m.c]) e.lcs[m.c] = m.l; }); if (c.b.lc) e.lcs[c.id] = c.b.lc;
   }));
+  C.forEach(c => calcTeams(c.id).slice(0, 2).forEach(o => { const ids = o.ms.map(m => m.id), key = [...ids].sort().join('-'); let e = map.get(key); if (e) { e.votes.add(c.id); return; } map.set(key, { key, ids, lcs: {}, votes: new Set([c.id]), sug: [], raw: 4, calc: true }); }));
   const list = [...map.values()].map(e => { e.v = e.votes.size; e.sc = {}; ['ov', 'moc', 'pf', 'as'].forEach(m => { const avg = e.ids.reduce((s, i) => s + tval(byId[i], m), 0) / e.ids.length; e.sc[m] = avg + 0.15 * (e.v - 1); }); return e; });
   const ranks = {}; ['ov', 'moc', 'pf', 'as'].forEach(m => { const o = [...list].sort((a, b) => b.sc[m] - a.sc[m] || b.v - a.v || a.key.localeCompare(b.key)); o.forEach((e, i) => { (e.rk = e.rk || {})[m] = i + 1; }); ranks[m] = o; });
   TT_C = { list, ranks, by: new Map(list.map(e => [e.key, e])) }; return TT_C;
@@ -658,7 +659,7 @@ function teamsAll() {
 const teamHref = e => '#/team/' + e.ids.map(i => i + '-' + (e.lcs[i] || '')).join('_');
 function teamRow(e, m) {
   const k = tkey(e, m);
-  return `<div class="team trk"><span class="rkn">#${e.rk[m]}</span><span class="tag tg" style="--tc:var(${TV[k]})">${TN[k]}</span>${e.ids.map(i => e.sug.includes(i) ? `<span class="sugt" title="${L('Suggestion du site', 'Site suggestion')}">${tile(byId[i], { s: 1 })}</span>` : tile(byId[i], { s: 1 })).join('')}<span class="trs"><b>${e.sc[m].toFixed(2)}</b><small>${L('Conseillée par ' + e.v + ' perso', 'Recommended by ' + e.v + ' char.')}</small></span><a class="btn" href="${teamHref(e)}">${L('Ouvrir', 'Open')}</a></div>`;
+  return `<div class="team trk"><span class="rkn">#${e.rk[m]}</span>${e.calc && e.raw === 4 && !e.fromOpt ? `<span class="tag" title="${L('Équipe calculée par le site (synergie des kits)', 'Team calculated by the site (kit synergy)')}">${L('calculée', 'calc.')}</span>` : ''}<span class="tag tg" style="--tc:var(${TV[k]})">${TN[k]}</span>${e.ids.map(i => e.sug.includes(i) ? `<span class="sugt" title="${L('Suggestion du site', 'Site suggestion')}">${tile(byId[i], { s: 1 })}</span>` : tile(byId[i], { s: 1 })).join('')}<span class="trs"><b>${e.sc[m].toFixed(2)}</b><small>${L('Conseillée par ' + e.v + ' perso', 'Recommended by ' + e.v + ' char.')}</small></span><a class="btn" href="${teamHref(e)}">${L('Ouvrir', 'Open')}</a></div>`;
 }
 pages.teamtier = () => [`<section class="hlp"><span class="lab">${L('Classement calculé', 'Computed ranking')}</span><h1>${L('Tier list des équipes', 'Team tier list')}</h1><p class="lead">${L('Les équipes conseillées par HSR Optimizer, classées d’après la tier list Game8 de leurs membres dans le mode choisi, avec un petit bonus quand plusieurs personnages recommandent la même équipe.', 'Teams recommended by HSR Optimizer, ranked from their members’ Game8 tiers in the chosen mode, with a small bonus when several characters recommend the same team.')}</p></section>
   <div class="card note2"><b>${L('À savoir', 'Good to know')}</b> ${L('Ce classement est calculé par le site : ce n’est pas le « Top équipes » de Prydwen ni de Game8 (je n’ai pas accès à leurs classements d’équipes). Les équipes à moins de 4 persos chez HSR Optimizer sont complétées par une suggestion du site (case en pointillés). Il reflète la force des membres, pas la synergie réelle. Score = moyenne des tiers (T0 = 5 … T4 = 0) + 0,15 par recommandation supplémentaire. Le rang T est relatif : T0 = les 10 % meilleures équipes, T0.5 = les 20 % suivantes, T1 = 30 %, T2 = 25 %, T3 = le reste.', 'This ranking is computed by the site: it is not Prydwen’s or Game8’s “Top teams” (their team rankings are not accessible to me). Teams with fewer than 4 characters at HSR Optimizer are completed with a site suggestion (dashed tile). It reflects member strength, not real synergy. Score = average tier (T0 = 5 … T4 = 0) + 0.15 per extra recommendation. The T rank is relative: T0 = top 10% of teams, T0.5 = next 20%, T1 = 30%, T2 = 25%, T3 = the rest.')}</div>
@@ -781,6 +782,7 @@ function statusHtml(S, adminMode) {
   ${row(L('Personnages, cônes, reliques', 'Characters, cones, relics'), true, `${S.chars} / ${S.lcs} / ${S.sets}`)}${row(L('Builds et équipes', 'Builds and teams'), S.builds > 0, S.builds + ' builds')}
   ${row(lab.tiers, S.tiers === 'game8', S.tiers === 'game8' ? L('mise à jour ce lundi', 'updated this Monday') : L('source indisponible : dernier classement connu conservé', 'source unavailable: last known ranking kept'))}
   ${row(lab.banners, S.banners === 'auto', S.banners === 'auto' ? L('récupérées automatiquement', 'fetched automatically') : L('API indisponible : fichier manuel utilisé', 'API unavailable: manual file used'))}
+  ${row(L('Calendrier end game', 'End game schedule'), S.schedule === 'auto', S.schedule === 'auto' ? L('récupéré automatiquement', 'fetched automatically') : L('API indisponible : fichier manuel utilisé', 'API unavailable: manual file used'))}
   ${stale ? `<p class="sub" style="color:var(--SS)">${L('Les données ont plus de 9 jours : le workflow du lundi semble ne pas s’être exécuté.', 'Data is over 9 days old: the Monday workflow may not have run.')}</p>` : ''}${adminMode && warn ? `<p class="sub">${L('À faire : onglet Actions de GitHub → « Mise à jour hebdomadaire » → Run workflow, et regardez les erreurs en rouge.', 'To do: GitHub Actions tab → “Mise à jour hebdomadaire” → Run workflow, and check red errors.')}</p>` : ''}</div>`;
 }
 const withStatus = (name, adminMode) => { const f = pages[name]; pages[name] = (...a) => { const r = f(...a); if (!Array.isArray(r)) return r; const af = r[2]; return ['<div id="stbox"></div>' + r[0], r[1], () => { if (af) af(); getStatus().then(S => { const b = $('#stbox'); if (b) b.innerHTML = statusHtml(S, adminMode); }); }]; }; };
@@ -914,6 +916,80 @@ document.addEventListener('click', e => {
   const r = e.target.closest('[data-rem]'); if (r) { const b = (window.BNL || [])[+r.dataset.rem]; if (b && b.end) { remAdd(b); remIcs(b); r.textContent = '✓ ' + L('Rappel ajouté', 'Reminder added'); } }
 });
 
+// ------------------------------------------------------------ moteur de synergie (calcul local, sans IA externe)
+const TAGRX = { elation: /Allégresse|Elation|Banger|Punchline/gi, dot: /sur la durée|\bDoT\b|damage over time|Choc\b|Shock|Brûlure|\bBurn|Saignement|Bleed|Vent déchirant|Wind Shear/gi, brk: /Rupture|\bBreak/gi, fua: /de suivi|follow-up/gi, memo: /mémosprite|memosprite/gi };
+let SYN = null;
+function synData() {
+  if (SYN) return SYN;
+  const tags = {}, co = new Map();
+  C.forEach(c => { const tx = (c.s || []).map(s => (s.d || '') + ' ' + (s.n || '')).join(' '), t = {}; Object.keys(TAGRX).forEach(k => { const n = (tx.match(TAGRX[k]) || []).length; if (n >= 2) t[k] = n >= 5 ? 2 : 1; }); if (c.pi === 'Elation') t.elation = 2; if (c.pi === 'Memory') t.memo = Math.max(t.memo || 0, 1); tags[c.id] = t; });
+  C.forEach(c => ((c.b || {}).teams || []).forEach(t => { const ids = [c.id, ...t.map(m => m.c)].filter(i => byId[i]); for (let a = 0; a < ids.length; a++) for (let b = a + 1; b < ids.length; b++) { const k = [ids[a], ids[b]].sort().join('|'); co.set(k, (co.get(k) || new Set()).add(c.id)); } }));
+  SYN = { tags, co, pair: new Map() }; return SYN;
+}
+function pairSyn(a, b) {
+  const S = synData(), k = a.id < b.id ? a.id + '|' + b.id : b.id + '|' + a.id; if (S.pair.has(k)) return S.pair.get(k);
+  const ta = S.tags[a.id], tb = S.tags[b.id], ra = roleOf(a), rb = roleOf(b); let s = 0;
+  Object.keys(TAGRX).forEach(t => { if (ta[t] && tb[t]) s += 1 + Math.min(ta[t], tb[t]) * .5; });
+  if (a.pi === 'Elation' && b.pi === 'Elation') s += 2.5;
+  if ((a.pi === 'Elation' && b.pi === 'Shaman') || (b.pi === 'Elation' && a.pi === 'Shaman')) s += 1.2;
+  const sup = (x, y) => { if (x.pi === 'Shaman' && roleOf(y) === 'dps') s += 1; if (x.pi === 'Warlock' && S.tags[y.id].dot && roleOf(y) === 'dps') s += 2; if (x.pi === 'Memory' && S.tags[y.id].memo) s += 1.5; if (['Knight', 'Priest'].includes(x.pi) && roleOf(y) === 'dps') s += .6; };
+  sup(a, b); sup(b, a);
+  if (a.ei === b.ei) s += .5;
+  if (ra === 'dps' && rb === 'dps') s -= 1.2;
+  const c = (S.co.get(a.id < b.id ? a.id + '|' + b.id : b.id + '|' + a.id) || new Set()).size; s += Math.min(3, c) * 1.2;
+  S.pair.set(k, s); return s;
+}
+function teamSyn(ms) {
+  let s = 0; for (let i = 0; i < ms.length; i++) for (let j = i + 1; j < ms.length; j++) s += pairSyn(ms[i], ms[j]);
+  const r = ms.map(roleOf), nd = r.filter(x => x === 'dps').length, ns = r.filter(x => x === 'support').length, nh = r.filter(x => x === 'sustain').length;
+  s += (nd ? 3 : -3) + (ns ? 2 : 0) + (nh ? 2 : -1) + (nd > 2 ? -3 : 0) + ms.reduce((t, c) => t + tval(c, 'ov'), 0) * .3;
+  return s;
+}
+let CALC_T = null;
+let USE = {};
+function calcTeams(id) {
+  if (!CALC_T) CALC_T = {}; if (CALC_T[id]) return CALC_T[id];
+  const c = byId[id]; if (!c) return [];
+  const pool = C.filter(x => x.id !== id && !/^80/.test(x.id)).map(x => ({ x, s: pairSyn(c, x) + tval(x, 'ov') * .15 })).sort((a, b) => b.s - a.s).slice(0, 22).map(o => o.x), out = [];
+  for (let i = 0; i < pool.length; i++) for (let j = i + 1; j < pool.length; j++) for (let k = j + 1; k < pool.length; k++) { const ms = [c, pool[i], pool[j], pool[k]]; out.push({ ms, s: teamSyn(ms) }); }
+  const pen = o => o.ms.slice(1).reduce((t, m) => t + Math.max(0, (USE[m.id] || 0) - 14) * .25, 0);
+  out.forEach(o => { o.s2 = o.s - pen(o); }); out.sort((a, b) => b.s2 - a.s2); const res = [], used = [];
+  for (const o of out) { const ids = o.ms.map(m => m.id); if (used.some(u => u.filter(x => ids.includes(x)).length >= 3)) continue; used.push(ids); res.push(o); o.ms.slice(1).forEach(m => USE[m.id] = (USE[m.id] || 0) + 1); if (res.length >= 3) break; }
+  return (CALC_T[id] = res);
+}
+function calcTeamsHtml(c) {
+  const T = calcTeams(c.id); if (!T.length) return '';
+  return sec(L('Équipes calculées par le site', 'Teams calculated by the site')) + `<p class="sub">${L('Calcul de synergie entre les kits (éléments, voies, mots-clés des compétences comme Allégresse, DoT, Rupture, mémosprites) et les niveaux de tier. Ce n’est pas une IA en ligne ni une simulation de combat : une estimation qui complète les équipes de HSR Optimizer.', 'Synergy calculated from kits (elements, paths, skill keywords such as Elation, DoT, Break, memosprites) and tier levels. This is not an online AI or a combat simulation: an estimate that complements HSR Optimizer’s teams.')}</p>` +
+    T.map(o => `<div class="team"><span class="tag tg" style="--tc:var(--ac)">${L('calculée', 'calculated')}</span>${o.ms.map(m => tile(m, { s: 1 })).join('')}<a class="btn" style="margin-left:auto" href="#/team/${o.ms.map(m => m.id + '-').join('_')}">${L('Ouvrir', 'Open')}</a></div>`).join('');
+}
+
+// ------------------------------------------------------------ prochaine version : teaser + page détaillée
+const nxChar = () => { const nx = D.banners && D.banners.next; return nx && nx.char && byId[nx.char] ? byId[nx.char] : null; };
+const nxName = nx => (LANG === 'en' && nx.name_en) || nx.name || '';
+function nxTeaser(nx, big) {
+  const c = nxChar(), el = nx.element, pa = nx.path;
+  const art = c ? `<img class="nxart" src="${im('p', c.id)}" alt="">` : `<div class="nxmys"><span>?</span>${el ? eiImg(el) : ''}${pa ? piImg(pa) : ''}</div>`;
+  return `<div class="nxt ${big ? 'big' : ''}">${art}<div class="nxi"><span class="lab">${L('Prochain personnage', 'Next character')}</span><b class="nxn">${c ? esc(c.n) : esc(nxName(nx)) || '???'}</b><span class="sub">${nx.rarity ? nx.rarity + '★ · ' : ''}${el ? eN(el) + ' · ' : ''}${pa ? pN(pa) : ''}</span></div></div>`;
+}
+function verBanner() {
+  const nx = D.banners && D.banners.next; if (!nx) return '';
+  const d = Math.ceil((new Date(nx.date) - Date.now()) / 864e5);
+  return `<a class="vs nxcard" href="#/next"><div><span class="lab">${L('Prochaine version', 'Next version')}</span><b>${L('Version ', 'Version ')}${esc(nx.version)}</b></div><div class="vn"><b data-cdd="${nx.date}">${Math.max(0, d)}</b><span>${L('jours', 'days')}</span></div>${nxTeaser(nx)}<div style="grid-column:1/-1"><span class="ct" data-cd="${nx.date}"></span> <span class="sub">${nx.estimated ? L('Date estimée', 'Estimated date') : L('Date confirmée', 'Confirmed date')} · <u>${L('En savoir plus', 'Learn more')} →</u></span></div></a>`;
+}
+pages.next = () => {
+  const nx = D.banners && D.banners.next; if (!nx) return pages.notfound();
+  const c = nxChar(), cf = nx.confirmed || {}, d = Math.max(0, Math.ceil((new Date(nx.date) - Date.now()) / 864e5));
+  const row = (lab, val, ok) => val ? `<div class="strow ${ok ? 'ok' : 'ko'}"><i></i><b>${lab}</b><span>${val} · ${ok ? L('confirmé', 'confirmed') : L('à confirmer', 'to be confirmed')}</span></div>` : '';
+  const st = (LANG === 'en' ? nx.story_en : nx.story_fr) || [], dn = (LANG === 'en' ? nx.date_note_en : nx.date_note_fr) || '';
+  const kit = c ? sec(L('Kit du personnage', 'Character kit')) + `<div class="card">${(c.s || []).slice(0, 8).map(s => `<p style="margin:0 0 8px"><span class="lab">${esc(s.t)}</span> <b>${esc(s.n)}</b></p>`).join('')}<a class="btn pri" href="#/perso/${c.id}">${L('Voir la fiche complète', 'Open the full page')}</a></div>` : `<p class="note">${L('Le kit n’est pas encore disponible : la fiche complète apparaîtra automatiquement dès que le personnage est ajouté aux données du jeu (la mise à jour du lundi la détecte toute seule).', 'The kit is not available yet: the full page will appear automatically as soon as the character is added to the game data (the Monday update detects it on its own).')}</p>`;
+  return [`<section class="hlp nxhero"><span class="lab">${L('Aperçu · version ', 'Preview · version ')}${esc(nx.version)}</span><h1>${c ? esc(c.n) : esc(nxName(nx)) || L('Personnage mystérieux', 'Mystery character')}</h1><p class="lead">${esc((LANG === 'en' ? nx.role_en : nx.role_fr) || '')}</p></section>
+  <div class="cols"><div class="mn">${nxTeaser(nx, true)}
+  ${sec(L('Ce que l’on sait', 'What we know'))}<div class="card stat2">${row(L('Personnage', 'Character'), esc(nxName(nx)), cf.char)}${row(L('Voie', 'Path'), nx.path ? pN(nx.path) : '', cf.path)}${row(L('Élément', 'Element'), nx.element ? eN(nx.element) : '', cf.element)}${row(L('Rareté', 'Rarity'), nx.rarity ? nx.rarity + '★' : '', cf.rarity)}${row(L('Date de sortie', 'Release date'), fmtD(nx.date), cf.date)}${dn ? `<p class="sub" style="margin:8px 0 0">${esc(dn)}</p>` : ''}</div>
+  ${sec(L('Contexte et histoire', 'Context and story'))}<div class="card">${st.map(t => `<p style="margin:0 0 10px">${esc(t)}</p>`).join('')}<a href="#/versions">${L('Voir le résumé de toutes les versions', 'See every version recap')} →</a></div>${kit}
+  <p class="note">${L('Sources : ', 'Sources: ')}${(nx.sources || []).map(s => `<a href="${s[1]}" target="_blank" rel="noopener">${esc(s[0])}</a>`).join(' · ')}. ${L('Informations avant sortie : elles peuvent changer. Cette page se met à jour toute seule chaque lundi (date, nom, fiche du personnage dès qu’ils sont disponibles).', 'Pre-release information: it may change. This page updates itself every Monday (date, name, character page as soon as available).')}</p></div>
+  <aside class="rail"><div class="vs"><div><span class="lab">${L('Sortie dans', 'Releases in')}</span><b>${L('Version ', 'Version ')}${esc(nx.version)}</b></div><div class="vn"><b data-cdd="${nx.date}">${d}</b><span>${L('jours', 'days')}</span></div><div style="grid-column:1/-1"><span class="ct" data-cd="${nx.date}"></span></div></div></aside></div>`];
+};
+
 // ------------------------------------------------------------ cadre du site : menu, en-tête, fenêtres
 function dialogs() {
   return `<dialog id="dlg"><h2 class="dt">${L('Compte', 'Account')}</h2><p class="sub" style="margin:0 0 12px;font-size:13px">${L('Pour retrouver vos favoris et votre collection sur tous vos appareils.', 'To keep your favourites and collection on all your devices.')}</p>
@@ -932,17 +1008,17 @@ function dialogs() {
 function chrome() {
   const NAV = [['', [['#/home', 'home', L('Accueil', 'Home')]]], [L('Base de données', 'Database'), [['#/perso', 'users', L('Personnages', 'Characters')], ['#/lc', 'cone', L('Cônes de lumière', 'Light Cones')], ['#/rel', 'box', L('Reliques', 'Relics')]]], [L('Classements', 'Rankings'), [['#/tier', 'tier', 'Tier list'], ['#/teamtier', 'team', L('Tier list équipes', 'Team tier list')], ['#/banners', 'star', L('Bannières', 'Banners')]]],
     [L('End game', 'End game'), [['#/end/moc', 'end', 'Memory of Chaos'], ['#/end/pf', 'end', 'Pure Fiction'], ['#/end/as', 'end', 'Apocalyptic Shadow'], ['#/end/aa', 'end', 'Anomaly Arbitration']]],
-    [L('Outils', 'Tools'), [['#/compare', 'cmp', L('Comparateur', 'Compare')], ['#/calc', 'calc', L('Calculateur', 'Calculator')], ['#/plan', 'dice', L('Tirages', 'Pull planner')], ['#/teams', 'team', L('Équipes', 'Teams')]]], [L('Guides', 'Guides'), [['#/versions', 'book', L('Résumé de version', 'Version recap')], ['#/events', 'cal', L('Événements', 'Events')], ['#/aide', 'book', L('Aides', 'Help')]]],
+    [L('Outils', 'Tools'), [['#/compare', 'cmp', L('Comparateur', 'Compare')], ['#/calc', 'calc', L('Calculateur', 'Calculator')], ['#/plan', 'dice', L('Tirages', 'Pull planner')], ['#/teams', 'team', L('Équipes', 'Teams')]]], [L('Guides', 'Guides'), [['#/next', 'star', L('Prochaine version', 'Next version')], ['#/versions', 'book', L('Résumé de version', 'Version recap')], ['#/events', 'cal', L('Événements', 'Events')], ['#/aide', 'book', L('Aides', 'Help')]]],
     [L('Communauté', 'Community'), [['#/community', 'users', L('Joueurs', 'Players')], ['#/stats', 'chart', L('Statistiques', 'Statistics')]]], [L('Compte', 'Account'), [['#/profil', 'user', L('Mon profil', 'My profile')], ['#/profil/fav', 'star', L('Favoris', 'Favourites')], ['#/settings', 'cog', L('Paramètres', 'Settings')]]], ...(isAdmin ? [[L('Administration', 'Admin'), [['#/admin', 'shield', L('Retours & signalements', 'Feedback & reports')]]]] : [])];
   $('#side').innerHTML = `<a class="brand" href="#/home"><svg class="logo" viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".55" stop-color="#e0b050"/><stop offset="1" stop-color="#b98cff"/></linearGradient></defs><g stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round"><circle cx="32" cy="32" r="26" class="r1"/><circle cx="32" cy="32" r="17" stroke-dasharray="2 4" class="r2"/><path d="M32 3v58M3 32h58" opacity=".55"/><path d="M32 12l5 15 15 5-15 5-5 15-5-15-15-5 15-5z" fill="url(#lg)" fill-opacity=".22"/></g><circle cx="32" cy="32" r="3" fill="#fff"/></svg><div class="wm"><b>ASTROLABE</b><i>${L('Guide HSR', 'HSR guide')}</i><small>HSR v${esc(D.version || '')} · ${D.updated}</small></div></a>
-  <nav class="nv">${NAV.map((g, gi) => (g[0] ? `<h4 style="--k:${[42, 262, 330, 190, 150, 20, 290, 215, 0][gi]}">${g[0]}</h4>` : '') + g[1].map(i => `<a href="${i[0]}" style="--k:${[42, 262, 330, 190, 150, 20, 290, 215, 0][gi]}">${ico(i[1])}${i[2]}</a>`).join('')).join('')}</nav><div class="sf"><small>${L('Site de fans non officiel. Images et noms © HoYoverse. Classements : Game8.', 'Unofficial fan site. Images and names © HoYoverse. Rankings: Game8.')} · site v7</small></div>`;
+  <nav class="nv">${NAV.map((g, gi) => (g[0] ? `<h4 style="--k:${[42, 262, 330, 190, 150, 20, 290, 215, 0][gi]}">${g[0]}</h4>` : '') + g[1].map(i => `<a href="${i[0]}" style="--k:${[42, 262, 330, 190, 150, 20, 290, 215, 0][gi]}">${ico(i[1])}${i[2]}</a>`).join('')).join('')}</nav><div class="sf"><small>${L('Site de fans non officiel. Images et noms © HoYoverse. Classements : Game8.', 'Unofficial fan site. Images and names © HoYoverse. Rankings: Game8.')} · site v7.3</small></div>`;
   $('#hd').innerHTML = `<button class="btn io" id="burger" aria-label="Menu">${ico('menu')}</button><button class="srch" data-search="1">${ico('search')}<span>${L('Rechercher…', 'Search…')}</span><kbd>Ctrl K</kbd></button><span class="sp"></span>
   <div class="seg lang"><button data-lang="fr" class="${LANG === 'fr' ? 'on' : ''}">FR</button><button data-lang="en" class="${LANG === 'en' ? 'on' : ''}">EN</button></div><button class="btn io" id="theme" aria-label="${L('Thème', 'Theme')}">${ico('sun')}</button>${sb ? `<button class="btn" id="fbk" title="${L('Signaler un problème', 'Report a problem')}">${ico('flag')}<span class="hs">${L('Signaler', 'Report')}</span></button>` : ''}<span id="acct"></span>`;
   $('#dlgs').innerHTML = dialogs(); acct();
 }
 function runSearch(q) {
   q = q.trim().toLowerCase(); const out = $('#sr'); if (!out) return;
-  const PG = [['#/home', L('Accueil', 'Home')], ['#/tier', 'Tier list'], ['#/teamtier', L('Tier list des équipes', 'Team tier list')], ['#/banners', L('Bannières', 'Banners')], ['#/compare', L('Comparateur', 'Compare')], ['#/calc', L('Calculateur', 'Calculator')], ['#/plan', L('Planificateur de tirages', 'Pull planner')], ['#/teams', L('Équipes', 'Teams')], ['#/versions', L('Résumé de version', 'Version recap')], ['#/events', L('Événements', 'Events')], ['#/stats', L('Statistiques', 'Statistics')], ['#/community', L('Communauté', 'Community')], ['#/profil', L('Mon profil', 'My profile')], ['#/settings', L('Paramètres', 'Settings')], ['#/end/moc', 'Memory of Chaos'], ['#/end/pf', 'Pure Fiction'], ['#/end/as', 'Apocalyptic Shadow']];
+  const PG = [['#/home', L('Accueil', 'Home')], ['#/tier', 'Tier list'], ['#/teamtier', L('Tier list des équipes', 'Team tier list')], ['#/banners', L('Bannières', 'Banners')], ['#/compare', L('Comparateur', 'Compare')], ['#/calc', L('Calculateur', 'Calculator')], ['#/plan', L('Planificateur de tirages', 'Pull planner')], ['#/teams', L('Équipes', 'Teams')], ['#/next', L('Prochaine version', 'Next version')], ['#/versions', L('Résumé de version', 'Version recap')], ['#/events', L('Événements', 'Events')], ['#/stats', L('Statistiques', 'Statistics')], ['#/community', L('Communauté', 'Community')], ['#/profil', L('Mon profil', 'My profile')], ['#/settings', L('Paramètres', 'Settings')], ['#/end/moc', 'Memory of Chaos'], ['#/end/pf', 'Pure Fiction'], ['#/end/as', 'Apocalyptic Shadow']];
   const m = (n) => n.toLowerCase().includes(q);
   const ch = q ? C.filter(c => m(c.n)).slice(0, 8) : C.slice(0, 6), lc = q ? LC.filter(l => m(l.n)).slice(0, 5) : [], rs = q ? RS.filter(r => m(r.n)).slice(0, 5) : [], pg = q ? PG.filter(p => m(p[1])).slice(0, 5) : PG.slice(0, 6);
   const it = (h, img, t, s) => `<a class="sit" href="${h}">${img ? `<img src="${img}" alt="">` : '<span class="pgi">→</span>'}<b>${esc(t)}</b><em>${esc(s || '')}</em></a>`;

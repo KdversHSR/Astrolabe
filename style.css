@@ -274,3 +274,26 @@ b.v{color:var(--ac2);font-weight:700}
 .altr{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
 .simres{display:flex;gap:8px;flex-wrap:wrap;min-height:64px;margin-bottom:8px}.sx{position:relative;width:64px;height:64px;border-radius:12px;overflow:hidden;border:2px solid var(--bd);display:grid;place-items:center;background:var(--s2);font:600 12px var(--mo);color:var(--mu)}.sx img{width:100%;height:100%;object-fit:cover}.sx em{position:absolute;left:0;right:0;bottom:0;text-align:center;font-style:normal;font-size:11px;background:#000a;color:#fff}.sx.r4{border-color:#b98cff}.sx.r5{border-color:#f0c964;box-shadow:0 0 16px #f0c96480}.sx.r5.lose{border-color:#f08a3c;box-shadow:0 0 12px #f08a3c60}
 .sx.pop{animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}@keyframes pop{from{transform:scale(.2) rotate(-12deg);opacity:0}to{transform:none;opacity:1}}
+.hero2 .hp{-webkit-mask-image:radial-gradient(ellipse 50% 52% at 50% 46%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 50% 52% at 50% 46%,#000 55%,transparent 100%);border-radius:0}
+/* v7.3 : teaser prochaine version */
+.nxcard{display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center}
+.nxt{display:flex;gap:14px;align-items:center;grid-column:1/-1;padding:10px;border:1px dashed var(--ac);border-radius:14px;background:linear-gradient(120deg,var(--hl),transparent)}
+.nxt .nxart{width:78px;height:78px;border-radius:12px;object-fit:cover;object-position:top}
+.nxmys{position:relative;width:78px;height:78px;border-radius:12px;display:grid;place-items:center;flex:none;background:radial-gradient(circle,#2a2150,#0e0f1c);border:1px solid var(--bd);overflow:hidden}
+.nxmys span{font:700 40px var(--se);color:var(--ac);text-shadow:0 0 18px var(--ac);animation:fl 4s ease-in-out infinite}.nxmys img{position:absolute;width:22px;height:22px;bottom:5px}.nxmys img:nth-of-type(1){left:5px}.nxmys img:nth-of-type(2){right:5px}
+.nxn{display:block;font:700 20px var(--se)}.nxt.big{padding:18px}.nxt.big .nxart,.nxt.big .nxmys{width:150px;height:150px}.nxt.big .nxn{font-size:30px}
+@media(max-width:760px){.nxt.big .nxart,.nxt.big .nxmys{width:96px;height:96px}}
+/* v7.4 : finitions visuelles */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.55;background-image:radial-gradient(1px 1px at 8% 14%,#fff8,transparent),radial-gradient(1.5px 1.5px at 23% 62%,#fff6,transparent),radial-gradient(1px 1px at 41% 32%,#fff7,transparent),radial-gradient(1.5px 1.5px at 57% 84%,#fff5,transparent),radial-gradient(1px 1px at 72% 18%,#fff8,transparent),radial-gradient(1.5px 1.5px at 88% 52%,#fff6,transparent),radial-gradient(1px 1px at 95% 90%,#fff7,transparent),radial-gradient(1px 1px at 15% 88%,#fff6,transparent);animation:twk 7s ease-in-out infinite alternate}
+@keyframes twk{from{opacity:.25}to{opacity:.6}}
+:root[data-theme=light] body::before{display:none}
+.main>*{animation:pgin .45s ease both}@keyframes pgin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.main>*:nth-child(2){animation-delay:.05s}.main>*:nth-child(3){animation-delay:.1s}
+.cd{transition:transform .22s,box-shadow .22s}.cd:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 10px 24px rgba(0,0,0,.4)}
+.card.hov{transition:transform .22s,border-color .22s,box-shadow .22s}.card.hov:hover{transform:translateY(-3px);border-color:var(--ac);box-shadow:0 10px 26px var(--hl)}
+.hero2::after{content:"";position:absolute;top:12%;left:-10%;width:140px;height:2px;background:linear-gradient(90deg,transparent,#fff,transparent);transform:rotate(18deg);opacity:0;animation:shoot 9s ease-in 3s infinite;pointer-events:none}
+@keyframes shoot{0%{opacity:0;transform:translate(0,0) rotate(18deg)}4%{opacity:.9}12%{opacity:0;transform:translate(900px,300px) rotate(18deg)}100%{opacity:0}}
+h2.sec,.sec{letter-spacing:.04em}
+button.btn.pri{box-shadow:0 4px 18px var(--hl)}button.btn.pri:hover,a.btn.pri:hover{box-shadow:0 6px 24px var(--ac);transform:translateY(-1px)}
+::selection{background:var(--ac);color:#0b0d17}
+@media(max-width:760px){.hero2::after{display:none}}

@@ -5,7 +5,46 @@
   "date": "2026-11-11T03:00:00Z",
   "estimated": true,
   "headliner": "Nihilux (Aeon ★ Aha), 5★ Quantique, voie Allégresse",
-  "headliner_en": "Nihilux (Aeon ★ Aha), 5★ Quantum, Elation path"
+  "headliner_en": "Nihilux (Aeon ★ Aha), 5★ Quantum, Elation path",
+  "name": "Nihilux",
+  "name_en": "Nihilux",
+  "char": null,
+  "rarity": 5,
+  "element": "Quantum",
+  "path": "Elation",
+  "role_fr": "Premier Aeon jouable : la voie Allégresse de l'Aeon Aha",
+  "role_en": "First playable Aeon: Aha's path of Elation",
+  "confirmed": {
+   "char": true,
+   "path": true,
+   "element": false,
+   "rarity": false,
+   "date": false
+  },
+  "story_fr": [
+   "Nihilux est la forme sous laquelle l'Aeon Aha, maître de la voie Allégresse, doit devenir jouable. Ce serait la première fois qu'un Aeon rejoint l'équipe.",
+   "Le personnage vit à Planarcadia et a dirigé le magazine à potins Furbobo Weekly, selon les informations publiées autour de l'annonce.",
+   "Les Fous masqués, fidèles d'Aha, racontent que l'Aeon serait devenu un dieu après qu'un bébé en pleurs est tombé de l'Arbre Imaginaire et qu'Aha a éclaté d'un rire qui a résonné dans tout l'univers. C'est une croyance, pas un fait établi du jeu.",
+   "L'histoire de la 4.7 elle-même n'est pas annoncée : ce résumé sera ajouté dès qu'elle l'est."
+  ],
+  "story_en": [
+   "Nihilux is the form through which Aeon Aha, master of the Path of Elation, is set to become playable. It would be the first time an Aeon joins the team.",
+   "The character lives in Planarcadia and ran the gossip magazine Furbobo Weekly, according to information published around the announcement.",
+   "The Masked Fools, Aha's followers, say the Aeon became a god after a crying baby fell from the Imaginary Tree and Aha burst into laughter that echoed through the universe. This is a belief, not an established fact of the game.",
+   "The 4.7 story itself has not been announced: this summary will be added as soon as it is."
+  ],
+  "sources": [
+   [
+    "Game8 · 4.7",
+    "https://game8.co/games/Honkai-Star-Rail/archives/622573"
+   ],
+   [
+    "GosuGamers · Aeon Aha",
+    "https://www.gosugamers.net/news/79173-honkai-star-rail-reveals-aeon-aha-as-next-playable-character-for-version-4-7"
+   ]
+  ],
+  "date_note_fr": "Les sources se contredisent : mi-novembre (estimation Game8) ou fin novembre / début décembre.",
+  "date_note_en": "Sources disagree: mid-November (Game8 estimate) or late November / early December."
  },
  "rateup4": [
   "Qingque",

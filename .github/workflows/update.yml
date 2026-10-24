@@ -44,6 +44,11 @@ jobs:
           mkdir _site
           cp -r index.html style.css app.js config.js manifest.webmanifest sw.js favicon.svg favicon.ico data img _site/
       - uses: actions/configure-pages@v5
+        id: pages
+      - name: Adresse du site pour les aperçus de partage
+        run: |
+          U="${{ steps.pages.outputs.base_url }}/"
+          sed -i "s#__SITE_URL__#${U}#g" _site/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

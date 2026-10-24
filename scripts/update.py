@@ -350,7 +350,7 @@ def main():
     print('3/5 tier list (Game8)…')
     seed = json.loads((DATA / 'seed_tiers.json').read_text('utf-8'))
     tiers, gen, eg, version = seed['overall'], seed['general'], seed['endgame'], manual.get('version')
-    ST = {'tiers': 'seed', 'banners': 'manual'}
+    ST = {'tiers': 'seed', 'banners': 'manual', 'schedule': 'manual'}
     if not a.no_scrape:
         try:
             tiers, gen, eg, v = scrape_game8()
@@ -410,6 +410,35 @@ def main():
                 bj['rateup4'] = list(dict.fromkeys(r4))
             ST['banners'] = 'auto'
             print('  bannières mises à jour automatiquement :', len(auto))
+        # calendrier end game (Chasm = Memory of Chaos, Story = Pure Fiction, Boss = Apocalyptic Shadow, Peak = Anomaly Arbitration)
+        MD = {'ChallengeTypeChasm': 'Memory of Chaos', 'ChallengeTypeStory': 'Pure Fiction', 'ChallengeTypeBoss': 'Apocalyptic Shadow', 'ChallengeTypePeak': 'Anomaly Arbitration'}
+        MF = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+        ME = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        dt = lambda t: datetime.datetime.fromtimestamp(t + 8 * 3600, datetime.timezone.utc)  # date côté serveur (UTC+8), identique à celle du jeu
+        rows = []
+        for ch_ in cal.get('challenges', []):
+            mode = MD.get(ch_.get('type_name'))
+            if mode and ch_.get('start_time') and ch_.get('end_time') and ch_['end_time'] > now_ts:
+                rows.append((ch_['start_time'], mode, ch_.get('name', ''), dt(ch_['start_time']), dt(ch_['end_time'])))
+        if rows:
+            rows.sort()
+            nm = lambda m, n: f"{m} « {n} »" if m in ('Memory of Chaos', 'Pure Fiction', 'Apocalyptic Shadow') and n else m
+            manual['schedule'] = [[nm(m, n), f"{s.day} {MF[s.month - 1]}", f"{e.day} {MF[e.month - 1]}"] for _, m, n, s, e in rows]
+            manual['schedule_en'] = [[nm(m, n), f"{ME[s.month - 1]} {s.day}", f"{ME[e.month - 1]} {e.day}"] for _, m, n, s, e in rows]
+            ST['schedule'] = 'auto'
+            print('  calendrier end game mis à jour automatiquement :', len(rows), 'entrées')
+        # prochaine version : si l'API annonce déjà une bannière à venir, la date devient certaine
+        fut = [x for x in cal.get('banners', []) if x.get('start_time') and x['start_time'] > now_ts and x.get('characters') and any(c.get('rarity') == 5 for c in x['characters'])]
+        if fut:
+            f0 = sorted(fut, key=lambda x: x['start_time'])[0]
+            nx = bj.setdefault('next', {})
+            if f0.get('version'):
+                nx['version'] = str(f0['version'])
+            nx['date'] = iso(f0['start_time']); nx['estimated'] = False; nx.setdefault('confirmed', {})['date'] = True
+            h = [c['name'] for c in f0['characters'] if c.get('rarity') == 5]
+            if h:
+                nx['name'] = nx['name_en'] = h[0]
+            print('  prochaine version détectée via l\'API :', nx.get('version'), nx['date'])
     except Exception as ex:
         print('  bannières automatiques indisponibles (', ex, ') -> banners.json manuel conservé')
     lcn = {nz(v['name']): k for k, v in LCe.items()}
@@ -417,6 +446,11 @@ def main():
         b['chars'] = [i for i in (rid(n) for n in b.get('chars', [])) if i]
         b['lcs'] = [lcn[nz(n)] for n in b.get('lcs', []) if nz(n) in lcn]
     bj['rateup4'] = [i for i in (rid(n) for n in bj.get('rateup4', [])) if i]
+    nx_ = bj.get('next') or {}
+    if nx_.get('name') and not nx_.get('char'):
+        nx_['char'] = next((by_en[nz(x)][0] for x in (nx_['name'], nx_.get('name_en', '')) if nz(x) in by_en), None)
+        if nx_['char']:
+            print('  personnage de la prochaine version trouvé dans la base :', nx_['char'])
 
     rsn = {nz(v['name']): k for k, v in RSe.items()}
     cj = json.loads((DATA / 'curated_builds.json').read_text('utf-8'))
@@ -488,8 +522,8 @@ def main():
     sets.sort(key=lambda x: (x['pl'], x['n']))
     out = {'version': version, 'updated': datetime.date.today().isoformat(), 'chars': chars, 'lcs': lcs, 'sets': sets, 'tiers': tiers_out, 'trend': trend, 'trend_since': since, 'tnotes': tnotes, 'events': events, 'banners': bj, 'manual': manual}
     (DATA / 'data.json').write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), 'utf-8')
-    pb = [k for k, ok in (('tiers', ST['tiers'] == 'game8'), ('banners', ST['banners'] == 'auto')) if not ok] if not a.no_scrape else []
-    (DATA / 'status.json').write_text(json.dumps({'updated': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'), 'chars': len(chars), 'lcs': len(lcs), 'sets': len(sets), 'builds': sum(1 for c in chars if c.get('b')), 'tiers': ST['tiers'], 'banners': ST['banners'], 'problems': pb}, ensure_ascii=False, indent=1), 'utf-8')
+    pb = [k for k, ok in (('tiers', ST['tiers'] == 'game8'), ('banners', ST['banners'] == 'auto'), ('schedule', ST['schedule'] == 'auto')) if not ok] if not a.no_scrape else []
+    (DATA / 'status.json').write_text(json.dumps({'updated': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'), 'chars': len(chars), 'lcs': len(lcs), 'sets': len(sets), 'builds': sum(1 for c in chars if c.get('b')), 'tiers': ST['tiers'], 'banners': ST['banners'], 'schedule': ST['schedule'], 'problems': pb}, ensure_ascii=False, indent=1), 'utf-8')
     print(f'   {len(chars)} personnages, {len(lcs)} cônes, {len(sets)} sets, {sum(1 for c in chars if "b" in c)} builds')
 
     extra = []
