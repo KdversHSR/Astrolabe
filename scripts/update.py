@@ -200,6 +200,8 @@ def get_browser(url, tries=3):
 
 def scrape_game8():
     page = get_browser(GAME8)
+    if len(page) < 20000:
+        raise RuntimeError(f'Game8 bloque le robot : page reçue de {len(page)} octets au lieu de plus de 100 000')
     ver = re.search(r'Version (\d\.\d+)', page)
     res, gen, eg = {}, {}, {}
     for tb in re.findall(r'<table.*?</table>', page, re.S):
@@ -377,7 +379,8 @@ def main():
             tiers, gen, eg, v = scrape_game8()
             ST['tiers'] = 'game8'
             version = v or version
-            (DATA / 'seed_tiers.json').write_text(json.dumps({'overall': tiers, 'general': gen, 'endgame': eg}, ensure_ascii=False, indent=1), 'utf-8')
+            (DATA / 'seed_tiers.json').write_text(json.dumps({'overall': tiers, 'general': gen, 'endgame': eg, 'checked': datetime.date.today().isoformat()}, ensure_ascii=False, indent=1), 'utf-8')
+            seed['checked'] = datetime.date.today().isoformat()
             print('   tier list mise à jour depuis Game8')
         except Exception as e:
             ST['tiers_err'] = str(e)[:240]
@@ -545,7 +548,7 @@ def main():
     out = {'version': version, 'updated': datetime.date.today().isoformat(), 'chars': chars, 'lcs': lcs, 'sets': sets, 'tiers': tiers_out, 'trend': trend, 'trend_since': since, 'tnotes': tnotes, 'events': events, 'banners': bj, 'manual': manual}
     (DATA / 'data.json').write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), 'utf-8')
     pb = [k for k, ok in (('tiers', ST['tiers'] == 'game8'), ('banners', ST['banners'] == 'auto'), ('schedule', ST['schedule'] == 'auto')) if not ok] if not a.no_scrape else []
-    (DATA / 'status.json').write_text(json.dumps({'updated': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'), 'chars': len(chars), 'lcs': len(lcs), 'sets': len(sets), 'builds': sum(1 for c in chars if c.get('b')), 'tiers': ST['tiers'], 'banners': ST['banners'], 'schedule': ST['schedule'], 'tiers_err': ST.get('tiers_err', ''), 'problems': pb}, ensure_ascii=False, indent=1), 'utf-8')
+    (DATA / 'status.json').write_text(json.dumps({'updated': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'), 'chars': len(chars), 'lcs': len(lcs), 'sets': len(sets), 'builds': sum(1 for c in chars if c.get('b')), 'tiers': ST['tiers'], 'banners': ST['banners'], 'schedule': ST['schedule'], 'tiers_err': ST.get('tiers_err', ''), 'tiers_checked': seed.get('checked', ''), 'problems': pb}, ensure_ascii=False, indent=1), 'utf-8')
     print(f'   {len(chars)} personnages, {len(lcs)} cônes, {len(sets)} sets, {sum(1 for c in chars if "b" in c)} builds')
 
     extra = []
