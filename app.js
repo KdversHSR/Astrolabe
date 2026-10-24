@@ -559,10 +559,12 @@ async function mfaVerify() {
 async function mfaDraw() {
   const el = $('#sec2fa'); if (!el) return;
   if (!(sb && user && sb.auth.mfa)) { el.innerHTML = `<p class="sub">${L('Connectez-vous pour activer la double authentification.', 'Log in to enable two-factor authentication.')}</p>`; return; }
+  const prov = (user.app_metadata && user.app_metadata.providers) || [user.app_metadata && user.app_metadata.provider || 'email'], hasD = prov.includes('discord');
+  const acc = `<p><b>${L('Connexion', 'Sign-in')}</b> : ${prov.map(p => p === 'email' ? L('e-mail + mot de passe', 'e-mail + password') : p[0].toUpperCase() + p.slice(1)).join(', ')} ${hasD ? '' : `<button class="btn dsc2" id="lkdc">${L('Lier mon compte Discord', 'Link my Discord account')}</button>`} <button class="btn" id="out2">${L('Me déconnecter', 'Log out')}</button></p><p class="sub" id="lkmsg"></p><hr style="border:0;border-top:1px solid var(--bd);margin:12px 0">`;
   const r = await sb.auth.mfa.listFactors(), all = (r.data && r.data.all) || [], on = all.filter(x => x.status === 'verified' && x.factor_type === 'totp');
-  el.innerHTML = on.length ? `<p>✅ ${L('Double authentification activée : un code vous sera demandé à chaque connexion.', 'Two-factor authentication is on: a code is asked at each login.')}</p><button class="btn" id="mfoff" data-f="${on[0].id}">${L('Désactiver', 'Turn off')}</button>`
+  el.innerHTML = acc + (on.length ? `<p>✅ ${L('Double authentification activée : un code vous sera demandé à chaque connexion.', 'Two-factor authentication is on: a code is asked at each login.')}</p><button class="btn" id="mfoff" data-f="${on[0].id}">${L('Désactiver', 'Turn off')}</button>`
     : M.en ? `<p class="sub">${L('1. Scannez ce QR code avec une application (Google Authenticator, Authy, 2FAS…). 2. Entrez le code à 6 chiffres affiché.', '1. Scan this QR code with an app (Google Authenticator, Authy, 2FAS…). 2. Enter the 6-digit code shown.')}</p><img class="qr" src="${esc(M.en.qr)}" alt="QR" width="168" height="168"><p class="sub">${L('Ou saisissez cette clé : ', 'Or enter this key: ')}<code>${esc(M.en.secret)}</code></p><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="mfe" inputmode="numeric" maxlength="6" placeholder="123456" style="max-width:160px;margin:0"><button class="btn pri" id="mfok">${L('Confirmer', 'Confirm')}</button><button class="btn" id="mfno">${L('Annuler', 'Cancel')}</button></div>`
-      : `<p class="sub">${L('Ajoute une protection : en plus du mot de passe, un code à 6 chiffres temporaire est demandé.', 'Adds protection: on top of the password, a temporary 6-digit code is required.')}</p><button class="btn" id="mfon">${L('Activer la double authentification', 'Enable two-factor authentication')}</button>`;
+      : `<p class="sub">${L('Ajoute une protection : en plus du mot de passe, un code à 6 chiffres temporaire est demandé.', 'Adds protection: on top of the password, a temporary 6-digit code is required.')}</p><button class="btn" id="mfon">${L('Activer la double authentification', 'Enable two-factor authentication')}</button>`);
   el.innerHTML += `<p class="sub" id="mfmsg">${esc(M.msg)}</p>`;
 }
 async function mfaClick(id, b) {
@@ -592,6 +594,11 @@ async function delAccount() {
   if (error) { pmsg = L('Échec : exécutez supabase/schema_v5.sql. (', 'Failed: run supabase/schema_v5.sql. (') + error.message + ')'; render(); return; }
   ['astro_prof', 'astro_fav', 'astro_teams'].forEach(k => localStorage.removeItem(k)); prof = { name: '', avatar: '', col: {}, handle: '', bio: '', pub: false, show: [] }; fav = { char: [], build: [] }; myTeams = [];
   await sb.auth.signOut(); location.hash = '#/home'; alert(L('Votre compte a été supprimé.', 'Your account has been deleted.'));
+}
+
+async function linkDiscord() {
+  const { error } = await sb.auth.linkIdentity({ provider: 'discord', options: { redirectTo: location.href.split('#')[0] } });
+  const m = $('#lkmsg'); if (error && m) m.textContent = L('Impossible : activez Discord et « Manual linking » dans Supabase. ', 'Not possible: enable Discord and “Manual linking” in Supabase. ') + error.message;
 }
 
 // ------------------------------------------------------------ tier list des équipes (calculée) + outils de fiche personnage
@@ -697,7 +704,7 @@ function chrome() {
     [L('Outils', 'Tools'), [['#/compare', 'cmp', L('Comparateur', 'Compare')], ['#/calc', 'calc', L('Calculateur', 'Calculator')], ['#/plan', 'dice', L('Tirages', 'Pull planner')], ['#/teams', 'team', L('Équipes', 'Teams')]]], [L('Guides', 'Guides'), [['#/versions', 'book', L('Résumé de version', 'Version recap')], ['#/events', 'cal', L('Événements', 'Events')], ['#/aide', 'book', L('Aides', 'Help')]]],
     [L('Communauté', 'Community'), [['#/community', 'users', L('Joueurs', 'Players')], ['#/stats', 'chart', L('Statistiques', 'Statistics')]]], [L('Compte', 'Account'), [['#/profil', 'user', L('Mon profil', 'My profile')], ['#/profil/fav', 'star', L('Favoris', 'Favourites')]]], ...(isAdmin ? [[L('Administration', 'Admin'), [['#/admin', 'shield', L('Retours & signalements', 'Feedback & reports')]]]] : [])];
   $('#side').innerHTML = `<a class="brand" href="#/home"><svg class="logo" viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".55" stop-color="#e0b050"/><stop offset="1" stop-color="#b98cff"/></linearGradient></defs><g stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round"><circle cx="32" cy="32" r="26" class="r1"/><circle cx="32" cy="32" r="17" stroke-dasharray="2 4" class="r2"/><path d="M32 3v58M3 32h58" opacity=".55"/><path d="M32 12l5 15 15 5-15 5-5 15-5-15-15-5 15-5z" fill="url(#lg)" fill-opacity=".22"/></g><circle cx="32" cy="32" r="3" fill="#fff"/></svg><div class="wm"><b>ASTROLABE</b><i>${L('Guide HSR', 'HSR guide')}</i><small>HSR v${esc(D.version || '')} · ${D.updated}</small></div></a>
-  <nav class="nv">${NAV.map(g => (g[0] ? `<h4>${g[0]}</h4>` : '') + g[1].map(i => `<a href="${i[0]}">${ico(i[1])}${i[2]}</a>`).join('')).join('')}</nav><div class="sf"><small>${L('Site de fans non officiel. Images et noms © HoYoverse. Classements : Game8.', 'Unofficial fan site. Images and names © HoYoverse. Rankings: Game8.')}</small></div>`;
+  <nav class="nv">${NAV.map(g => (g[0] ? `<h4>${g[0]}</h4>` : '') + g[1].map(i => `<a href="${i[0]}">${ico(i[1])}${i[2]}</a>`).join('')).join('')}</nav><div class="sf"><small>${L('Site de fans non officiel. Images et noms © HoYoverse. Classements : Game8.', 'Unofficial fan site. Images and names © HoYoverse. Rankings: Game8.')} · site v6</small></div>`;
   $('#hd').innerHTML = `<button class="btn io" id="burger" aria-label="Menu">${ico('menu')}</button><button class="srch" data-search="1">${ico('search')}<span>${L('Rechercher…', 'Search…')}</span><kbd>Ctrl K</kbd></button><span class="sp"></span>
   <div class="seg lang"><button data-lang="fr" class="${LANG === 'fr' ? 'on' : ''}">FR</button><button data-lang="en" class="${LANG === 'en' ? 'on' : ''}">EN</button></div><button class="btn io" id="theme" aria-label="${L('Thème', 'Theme')}">${ico('sun')}</button>${sb ? `<button class="btn" id="fbk" title="${L('Signaler un problème', 'Report a problem')}">${ico('flag')}<span class="hs">${L('Signaler', 'Report')}</span></button>` : ''}<span id="acct"></span>`;
   $('#dlgs').innerHTML = dialogs(); acct();
@@ -771,7 +778,8 @@ document.addEventListener('click', e => {
   else if (b.id === 'burger') $('#side').classList.toggle('open');
   else if (b.id === 'theme') { const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = t; store.set('astro_theme', t); }
   else if (b.id === 'login') { authMsg(''); $('#dlg').showModal(); }
-  else if (b.id === 'out') sb.auth.signOut();
+  else if (b.id === 'out' || b.id === 'out2') sb.auth.signOut().then(() => { user = null; isAdmin = false; acct(); chrome(); render(); });
+  else if (b.id === 'lkdc') linkDiscord();
   else if (['bin', 'bup', 'bfg', 'bdc'].includes(b.id)) authClick(b.id);
   else if (b.id === 'mfv') mfaVerify();
   else if (['mfon', 'mfok', 'mfno', 'mfoff'].includes(b.id)) mfaClick(b.id, b);
