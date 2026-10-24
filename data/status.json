@@ -1,11 +1,13 @@
 {
- "updated": "2026-10-24T23:05:35Z",
+ "updated": "2026-10-24T23:11:31Z",
  "chars": 93,
  "lcs": 170,
  "sets": 62,
  "builds": 93,
  "tiers": "seed",
- "banners": "manual",
- "schedule": "manual",
- "problems": []
+ "banners": "auto",
+ "schedule": "auto",
+ "problems": [
+  "tiers"
+ ]
 }
