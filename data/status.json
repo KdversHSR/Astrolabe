@@ -1,12 +1,14 @@
 {
- "updated": "2026-10-24T23:25:10Z",
+ "updated": "2026-10-24T23:30:29Z",
  "chars": 93,
  "lcs": 170,
  "sets": 62,
  "builds": 93,
  "tiers": "seed",
- "banners": "manual",
- "schedule": "manual",
- "tiers_err": "",
- "problems": []
+ "banners": "auto",
+ "schedule": "auto",
+ "tiers_err": "structure Game8 inattendue (page 2035 octets, classement 0 persos, rôles False, end game False)",
+ "problems": [
+  "tiers"
+ ]
 }
