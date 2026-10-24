@@ -370,6 +370,45 @@ def main():
                 tnotes[rid(n_)] = note
     events = json.loads((DATA / 'events.json').read_text('utf-8')) if (DATA / 'events.json').exists() else []
     bj = json.loads((DATA / 'banners.json').read_text('utf-8'))
+    # bannières automatiques (API communautaire Ennead) ; en cas d'échec on garde banners.json tel quel
+    try:
+        cal = json.loads(get('https://api.ennead.cc/mihoyo/starrail/calendar'))
+        iso = lambda t: datetime.datetime.fromtimestamp(t - 8 * 3600, datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')  # heure serveur UTC+8 -> UTC
+        now_ts = datetime.datetime.now(datetime.timezone.utc).timestamp() + 8 * 3600
+        old = {}
+        for x in bj['list']:
+            if x.get('end') is not None and 'ollab' not in x.get('kind', ''):
+                old[tuple(sorted(filter(None, (rid(n) for n in x.get('chars', [])))))] = (x.get('kind'), x.get('kind_en'))
+        maxold = max([int(i) for k in old for i in k if i.isdigit()] or [0])
+        ch, lc = {}, {}
+        for b in cal.get('banners', []):
+            if not b.get('start_time') or not b.get('end_time') or b['end_time'] < now_ts - 86400:
+                continue
+            key = (b['start_time'], b['end_time'])
+            if b.get('characters'):
+                ch[key] = b
+            elif b.get('light_cones'):
+                lc[key] = b
+        auto = []
+        for key, b in sorted(ch.items()):
+            five = [c['name'] for c in b['characters'] if c.get('rarity') == 5]
+            if not five:
+                continue
+            lcs = [x['name'] for x in (lc.get(key) or {}).get('light_cones', []) if x.get('rarity') == 5]
+            fid = rid(five[0])
+            prev = old.get(tuple(sorted(filter(None, (rid(n) for n in five)))))
+            isnew = bool(fid) and fid.isdigit() and int(fid) > maxold
+            kind, kind_en = prev if prev and prev[0] else (('Nouveau 5★', 'New 5★') if isnew else ('Rerun', 'Rerun'))
+            auto.append({'chars': five, 'lcs': lcs, 'kind': kind, 'kind_en': kind_en, 'start': iso(key[0]), 'end': iso(key[1])})
+        if auto:
+            keep = [x for x in bj['list'] if x.get('end') is None or 'ollab' in x.get('kind', '')]
+            bj['list'] = auto + keep
+            r4 = [c['name'] for b in ch.values() for c in b['characters'] if c.get('rarity') == 4]
+            if r4:
+                bj['rateup4'] = list(dict.fromkeys(r4))
+            print('  bannières mises à jour automatiquement :', len(auto))
+    except Exception as ex:
+        print('  bannières automatiques indisponibles (', ex, ') -> banners.json manuel conservé')
     lcn = {nz(v['name']): k for k, v in LCe.items()}
     for b in bj['list']:
         b['chars'] = [i for i in (rid(n) for n in b.get('chars', [])) if i]

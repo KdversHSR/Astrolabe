@@ -6,7 +6,7 @@ Tier list, builds, cônes de lumière, reliques, end game, favoris et comptes. S
 - `scripts/update.py` récupère les données : personnages, cônes, reliques et images (StarRailRes), builds et équipes (HSR Optimizer, licence MIT), tier list et end game (Game8, classements seulement avec lien vers la source). Il écrit `data/data.json` et `img/`.
 - Si une source tombe en panne ou change de format, le script garde les anciennes données au lieu de casser le site.
 - `data/manual.json` : calendrier end game, descriptions des modes, liens de guides. **À modifier à la main à chaque version** (2 minutes, directement sur GitHub).
-- `data/banners.json` : bannières en cours (personnages, cônes, dates de début et de fin en UTC) et date de la prochaine version. **À mettre à jour à chaque phase** (début et milieu de version). Le site calcule tout seul les comptes à rebours.
+- `data/banners.json` : bannières en cours (personnages, cônes, dates de début et de fin en UTC) et date de la prochaine version. **Les bannières sont maintenant récupérées automatiquement chaque lundi** (API communautaire Ennead). Ce fichier sert de secours si l’API ne répond pas, et contient les collaborations, la date de la prochaine version et son personnage (à mettre à jour à la main). Le site calcule tout seul les comptes à rebours.
 - `data/events.json` : guides d’événements et de modes end game. Copiez le bloc « exemple » (il est masqué par `"hidden": true`) pour ajouter un événement avec dates, étapes, conseils et récompenses.
 - `data/tier_notes.json` (facultatif) : pour afficher un badge d’éidolon particulier sur un personnage dans la tier list (par défaut **E0**, base du classement Game8). Exemple : `"Firefly": "E6"`.
 - `data/tier_history.json` : géré automatiquement. Il garde les deux derniers classements pour afficher les flèches vertes (▲ monte), rouges (▼ baisse) et NEW. **Ne le modifiez pas.**
@@ -84,3 +84,13 @@ Les profils publics sont désactivés par défaut. Les signalements arrivent dan
 ## Équipes classées et fiches personnage
 - La **Tier list des équipes** est calculée par le site (tiers Game8 des membres + équipes conseillées par HSR Optimizer) : ce n’est pas un classement publié par un autre site.
 - Les onglets Stats, Dégâts et le curseur de niveau des compétences utilisent les chiffres du jeu (StarRailRes). Le simulateur de dégâts est une estimation d’un seul coup.
+
+
+## Nouveautés v7
+- **Paramètres** dans le menu de gauche : thème, couleur d’accent, taille du texte, densité, animations, langue, fuseau des dates, échelle de la tier list, éidolon par défaut, spoilers, page d’ouverture, compte (profil, sécurité, suppression) et export/import de vos données.
+- **Équipes à 4** : si HSR Optimizer en liste moins de 4, le site complète avec une suggestion (case en pointillés).
+- **Accueil** retravaillé (routine du jour enregistrée sur l’appareil) et menu coloré.
+- **Résumé de version** illustré : `data/versions.json` (champs `hero`, `chars`, `cn`, `nf`, `ne`).
+
+## Ce qui est automatique chaque lundi
+Personnages, cônes, reliques, builds, équipes, tier list (Game8), images, flèches de tendance et **bannières**. Reste manuel : résumés d’histoire (`versions.json`), guides (`manual.json`), prochaine version (`banners.json › next`).
