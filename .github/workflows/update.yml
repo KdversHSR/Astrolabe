@@ -8,6 +8,7 @@ on:
     branches: [main]
 
 permissions:
+  issues: write
   contents: write
   pages: write
   id-token: write
@@ -27,6 +28,11 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Mettre à jour les données
         run: python scripts/update.py
+      - name: Prévenir en cas d'échec
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "La mise à jour automatique a échoué" --body "Le workflow du lundi a échoué. Ouvrez l'onglet Actions pour voir l'erreur, puis relancez-le avec Run workflow." || true
       - name: Enregistrer les nouvelles données
         run: |
           git config user.name "astrolabe-bot"
@@ -36,7 +42,7 @@ jobs:
       - name: Préparer le site
         run: |
           mkdir _site
-          cp -r index.html style.css app.js config.js data img _site/
+          cp -r index.html style.css app.js config.js manifest.webmanifest sw.js favicon.svg favicon.ico data img _site/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

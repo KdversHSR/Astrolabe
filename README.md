@@ -94,3 +94,12 @@ Les profils publics sont désactivés par défaut. Les signalements arrivent dan
 
 ## Ce qui est automatique chaque lundi
 Personnages, cônes, reliques, builds, équipes, tier list (Game8), images, flèches de tendance et **bannières**. Reste manuel : résumés d’histoire (`versions.json`), guides (`manual.json`), prochaine version (`banners.json › next`).
+
+## Nouveautés v7.1
+- **Statut des données** (page Aides et page Admin) : lit `data/status.json`, écrit à chaque mise à jour. Alerte si la tier list ou les bannières n’ont pas pu être rafraîchies, ou si les données ont plus de 9 jours. En cas d’échec du workflow, une *issue* « La mise à jour automatique a échoué » est créée sur GitHub (et GitHub vous écrit par e-mail).
+- **Rappels de bannières** : bouton « Me rappeler 24 h avant la fin » (fichier calendrier .ics + notification si le site est ouvert).
+- **Simulateur de tirages** sous le planificateur.
+- **Mes équipes possibles** : équipes complètes, « presque prêtes » et personnages à tirer en priorité, d’après votre collection.
+- **Synergie d’équipe** (score indicatif, rôles, alternatives) sur la page d’une équipe.
+- **Application installable** (PWA : `manifest.webmanifest`, `sw.js`, icônes dans `img/`) avec mode hors-ligne.
+- **Succès** sur le profil (et sur les profils publics, d’après les statistiques publiées).

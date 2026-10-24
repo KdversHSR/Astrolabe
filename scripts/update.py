@@ -350,9 +350,11 @@ def main():
     print('3/5 tier list (Game8)…')
     seed = json.loads((DATA / 'seed_tiers.json').read_text('utf-8'))
     tiers, gen, eg, version = seed['overall'], seed['general'], seed['endgame'], manual.get('version')
+    ST = {'tiers': 'seed', 'banners': 'manual'}
     if not a.no_scrape:
         try:
             tiers, gen, eg, v = scrape_game8()
+            ST['tiers'] = 'game8'
             version = v or version
             (DATA / 'seed_tiers.json').write_text(json.dumps({'overall': tiers, 'general': gen, 'endgame': eg}, ensure_ascii=False, indent=1), 'utf-8')
             print('   tier list mise à jour depuis Game8')
@@ -406,6 +408,7 @@ def main():
             r4 = [c['name'] for b in ch.values() for c in b['characters'] if c.get('rarity') == 4]
             if r4:
                 bj['rateup4'] = list(dict.fromkeys(r4))
+            ST['banners'] = 'auto'
             print('  bannières mises à jour automatiquement :', len(auto))
     except Exception as ex:
         print('  bannières automatiques indisponibles (', ex, ') -> banners.json manuel conservé')
@@ -485,6 +488,8 @@ def main():
     sets.sort(key=lambda x: (x['pl'], x['n']))
     out = {'version': version, 'updated': datetime.date.today().isoformat(), 'chars': chars, 'lcs': lcs, 'sets': sets, 'tiers': tiers_out, 'trend': trend, 'trend_since': since, 'tnotes': tnotes, 'events': events, 'banners': bj, 'manual': manual}
     (DATA / 'data.json').write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), 'utf-8')
+    pb = [k for k, ok in (('tiers', ST['tiers'] == 'game8'), ('banners', ST['banners'] == 'auto')) if not ok] if not a.no_scrape else []
+    (DATA / 'status.json').write_text(json.dumps({'updated': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'), 'chars': len(chars), 'lcs': len(lcs), 'sets': len(sets), 'builds': sum(1 for c in chars if c.get('b')), 'tiers': ST['tiers'], 'banners': ST['banners'], 'problems': pb}, ensure_ascii=False, indent=1), 'utf-8')
     print(f'   {len(chars)} personnages, {len(lcs)} cônes, {len(sets)} sets, {sum(1 for c in chars if "b" in c)} builds')
 
     extra = []

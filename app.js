@@ -351,7 +351,7 @@ let TB = store.get('astro_tb', { name: '', m: [{ c: '', l: '' }, { c: '', l: '' 
 const teamCode = m => m.filter(x => x.c).map(x => x.c + '-' + (x.l || '')).join('_');
 const parseTeam = s => (s || '').split('_').map(p => p.split('-')).filter(p => byId[p[0]]).slice(0, 4).map(p => ({ c: p[0], l: lcOf(p[1]) ? p[1] : '' }));
 const shareUrl = m => location.href.split('#')[0] + '#/team/' + teamCode(m);
-function teamAnalysis(m) {
+function teamAnalysisOld(m) {
   const ms = m.filter(x => byId[x.c]).map(x => byId[x.c]); if (!ms.length) return '';
   const paths = ms.map(c => c.pi), tips = [];
   if (!paths.some(p => ['Priest', 'Knight'].includes(p)) && !ms.some(c => c.pi === 'Memory')) tips.push(L('Aucun soigneur ni protecteur : prévoyez des boucliers ou du soin.', 'No healer or protector: plan for shields or healing.'));
@@ -421,7 +421,7 @@ pages.profil = tab => {
   const name = prof.name || (user ? user.email.split('@')[0] : L('Voyageur', 'Traveler')), since = user ? L('Membre depuis le ', 'Member since ') + new Date(user.created_at).toLocaleDateString(LOC()) : L('Profil local, enregistré dans ce navigateur', 'Local profile, saved in this browser');
   const teams = new Map(); own.forEach(i => ((byId[i].b || {}).teams || []).forEach(t => { const ids = [...new Set([i, ...t.map(m => m.c)])]; if (ids.length >= 3 && ids.length <= 4 && ids.every(x => x in prof.col)) teams.set([...ids].sort().join('-'), ids); }));
   const banner = !sb ? '' : user ? '' : `<div class="card" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span>${L('Connectez-vous pour retrouver votre collection et vos favoris sur tous vos appareils.', 'Log in to keep your collection and favourites on all your devices.')}</span><button class="btn pri" id="login">${L('Connexion', 'Log in')}</button></div>`;
-  const tabs = [['col', L('Collection', 'Collection'), 'users'], ['fav', L('Favoris', 'Favourites'), 'star'], ['teams', L('Équipes possibles', 'Possible teams'), 'cmp']];
+  const tabs = [['col', L('Collection', 'Collection'), 'users'], ['fav', L('Favoris', 'Favourites'), 'star'], ['teams', L('Mes équipes possibles', 'My possible teams'), 'cmp']];
   let body = '', res = null;
   if (tab === 'col') {
     res = () => `<div class="grid">${C.filter(c => (!S.e || c.ei === S.e) && (!S.p || c.pi === S.p) && (!S.r || c.r == S.r) && has(c.n) && (!S.own || (S.own === 'own') === (c.id in prof.col))).map(c => { const on = c.id in prof.col; return `<div style="width:88px"><button class="cd own r${c.r}${on ? ' on' : ''}" data-own="${c.id}"><span class="pt"><img src="${im('c', c.id)}" alt="" loading="lazy">${eiImg(c.ei)}${on ? `<b class="bd">E${prof.col[c.id]}</b>` : ''}</span><span class="nm">${esc(c.n)}</span></button>${on ? `<select data-eid="${c.id}" style="width:88px;padding:3px;margin:4px 0 0;font-size:12px">${[0, 1, 2, 3, 4, 5, 6].map(e => `<option value="${e}" ${prof.col[c.id] == e ? 'selected' : ''}>E${e}</option>`).join('')}</select>` : ''}</div>`; }).join('')}</div>`;
@@ -430,13 +430,13 @@ pages.profil = tab => {
     const fc = C.filter(c => fav.char.includes(c.id)), fb = C.filter(c => fav.build.includes(c.id));
     body = sec(L('Personnages favoris', 'Favourite characters')) + (fc.length ? `<div class="grid">${fc.map(c => tile(c, { sub: eN(c.ei) + ' · ' + pN(c.pi) })).join('')}</div>` : `<p class="sub">${L('Aucun pour l’instant. Cliquez sur « Personnage favori » dans une fiche.', 'None yet. Click “Favourite character” on a character page.')}</p>`) + sec(L('Builds favoris', 'Favourite builds')) + (fb.length ? fb.map(c => `<div class="card" style="display:flex;gap:14px;align-items:center">${tile(c, { s: 1 })}<div><b>${esc(c.n)}</b><br><span class="sub">${c.b ? esc(c.b.subs.slice(0, 4).map(stx).join(' > ')) : ''}</span><br><a href="#/perso/${c.id}/build">${L('Voir le build', 'See the build')}</a></div></div>`).join('') : `<p class="sub">${L('Aucun pour l’instant. Cliquez sur « Build favori » dans une fiche.', 'None yet. Click “Favourite build” on a character page.')}</p>`);
   } else if (tab === 'teams') {
-    body = `<p class="sub">${L('Équipes du site dont tous les membres sont dans votre collection.', 'Site teams whose members are all in your collection.')}</p>` + ([...teams.values()].slice(0, 30).map(ids => `<div class="team">${ids.map(i => tile(byId[i], { s: 1 })).join('')}<a class="btn" style="margin-left:auto" href="#/team/${ids.map(i => i + '-').join('_')}">${L('Ouvrir', 'Open')}</a></div>`).join('') || `<p class="sub">${L('Aucune équipe complète pour l’instant. Ajoutez des personnages dans l’onglet Collection.', 'No complete team yet. Add characters in the Collection tab.')}</p>`);
+    body = colTeamsHtml();
   } else {
     body = '';
   }
   return [`<div class="ph">${prof.avatar && byId[prof.avatar] ? `<img class="av" src="${im('c', prof.avatar)}" alt="">` : `<div class="av">${esc(name[0].toUpperCase())}</div>`}<div><h1>${esc(name)}</h1><span class="sub">${since}</span></div></div>${banner}
   <div class="g3"><div class="stat"><span class="lab">${L('Personnages', 'Characters')}</span><b>${own.length} / ${C.length}</b></div><div class="stat"><span class="lab">${L('5★ possédés', '5★ owned')}</span><b>${n5}</b></div><div class="stat"><span class="lab">${L('Éidolons cumulés', 'Total eidolons')}</span><b>${eids}</b></div><div class="stat"><span class="lab">${L('Favoris', 'Favourites')}</span><b>${fav.char.length + fav.build.length}</b></div></div>
-  <div class="bigtabs">${tabs.map(t => `<a class="${tab === t[0] ? 'on' : ''}" href="#/profil/${t[0]}">${ico(t[2])}${t[1]}</a>`).join('')}</div>${body}`, res, () => { if (tab === 'set') mfaDraw(); }];
+  ${badgesHtml(myBadgeStats())}<div class="bigtabs">${tabs.map(t => `<a class="${tab === t[0] ? 'on' : ''}" href="#/profil/${t[0]}">${ico(t[2])}${t[1]}</a>`).join('')}</div>${body}`, res, () => { if (tab === 'set') mfaDraw(); }];
 };
 function verBanner() {
   const nx = D.banners && D.banners.next; if (!nx) return '';
@@ -446,12 +446,13 @@ function verBanner() {
 function bannerCards() {
   const B = (D.banners && D.banners.list) || [], now = Date.now();
   const Lst = B.filter(b => !b.end || new Date(b.end) > now).sort((x, y) => (x.end ? new Date(x.end) : 9e15) - (y.end ? new Date(y.end) : 9e15));
+  window.BNL = Lst;
   if (!Lst.length) return `<p class="sub">${L('Aucune bannière renseignée.', 'No banner listed.')}</p>`;
-  return Lst.map(b => { const up = new Date(b.start) > now; return `<div class="card bn"><div class="bnimg">${b.chars.map(i => byId[i] ? `<a href="#/perso/${i}"><img src="${im('p', i)}" alt="${esc(byId[i].n)}"></a>` : '').join('')}</div><div><span class="tag tg" style="--tc:var(--ac)">${esc(LANG === 'en' && b.kind_en || b.kind)}</span><span class="tag">${up ? L('À venir', 'Upcoming') : L('En cours', 'Ongoing')}</span>
+  return Lst.map((b, bi) => { const up = new Date(b.start) > now; return `<div class="card bn"><div class="bnimg">${b.chars.map(i => byId[i] ? `<a href="#/perso/${i}"><img src="${im('p', i)}" alt="${esc(byId[i].n)}"></a>` : '').join('')}</div><div><span class="tag tg" style="--tc:var(--ac)">${esc(LANG === 'en' && b.kind_en || b.kind)}</span><span class="tag">${up ? L('À venir', 'Upcoming') : L('En cours', 'Ongoing')}</span>
   <h2 style="margin:8px 0 4px">${b.chars.map(i => byId[i] ? esc(byId[i].n) : '').join(' + ')}</h2>
   ${b.lcs.map(i => { const l = lcOf(i); return l ? `<div class="row" style="padding:6px 0"><img src="${im('l', i)}" alt="" style="width:36px;height:36px"><div><b>${esc(l.n)}</b></div></div>` : ''; }).join('')}
   <p class="ct" style="margin:8px 0 2px" ${up ? `data-cd="${b.start}" data-pre="${L('Démarre dans ', 'Starts in ')}"` : b.end ? `data-cd="${b.end}" data-pre="${L('Se termine dans ', 'Ends in ')}"` : ''}>${b.end || up ? '' : L('Sans date de fin annoncée', 'No end date announced')}</p>
-  <span class="sub" style="font-size:13px">${fmtD(b.start)} → ${b.end ? fmtD(b.end) : L('non annoncée', 'not announced')}</span></div></div>`; }).join('');
+  <span class="sub" style="font-size:13px">${fmtD(b.start)} → ${b.end ? fmtD(b.end) : L('non annoncée', 'not announced')}</span>${b.end ? `<div style="margin-top:8px"><button class="btn" data-rem="${bi}">🔔 ${L('Me rappeler 24 h avant la fin', 'Remind me 24h before the end')}</button></div>` : ''}</div></div>`; }).join('');
 }
 pages.banners = () => {
   const r = (D.banners && D.banners.rateup4) || [];
@@ -494,7 +495,7 @@ async function loadProfile(h) {
   const sh = (Array.isArray(p.showcase) ? p.showcase : []).filter(s => byId[s.c]).slice(0, 6);
   el.innerHTML = `<a class="back" href="#/community" style="color:var(--ac)">← ${L('Communauté', 'Community')}</a><div class="pfx"><div class="pcov big" ${cover(p)}></div><div class="pfh">${avOf(p, 'lg')}<div class="pfn"><h1>${esc(p.display_name || p.handle)}</h1><span class="sub">@${esc(p.handle)}</span></div><div class="pfa">${user ? `<button class="btn ${liked ? 'on' : ''}" data-like="1">${liked ? '♥' : '♡'} ${L('J’aime', 'Like')}</button><button class="btn" data-report="1">${L('Signaler', 'Report')}</button>` : ''}</div></div>${p.bio ? `<p class="pfb">${esc(p.bio)}</p>` : ''}
   <div class="pfs"><div><b>${st.n ?? '—'}</b><span>${L('Personnages', 'Characters')}</span></div><div><b>${st.n5 ?? '—'}</b><span>5★</span></div><div><b>${st.e ?? '—'}</b><span>${L('Éidolons', 'Eidolons')}</span></div><div><b>♥ ${count || 0}</b><span>${L('J’aime', 'Likes')}</span></div></div>${isAdmin ? `<div style="padding:0 18px 14px"><button class="btn" data-adelp="${p.user_id}">${L('Supprimer le profil (admin)', 'Delete profile (admin)')}</button> <button class="btn danger" data-adelu="${p.user_id}">${L('Supprimer le compte (admin)', 'Delete account (admin)')}</button></div>` : ''}${user ? '' : `<p class="sub" style="padding:0 18px 14px">${L('Connectez-vous pour aimer ou signaler ce profil.', 'Log in to like or report this profile.')}</p>`}</div>
-  ${sec(L('Vitrine', 'Showcase'))}<div class="posts">${sh.length ? sh.map(s => { const c = byId[s.c]; return `<article class="post"><a class="pimg" href="#/perso/${c.id}"><img src="${im('p', c.id)}" alt="" loading="lazy"></a><div class="ptx"><b>${esc(c.n)}</b><span class="sub">${eN(c.ei)} · ${pN(c.pi)}</span><p>${esc(s.t || '')}</p><a href="#/perso/${c.id}/build">${L('Voir le build recommandé', 'See the recommended build')} →</a></div></article>`; }).join('') : `<p class="sub">${L('Vitrine vide.', 'Empty showcase.')}</p>`}</div>`;
+  ${badgesHtml({ n: st.n, n5: st.n5, e: st.e })}${sec(L('Vitrine', 'Showcase'))}<div class="posts">${sh.length ? sh.map(s => { const c = byId[s.c]; return `<article class="post"><a class="pimg" href="#/perso/${c.id}"><img src="${im('p', c.id)}" alt="" loading="lazy"></a><div class="ptx"><b>${esc(c.n)}</b><span class="sub">${eN(c.ei)} · ${pN(c.pi)}</span><p>${esc(s.t || '')}</p><a href="#/perso/${c.id}/build">${L('Voir le build recommandé', 'See the recommended build')} →</a></div></article>`; }).join('') : `<p class="sub">${L('Vitrine vide.', 'Empty showcase.')}</p>`}</div>`;
 }
 
 // ------------------------------------------------------------ résumé de version
@@ -766,6 +767,153 @@ function dailyHtml() {
 }
 document.addEventListener('change', e => { const t = e.target; if (t && t.dataset && t.dataset.daily !== undefined) { const day = new Date().toISOString().slice(0, 10), s = store.get('astro_daily', {}); let d = s.day === day ? s.d || [] : []; const i = +t.dataset.daily; d = t.checked ? [...new Set([...d, i])] : d.filter(x => x !== i); store.set('astro_daily', { day, d }); const c = t.closest('.daily'); if (c) { t.parentNode.classList.toggle('on', t.checked); c.querySelector('.sub').textContent = d.length + '/' + DAILY.length + ' · ' + L('se remet à zéro chaque jour', 'resets every day'); } } });
 
+// ------------------------------------------------------------ v7 : statut, analyse de collection, succès, simulateur, rappels, synergie
+// ---- statut des données (data/status.json écrit par le workflow du lundi)
+let ST_P = null;
+const getStatus = () => ST_P || (ST_P = fetch('data/status.json?' + Date.now()).then(r => r.json()).catch(() => null));
+function statusHtml(S, adminMode) {
+  if (!S) return `<div class="card note2"><b>${L('Statut des données', 'Data status')}</b> ${L('Information indisponible (le fichier status.json apparaît après la prochaine mise à jour automatique).', 'Not available yet (status.json appears after the next automatic update).')}</div>`;
+  const age = Math.floor((Date.now() - new Date(S.updated)) / 864e5), stale = age > 9, pb = S.problems || [];
+  const lab = { tiers: L('Tier list (Game8)', 'Tier list (Game8)'), banners: L('Bannières (API)', 'Banners (API)') };
+  const row = (n, ok, d) => `<div class="strow ${ok ? 'ok' : 'ko'}"><i></i><b>${n}</b><span>${d}</span></div>`;
+  const warn = stale || pb.length;
+  return `<div class="card stat2 ${warn ? 'warn' : ''}"><div class="dh"><b>${L('Statut des données', 'Data status')}</b><span class="sub">${L('Dernière mise à jour automatique : ', 'Last automatic update: ')}${fmtD(S.updated)} (${age} ${L('j', 'd')})</span></div>
+  ${row(L('Personnages, cônes, reliques', 'Characters, cones, relics'), true, `${S.chars} / ${S.lcs} / ${S.sets}`)}${row(L('Builds et équipes', 'Builds and teams'), S.builds > 0, S.builds + ' builds')}
+  ${row(lab.tiers, S.tiers === 'game8', S.tiers === 'game8' ? L('mise à jour ce lundi', 'updated this Monday') : L('source indisponible : dernier classement connu conservé', 'source unavailable: last known ranking kept'))}
+  ${row(lab.banners, S.banners === 'auto', S.banners === 'auto' ? L('récupérées automatiquement', 'fetched automatically') : L('API indisponible : fichier manuel utilisé', 'API unavailable: manual file used'))}
+  ${stale ? `<p class="sub" style="color:var(--SS)">${L('Les données ont plus de 9 jours : le workflow du lundi semble ne pas s’être exécuté.', 'Data is over 9 days old: the Monday workflow may not have run.')}</p>` : ''}${adminMode && warn ? `<p class="sub">${L('À faire : onglet Actions de GitHub → « Mise à jour hebdomadaire » → Run workflow, et regardez les erreurs en rouge.', 'To do: GitHub Actions tab → “Mise à jour hebdomadaire” → Run workflow, and check red errors.')}</p>` : ''}</div>`;
+}
+const withStatus = (name, adminMode) => { const f = pages[name]; pages[name] = (...a) => { const r = f(...a); if (!Array.isArray(r)) return r; const af = r[2]; return ['<div id="stbox"></div>' + r[0], r[1], () => { if (af) af(); getStatus().then(S => { const b = $('#stbox'); if (b) b.innerHTML = statusHtml(S, adminMode); }); }]; }; };
+withStatus('aide', false); withStatus('admin', true);
+
+// ---- succès / badges
+function badgesOf(s) {
+  const B = [], add = (k, ok, fr, en, dfr, den, g) => B.push({ k, ok, fr, en, dfr, den, g: g || 'c' });
+  const n = s.n || 0, n5 = s.n5 || 0, e = s.e || 0, t = C.length;
+  add('n1', n >= 1, 'Premier pas', 'First steps', 'Ajouter un personnage à sa collection', 'Add a character to your collection');
+  add('n10', n >= 10, 'Équipe au complet', 'Full squad', '10 personnages', '10 characters');
+  add('n25', n >= 25, 'Collectionneur', 'Collector', '25 personnages', '25 characters');
+  add('n50', n >= 50, 'Grand collectionneur', 'Grand collector', '50 personnages', '50 characters');
+  add('nall', t > 0 && n >= t, 'Complétiste', 'Completionist', 'Posséder tous les personnages du site', 'Own every character on the site');
+  add('s5', n5 >= 10, 'Chanceux', 'Lucky', '10 personnages 5★', '10 5★ characters');
+  add('s5b', n5 >= 25, 'Chouchou des étoiles', 'Star favourite', '25 personnages 5★', '25 5★ characters');
+  add('e6', (s.e6 || 0) >= 1 || (!s.col && e >= 6 * 3), 'Éveil total', 'Fully awakened', 'Un personnage à E6', 'A character at E6');
+  add('ee', e >= 25, 'Éidolons en pagaille', 'Eidolon hoarder', '25 éidolons cumulés', '25 total eidolons');
+  if (s.col) {
+    Object.keys(PTH).forEach(p => { const all = C.filter(c => c.pi === p); add('p' + p, all.length >= 3 && all.every(c => c.id in s.col), L('Voie : ', 'Path: ') + pN(p), 'Path: ' + pN(p), 'Posséder tous les personnages de cette voie', 'Own every character of this path', 'p'); });
+    Object.keys(ELE).forEach(x => { const all = C.filter(c => c.ei === x); add('e' + x, all.length >= 3 && all.every(c => c.id in s.col), L('Élément : ', 'Element: ') + eN(x), 'Element: ' + eN(x), 'Posséder tous les personnages de cet élément', 'Own every character of this element', 'e'); });
+  }
+  add('f10', (s.f || 0) >= 10, 'Curateur', 'Curator', '10 favoris', '10 favourites', 'a');
+  add('t3', (s.tm || 0) >= 3, 'Architecte', 'Architect', '3 équipes enregistrées', '3 saved teams', 'a');
+  add('acc', !!s.acc, 'Voyageur enregistré', 'Registered traveler', 'Avoir un compte', 'Have an account', 'a');
+  return B;
+}
+function badgesHtml(s) {
+  const B = badgesOf(s), ok = B.filter(b => b.ok), ko = B.filter(b => !b.ok);
+  const one = b => `<div class="bdg ${b.ok ? 'on' : ''}" title="${esc(L(b.dfr, b.den))}"><i>${b.ok ? '✦' : '·'}</i><b>${esc(L(b.fr, b.en))}</b><small>${esc(L(b.dfr, b.den))}</small></div>`;
+  return `<div class="card"><div class="dh"><b>${L('Succès', 'Achievements')}</b><span class="sub">${ok.length} / ${B.length}</span></div><div class="bdgs">${ok.map(one).join('') || `<span class="sub">${L('Pas encore de succès : ajoutez des personnages à votre collection.', 'No achievements yet: add characters to your collection.')}</span>`}</div>${ko.length ? `<details><summary class="sub" style="cursor:pointer;margin-top:8px">${L('Voir les succès à débloquer', 'Show locked achievements')}</summary><div class="bdgs" style="margin-top:8px">${ko.map(one).join('')}</div></details>` : ''}</div>`;
+}
+const myBadgeStats = () => { const own = Object.keys(prof.col).filter(i => byId[i]); return { n: own.length, n5: own.filter(i => byId[i].r === 5).length, e: own.reduce((s, i) => s + prof.col[i], 0), e6: own.filter(i => prof.col[i] >= 6).length, col: prof.col, f: fav.char.length + fav.build.length, tm: myTeams.length, acc: !!user }; };
+
+// ---- analyse de collection (onglet « équipes possibles » du profil)
+function colTeamsHtml() {
+  const own = new Set(Object.keys(prof.col).filter(i => byId[i]));
+  if (own.size < 2) return `<p class="sub">${L('Ajoutez au moins quelques personnages dans l’onglet Collection : le site cherchera les meilleures équipes que vous pouvez composer.', 'Add a few characters in the Collection tab: the site will look for the best teams you can build.')}</p>`;
+  const T = teamsAll().list, ok = [], one = [], miss = new Map();
+  T.forEach(e => { const m = e.ids.filter(i => !own.has(i)); if (!m.length) ok.push(e); else if (m.length === 1) { one.push([e, m[0]]); miss.set(m[0], (miss.get(m[0]) || []).concat(e)); } });
+  ok.sort((a, b) => a.rk.ov - b.rk.ov); one.sort((a, b) => a[0].rk.ov - b[0].rk.ov);
+  const best = [...miss.entries()].map(([id, es]) => ({ id, es, sc: es.reduce((s, e) => s + (T.length - e.rk.ov + 1), 0) })).sort((a, b) => b.sc - a.sc).slice(0, 6);
+  const row = (e, mi) => { const k = tkey(e, 'ov'); return `<div class="team trk"><span class="rkn">#${e.rk.ov}</span><span class="tag tg" style="--tc:var(${TV[k]})">${TN[k]}</span>${e.ids.map(i => `<span class="${e.sug.includes(i) ? 'sugt' : ''} ${i === mi ? 'missing' : ''}">${tile(byId[i], { s: 1, sub: i === mi ? L('à obtenir', 'missing') : '' })}</span>`).join('')}<a class="btn" style="margin-left:auto" href="${teamHref(e)}">${L('Ouvrir', 'Open')}</a></div>`; };
+  return `<div class="g3"><div class="stat"><span class="lab">${L('Équipes complètes', 'Complete teams')}</span><b>${ok.length}</b></div><div class="stat"><span class="lab">${L('À 1 perso près', 'One character away')}</span><b>${one.length}</b></div><div class="stat"><span class="lab">${L('Meilleure équipe', 'Best team')}</span><b>${ok[0] ? '#' + ok[0].rk.ov : '—'}</b></div></div>
+  ${best.length ? sec(L('À tirer en priorité', 'Pull priorities')) + `<p class="sub">${L('Les personnages qui débloqueraient les meilleures équipes (classées sur la tier list des équipes du site).', 'The characters that would unlock the best teams (ranked on the site’s team tier list).')}</p><div class="grid">${best.map(b => tile(byId[b.id], { sub: L(b.es.length + ' équipe(s)', b.es.length + ' team(s)') })).join('')}</div>` : ''}
+  ${sec(L('Équipes que vous pouvez jouer', 'Teams you can play'))}${ok.slice(0, 20).map(e => row(e)).join('') || `<p class="sub">${L('Aucune équipe complète pour l’instant.', 'No complete team yet.')}</p>`}
+  ${one.length ? sec(L('Presque prêtes', 'Almost ready')) + one.slice(0, 15).map(([e, m]) => row(e, m)).join('') : ''}<p class="note">${L('Les cases en pointillés sont des suggestions du site pour compléter une équipe à 4.', 'Dashed tiles are site suggestions to complete a team to 4.')}</p>`;
+}
+
+// ---- synergie d'équipe + alternatives
+const roleOf = c => { const r = ['dps', 'support', 'sustain'].filter(k => c.tr && c.tr[k]).sort((a, b) => tval(c, b) - tval(c, a))[0]; if (r) return r; return ['Warrior', 'Rogue', 'Mage'].includes(c.pi) ? 'dps' : ['Shaman', 'Warlock', 'Elation'].includes(c.pi) ? 'support' : 'sustain'; };
+function teamAnalysis(m) {
+  const ms = m.filter(x => byId[x.c]).map(x => byId[x.c]); if (!ms.length) return '';
+  const roles = ms.map(roleOf), nd = roles.filter(r => r === 'dps').length, ns = roles.filter(r => r === 'support').length, nh = roles.filter(r => r === 'sustain').length;
+  const els = {}; ms.forEach(c => els[c.ei] = (els[c.ei] || 0) + 1);
+  const avg = ms.reduce((s, c) => s + tval(c, 'ov'), 0) / ms.length, tips = [];
+  let sc = (nd ? 30 : 0) + (ns ? 20 : 0) + (ns > 1 ? 8 : 0) + (nh ? 20 : 0) + avg / 5 * 17 + (Object.values(els).some(v => v >= 2) ? 5 : 0);
+  if (ms.length < 4) { sc *= ms.length / 4; tips.push(L('Équipe incomplète : ajoutez ' + (4 - ms.length) + ' personnage(s).', 'Incomplete team: add ' + (4 - ms.length) + ' character(s).')); }
+  if (!nd) tips.push(L('Aucun personnage de dégâts principal.', 'No main damage dealer.'));
+  if (nd > 2) tips.push(L('Beaucoup de DPS : un second soutien serait plus efficace.', 'Many DPS: a second support would be more effective.'));
+  if (!nh) tips.push(L('Aucun soigneur ni protecteur : prévoyez des boucliers ou du soin.', 'No healer or protector: plan for shields or healing.'));
+  if (!ns) tips.push(L('Pas de soutien (Harmonie/Nihilité) : les dégâts risquent d’être limités.', 'No support (Harmony/Nihility): damage may be limited.'));
+  sc = Math.max(0, Math.min(100, Math.round(sc)));
+  const RL = { dps: 'DPS', support: 'Support', sustain: 'Sustain' }, alt = ms.map((c, i) => { const r = roles[i], a = C.filter(x => !ms.includes(x) && x.pi === c.pi && roleOf(x) === r).sort((x, y) => tval(y, 'ov') - tval(x, 'ov') || y.r - x.r).slice(0, 3); return a.length ? `<div class="altr"><span class="sub">${L('À la place de ', 'Instead of ')}<b>${esc(c.n)}</b></span>${a.map(x => tile(x, { s: 1 })).join('')}</div>` : ''; }).join('');
+  return `<div class="card"><div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div class="syn" style="--v:${sc}"><b>${sc}</b><span>/100</span></div><div style="flex:1;min-width:220px"><span class="lab">${L('Score de synergie (indicatif)', 'Synergy score (indicative)')}</span><div style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0">${ms.map((c, i) => `<span class="tag">${RL[roles[i]]}</span>`).join('')}</div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${ms.map(c => eiImg(c.ei) + piImg(c.pi)).join('')}<span class="sub" style="margin-left:8px">${L('Tiers : ', 'Tiers: ')}${ms.map(c => tchip(c.t)).join(' ')}</span></div></div></div>${tips.length ? `<ul class="tips">${tips.map(t => `<li>${t}</li>`).join('')}</ul>` : `<p class="sub" style="margin:8px 0 0">${L('Composition équilibrée sur le papier : dégâts, soutien et survie sont couverts.', 'Balanced on paper: damage, support and survival are covered.')}</p>`}${alt ? `<details style="margin-top:10px"><summary class="sub" style="cursor:pointer">${L('Alternatives si un personnage vous manque', 'Alternatives if you are missing a character')}</summary>${alt}</details>` : ''}<p class="note" style="margin:8px 0 0">${L('Calcul simple : rôles couverts + niveau des personnages + résonance élémentaire. Ce n’est pas une simulation de combat.', 'Simple calculation: covered roles + character tiers + elemental resonance. Not a combat simulation.')}</p></div>`;
+}
+
+// ---- simulateur de tirages
+let SIM = Object.assign({ c: { p: 0, g: 0 }, l: { p: 0, g: 0 }, n: 0, s5: 0, w: 0, h: [] }, store.get('astro_sim', {}));
+function simPull() {
+  const b = PL.b || 'c', cfg = BNR[b], st = SIM[b]; st.p++; SIM.n++;
+  const m = st.p, r = m >= cfg.hard ? 1 : m < cfg.soft ? cfg.base : Math.min(1, cfg.base + cfg.step * (m - cfg.soft + 1));
+  if (Math.random() < r) {
+    const win = st.g ? true : Math.random() < cfg.up; st.g = win ? 0 : 1; const got = st.p; st.p = 0; SIM.s5++; if (win) SIM.w++;
+    return { r: 5, win, p: got };
+  }
+  st.cnt4 = (st.cnt4 || 0) + 1; if (st.cnt4 >= 10 || Math.random() < .051) { st.cnt4 = 0; return { r: 4 }; }
+  return { r: 3 };
+}
+function simHtml() {
+  const b = PL.b || 'c', st = SIM[b], cur = ((D.banners && D.banners.list) || []).find(x => x.chars && x.chars.length), hist = SIM.h.slice(0, 20);
+  const lastWin = hist.find(h => h.r === 5);
+  return `<div class="card sim"><div class="dh"><b>${L('Simulateur de tirages', 'Pull simulator')}</b><span class="sub">${L('Pour s’amuser : tirages virtuels, aucun lien avec votre compte du jeu.', 'For fun: virtual pulls, unrelated to your game account.')}</span></div>
+  <div class="g3"><div class="stat"><span class="lab">Pity</span><b>${st.p} / ${BNR[b].hard}</b></div><div class="stat"><span class="lab">${L('Prochain 5★', 'Next 5★')}</span><b>${st.g ? L('garanti', 'guaranteed') : '50/50'}</b></div><div class="stat"><span class="lab">${L('Total', 'Total')}</span><b>${SIM.n} · ${SIM.s5}×5★</b></div></div>
+  <div class="cta" style="margin:12px 0"><button class="btn pri" data-sim="1">${L('Tirer ×1', 'Pull ×1')}</button><button class="btn pri" data-sim="10">${L('Tirer ×10', 'Pull ×10')}</button><button class="btn" data-sim="0">${L('Remettre à zéro', 'Reset')}</button></div>
+  <div class="simres" id="simres">${hist.map(h => simTile(h)).join('')}</div>
+  <p class="note">${L('Taux : 5★ 0,6 % (pity doux dès 74, garanti à 90), 4★ 5,1 % avec garantie au 10ᵉ. Le 5★ gagné ou perdu au 50/50 est tiré au hasard parmi les personnages du site.', 'Rates: 5★ 0.6% (soft pity from 74, hard at 90), 4★ 5.1% with a 10-pull guarantee. The 5★ won or lost at the 50/50 is drawn randomly among the site’s characters.')}</p></div>`;
+}
+function simTile(h) {
+  if (h.r === 3) return `<span class="sx r3" title="3★">3★</span>`;
+  const c = byId[h.c]; if (!c) return '';
+  return `<span class="sx r${h.r} ${h.r === 5 ? (h.win ? 'win' : 'lose') : ''}" title="${esc(c.n)}"><img src="${im('c', c.id)}" alt=""><em>${h.r}★${h.r === 5 ? (h.win ? '' : ' ✗') : ''}</em></span>`;
+}
+{
+  const _plan = pages.plan; pages.plan = () => { const r = _plan(); r[0] += `<div id="simbox">${simHtml()}</div>`; return r; };
+}
+function simRun(n) {
+  if (n === 0) { SIM = { c: { p: 0, g: 0 }, l: { p: 0, g: 0 }, n: 0, s5: 0, w: 0, h: [] }; store.set('astro_sim', SIM); const b = $('#simbox'); if (b) b.innerHTML = simHtml(); return; }
+  const b = PL.b || 'c', cur = ((D.banners && D.banners.list) || []).find(x => x.chars && x.chars.length), pool5 = C.filter(c => c.r === 5), pool4 = C.filter(c => c.r === 4), res = [];
+  for (let i = 0; i < n; i++) {
+    const x = simPull(); if (x.r === 5) { x.c = x.win && cur && b === 'c' ? cur.chars[0] : pool5[Math.floor(Math.random() * pool5.length)].id; if (b === 'l') x.c = pool5[Math.floor(Math.random() * pool5.length)].id; }
+    else if (x.r === 4) x.c = pool4[Math.floor(Math.random() * pool4.length)].id; res.push(x);
+  }
+  SIM.h = [...res.reverse(), ...SIM.h].slice(0, 60); store.set('astro_sim', SIM);
+  const box = $('#simbox'); if (!box) return; box.innerHTML = simHtml();
+  const items = box.querySelectorAll('#simres .sx'); items.forEach((el, i) => { if (i < n) { el.classList.add('pop'); el.style.animationDelay = (i * 70) + 'ms'; } });
+}
+
+// ---- rappels de bannières (calendrier + notification)
+let REM = store.get('astro_rem', []);
+function remIcs(b) {
+  const nm = b.chars.map(i => byId[i] ? byId[i].n : '').filter(Boolean).join(' + '), fm = t => new Date(t).toISOString().replace(/[-:]/g, '').replace(/\.\d+/, ''), end = new Date(b.end);
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Astrolabe//HSR//FR', 'BEGIN:VEVENT', 'UID:' + b.start + '-' + (b.chars || []).join('') + '@astrolabe', 'DTSTAMP:' + fm(Date.now()), 'DTSTART:' + fm(end), 'DTEND:' + fm(end.getTime() + 36e5), 'SUMMARY:' + L('Fin de la bannière : ', 'Banner ends: ') + nm, 'DESCRIPTION:Honkai: Star Rail', 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + L('La bannière se termine dans 24 h : ', 'Banner ends in 24h: ') + nm, 'TRIGGER:-P1D', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'];
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/calendar' })); a.download = 'astrolabe-banniere.ics'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function remAdd(b) {
+  const id = b.start + '|' + b.chars.join(','), nm = b.chars.map(i => byId[i] ? byId[i].n : '').join(' + ');
+  if (!REM.some(r => r.id === id)) { REM.push({ id, end: b.end, nm }); store.set('astro_rem', REM); }
+  try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch { }
+}
+function remCheck() {
+  try {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return; let ch = false; const now = Date.now();
+    REM.forEach(r => { const e = new Date(r.end).getTime(); if (!r.done && now >= e - 864e5 && now < e) { new Notification(L('Astrolabe : bannière bientôt terminée', 'Astrolabe: banner ending soon'), { body: r.nm + ' · ' + L('fin dans moins de 24 h', 'ends in under 24h'), icon: 'img/icon-192.png' }); r.done = 1; ch = true; } });
+    REM = REM.filter(r => new Date(r.end) > now - 864e5); if (ch) store.set('astro_rem', REM);
+  } catch { }
+}
+setInterval(remCheck, 300000); setTimeout(remCheck, 4000);
+document.addEventListener('click', e => {
+  const s = e.target.closest('[data-sim]'); if (s) { simRun(+s.dataset.sim); return; }
+  const r = e.target.closest('[data-rem]'); if (r) { const b = (window.BNL || [])[+r.dataset.rem]; if (b && b.end) { remAdd(b); remIcs(b); r.textContent = '✓ ' + L('Rappel ajouté', 'Reminder added'); } }
+});
+
 // ------------------------------------------------------------ cadre du site : menu, en-tête, fenêtres
 function dialogs() {
   return `<dialog id="dlg"><h2 class="dt">${L('Compte', 'Account')}</h2><p class="sub" style="margin:0 0 12px;font-size:13px">${L('Pour retrouver vos favoris et votre collection sur tous vos appareils.', 'To keep your favourites and collection on all your devices.')}</p>
@@ -894,6 +1042,7 @@ document.addEventListener('close', e => { if (e.target.id === 'dlg' && e.target.
 window.addEventListener('hashchange', () => { $('#side').classList.remove('open'); render(); scrollTo(0, 0); });
 
 // ------------------------------------------------------------ démarrage
+try { if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js'); } catch { }
 applyPrefs(); document.documentElement.lang = LANG; if (!location.hash && PREF.start && PREF.start !== '#/home') location.hash = PREF.start;
 if (!TB.m || TB.m.length !== 4) TB = { name: '', m: padTeam(TB.m || []) };
 Promise.all([window.__DATA__ ? Promise.resolve(window.__DATA__) : fetch('data/data.json').then(r => r.json()), LANG === 'en' ? (window.__DATA_EN__ ? Promise.resolve(window.__DATA_EN__) : fetch('data/data_en.json').then(r => r.json()).catch(() => null)) : Promise.resolve(null)]).then(([d, en]) => {
