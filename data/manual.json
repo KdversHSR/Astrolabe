@@ -109,5 +109,10 @@
    "Apocalyptic Shadow",
    "Boss encounters with mechanics to manage. Controlling pacing and ultimate energy matters a lot."
   ]
+ },
+ "legal": {
+  "editor": "",
+  "contact": "",
+  "_aide": "Facultatif : editor = votre pseudo ou nom affiché dans les mentions légales ; contact = une adresse e-mail publique si vous le souhaitez. Laissez vide pour ne rien afficher."
  }
 }

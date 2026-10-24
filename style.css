@@ -315,3 +315,4 @@ button.btn.pri{box-shadow:0 4px 18px var(--hl)}button.btn.pri:hover,a.btn.pri:ho
 @media(max-width:1100px){.hpw .hs{display:none}.hpw .orb{inset:0;width:100%}}
 @media(max-width:760px){.ribbon{grid-template-columns:repeat(2,1fr)}.ribbon>div:last-child{grid-column:span 2}.hpw{min-height:0}}
 @media(max-width:760px){.hero2{grid-template-columns:1fr;min-height:0}.hpw .hp:not(.hs){max-width:230px;margin:0 auto}.hpw .orb{inset:-4% 0 0;width:100%}}
+.bigtabs.c2{grid-template-columns:repeat(2,minmax(0,1fr))}.legal h2{font:700 20px var(--se);margin:22px 0 8px}.legal h2:first-child{margin-top:0}.legal p{margin:0 0 10px;line-height:1.6}

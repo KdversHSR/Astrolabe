@@ -118,3 +118,6 @@ Quand on colle le lien du site sur Discord, X ou WhatsApp, une carte avec le log
 
 ## Connexion Discord : activer ou désactiver
 Elle est **désactivée** par défaut (inscription par e-mail uniquement). Pour la réactiver : dans `app.js`, remplacez `const USE_DISCORD = false;` par `true`, après avoir configuré Discord dans Supabase.
+
+## Mentions légales et crédits (v7.6)
+Pages `#/legal` (mentions légales + confidentialité) et `#/credits`, liées en bas du menu et dans la fenêtre de création de compte. Pour afficher votre pseudo et un contact public, remplissez `legal.editor` et `legal.contact` dans `data/manual.json` (facultatif). Si la tier list reste orange dans « Statut des données », l’erreur exacte s’y affiche.

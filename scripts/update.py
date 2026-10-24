@@ -177,8 +177,29 @@ def names_in(cell):
     return out
 
 
+BROWSER = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
+           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-US,en;q=0.9'}
+
+
+def get_browser(url, tries=3):
+    import time
+    err = None
+    for i in range(tries):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=BROWSER), timeout=60) as r:
+                d = r.read()
+                if r.headers.get('Content-Encoding') == 'gzip':
+                    import gzip
+                    d = gzip.decompress(d)
+                return d.decode('utf-8', 'replace')
+        except Exception as e:
+            err = e
+            time.sleep(3 * (i + 1))
+    raise err
+
+
 def scrape_game8():
-    page = get(GAME8)
+    page = get_browser(GAME8)
     ver = re.search(r'Version (\d\.\d+)', page)
     res, gen, eg = {}, {}, {}
     for tb in re.findall(r'<table.*?</table>', page, re.S):
@@ -201,7 +222,7 @@ def scrape_game8():
         elif len(head) <= 2 and not res:
             res = {t: names_in(c[0]) for t, c in got.items()}
     if sum(len(v) for v in res.values()) < 60 or not gen or not eg:
-        raise RuntimeError('structure Game8 inattendue')
+        raise RuntimeError(f'structure Game8 inattendue (page {len(page)} octets, classement {sum(len(v) for v in res.values())} persos, rôles {bool(gen)}, end game {bool(eg)})')
     return res, gen, eg, ver[1] if ver else None
 
 
@@ -359,6 +380,7 @@ def main():
             (DATA / 'seed_tiers.json').write_text(json.dumps({'overall': tiers, 'general': gen, 'endgame': eg}, ensure_ascii=False, indent=1), 'utf-8')
             print('   tier list mise à jour depuis Game8')
         except Exception as e:
+            ST['tiers_err'] = str(e)[:240]
             print('   ATTENTION Game8 indisponible, anciennes données conservées :', e)
     ids_of = lambda d: {t: [i for i in (rid(n) for n in ns) if i] for t, ns in d.items()}
     tiers_out = {'ov': ids_of(tiers), **{k: ids_of(v) for k, v in gen.items()}, **{k: ids_of(v) for k, v in eg.items()}}
@@ -523,7 +545,7 @@ def main():
     out = {'version': version, 'updated': datetime.date.today().isoformat(), 'chars': chars, 'lcs': lcs, 'sets': sets, 'tiers': tiers_out, 'trend': trend, 'trend_since': since, 'tnotes': tnotes, 'events': events, 'banners': bj, 'manual': manual}
     (DATA / 'data.json').write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), 'utf-8')
     pb = [k for k, ok in (('tiers', ST['tiers'] == 'game8'), ('banners', ST['banners'] == 'auto'), ('schedule', ST['schedule'] == 'auto')) if not ok] if not a.no_scrape else []
-    (DATA / 'status.json').write_text(json.dumps({'updated': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'), 'chars': len(chars), 'lcs': len(lcs), 'sets': len(sets), 'builds': sum(1 for c in chars if c.get('b')), 'tiers': ST['tiers'], 'banners': ST['banners'], 'schedule': ST['schedule'], 'problems': pb}, ensure_ascii=False, indent=1), 'utf-8')
+    (DATA / 'status.json').write_text(json.dumps({'updated': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'), 'chars': len(chars), 'lcs': len(lcs), 'sets': len(sets), 'builds': sum(1 for c in chars if c.get('b')), 'tiers': ST['tiers'], 'banners': ST['banners'], 'schedule': ST['schedule'], 'tiers_err': ST.get('tiers_err', ''), 'problems': pb}, ensure_ascii=False, indent=1), 'utf-8')
     print(f'   {len(chars)} personnages, {len(lcs)} cônes, {len(sets)} sets, {sum(1 for c in chars if "b" in c)} builds')
 
     extra = []
