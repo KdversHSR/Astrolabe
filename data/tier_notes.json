@@ -1,0 +1,4 @@
+{
+ "_comment": "Facultatif. Pour signaler qu'un personnage est classé avec un éidolon ou un cône particulier, ajoutez une ligne « Nom anglais » : « E6 » (par défaut tous les personnages sont affichés E0, base du classement Game8).",
+ "_exemple": "E6"
+}

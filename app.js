@@ -1,26 +1,54 @@
 (() => {
+'use strict';
 const CFG = window.CFG || {};
-const im = (k, id) => (window.__IMG__ && window.__IMG__[k + '/' + id]) || `img/${k}/${id}.webp`;
 const $ = s => document.querySelector(s), app = $('#app');
-const EC = { Feu: '#ef5b3f', Glace: '#58c4ee', Foudre: '#b46cf5', Vent: '#3ed3a8', Physique: '#a7adbb', Quantique: '#6f7cf5', Imaginaire: '#f0c53a' };
-const TIERS = ['SS', 'S+', 'S', 'A', 'B', 'C'], TV = { 'SS': '--SS', 'S+': '--Sp', 'S': '--S', 'A': '--A', 'B': '--B', 'C': '--C', '?': '--C' };
-const IC = { home: 'M3 11l9-8 9 8M5 10v10h14V10', users: 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 4.5a3.5 3.5 0 0 1 0 6.5M18 15c2.5.5 4 2.3 4 5', cone: 'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5', box: 'M12 2l9 5v10l-9 5-9-5V7l9-5zM12 12l9-5M12 12v10M12 12L3 7', tier: 'M4 20V10M10 20V4M16 20v-8M22 20H2', end: 'M12 3a9 9 0 1 0 9 9M12 7.5a4.5 4.5 0 1 0 4.5 4.5M12 12h.01', cmp: 'M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4', cal: 'M4 5h16v16H4zM4 10h16M9 3v4M15 3v4', book: 'M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-6M20 4v14h-8', user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M4 21c0-4 4-6 8-6s8 2 8 6', star: 'M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17.3 6.4 20.3l1.2-6.3L3 9.6l6.3-.8z', info: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M12 11v5M12 8h.01', calc: 'M5 3h14v18H5zM8 7h8M8 12h2M14 12h2M8 16h2M14 16h2' };
-const ico = (n, c = '') => `<svg class="ic ${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${IC[n]}"/></svg>`;
-const NAV = [['', [['#/home', 'home', 'Accueil']]], ['Base de données', [['#/perso', 'users', 'Personnages'], ['#/lc', 'cone', 'Cônes de lumière'], ['#/rel', 'box', 'Reliques']]], ['Classements', [['#/tier', 'tier', 'Tier list'], ['#/banners', 'star', 'Bannières']]],
-  ['End game', [['#/end/moc', 'end', 'Memory of Chaos'], ['#/end/pf', 'end', 'Pure Fiction'], ['#/end/as', 'end', 'Apocalyptic Shadow'], ['#/end/aa', 'end', 'Anomaly Arbitration']]],
-  ['Outils', [['#/compare', 'cmp', 'Comparateur'], ['#/plan', 'calc', 'Planificateur']]], ['Guides', [['#/events', 'cal', 'Événements'], ['#/aide', 'book', 'Aides']]], ['Communauté', [['#/community', 'users', 'Joueurs']]], ['Compte', [['#/profil', 'user', 'Mon profil'], ['#/profil/fav', 'star', 'Favoris']]]];
-let D, C, byId, LC, RS, user = null, sb = null, TM = 'ov';
-let S = { q: '', e: '', p: '', r: '', own: '' };
 const store = { get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
-let fav = store.get('astro_fav', { char: [], build: [] }), prof = Object.assign({ name: '', avatar: '', col: {}, handle: '', bio: '', pub: false, show: [] }, store.get('astro_prof', {}));
+const im = (k, id) => (window.__IMG__ && window.__IMG__[k + '/' + id]) || `img/${k}/${id}.webp`;
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const fmtD = d => new Date(d).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' });
-const cdTxt = ms => { if (ms <= 0) return 'terminé'; const m = Math.floor(ms / 60000), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60); return (d ? d + ' j ' : '') + h + ' h ' + (m % 60) + ' min'; };
+
+// ------------------------------------------------------------ langue
+let LANG = store.get('astro_lang', (navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en');
+const L = (fr, en) => (LANG === 'fr' ? fr : en);
+const LOC = () => (LANG === 'fr' ? 'fr-FR' : 'en-GB');
+const ELE = { Fire: ['Feu', 'Fire', '#ef5b3f'], Ice: ['Glace', 'Ice', '#58c4ee'], Thunder: ['Foudre', 'Lightning', '#b46cf5'], Wind: ['Vent', 'Wind', '#3ed3a8'], Physical: ['Physique', 'Physical', '#a7adbb'], Quantum: ['Quantique', 'Quantum', '#6f7cf5'], Imaginary: ['Imaginaire', 'Imaginary', '#f0c53a'] };
+const PTH = { Warrior: ['Destruction', 'Destruction'], Rogue: ['Chasse', 'The Hunt'], Mage: ['Érudition', 'Erudition'], Shaman: ['Harmonie', 'Harmony'], Warlock: ['Nihilité', 'Nihility'], Knight: ['Préservation', 'Preservation'], Priest: ['Abondance', 'Abundance'], Memory: ['Souvenir', 'Remembrance'], Elation: ['Allégresse', 'Elation'] };
+const eN = id => (ELE[id] ? L(ELE[id][0], ELE[id][1]) : id), pN = id => (PTH[id] ? L(PTH[id][0], PTH[id][1]) : id), eC = id => (ELE[id] || [])[2] || '#888';
+const SKT = { 'Attaque normale': 'Basic ATK', 'Compétence': 'Skill', 'Ultime': 'Ultimate', 'Talent': 'Talent', 'Technique': 'Technique' };
+const STE = { 'ATQ': 'ATK', 'ATQ%': 'ATK%', 'PV': 'HP', 'PV%': 'HP%', 'DÉF': 'DEF', 'DÉF%': 'DEF%', 'VIT': 'SPD', 'Taux crit': 'CRIT Rate', 'DGT crit': 'CRIT DMG', 'Taux d’effet': 'Effect Hit Rate', 'Rés. d’effet': 'Effect RES', 'Effet de rupture': 'Break Effect', 'Recharge d’énergie': 'Energy Regen Rate', 'Soins': 'Outgoing Healing' };
+const stx = s => { if (LANG === 'fr') return s; if (STE[s]) return STE[s]; const m = /^DGT (.+)$/.exec(s); if (m) { const e = Object.values(ELE).find(x => x[0] === m[1]); return (e ? e[1] : m[1]) + ' DMG'; } return s; };
+
+// ------------------------------------------------------------ icônes
+const IC = { home: 'M3 11l9-8 9 8M5 10v10h14V10', users: 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 4.5a3.5 3.5 0 0 1 0 6.5M18 15c2.5.5 4 2.3 4 5', cone: 'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5', box: 'M12 2l9 5v10l-9 5-9-5V7l9-5zM12 12l9-5M12 12v10M12 12L3 7', tier: 'M4 20V10M10 20V4M16 20v-8M22 20H2', end: 'M12 3a9 9 0 1 0 9 9M12 7.5a4.5 4.5 0 1 0 4.5 4.5M12 12h.01', cmp: 'M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4', cal: 'M4 5h16v16H4zM4 10h16M9 3v4M15 3v4', book: 'M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-6M20 4v14h-8', user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M4 21c0-4 4-6 8-6s8 2 8 6', star: 'M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17.3 6.4 20.3l1.2-6.3L3 9.6l6.3-.8z', info: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M12 11v5M12 8h.01', calc: 'M5 3h14v18H5zM8 7h8M8 12h2M14 12h2M8 16h2M14 16h2', dice: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01', chart: 'M3 3v18h18M7 15l4-4 3 3 5-6', team: 'M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z', shield: 'M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4zM9 12l2 2 4-4', search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14M21 21l-5-5', flag: 'M5 21V4h11l-1.5 4L16 12H5', globe: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18', sun: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5', menu: 'M4 6h16M4 12h16M4 18h16', plus: 'M12 5v14M5 12h14' };
+const ico = (n, c = '') => `<svg class="ic ${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${IC[n] || ''}"/></svg>`;
+
+// ------------------------------------------------------------ état
+const TN = { 'SS': 'T0', 'S+': 'T0.5', 'S': 'T1', 'A': 'T2', 'B': 'T3', 'C': 'T4' }, TBR = { 'SS': ['Apex', 'Apex'], 'S+': ['Meta', 'Meta'], 'S': ['Meta', 'Meta'], 'A': ['Jouable', 'Playable'], 'B': ['Hors méta', 'Off-meta'], 'C': ['Hors méta', 'Off-meta'] };
+const TIERS = ['SS', 'S+', 'S', 'A', 'B', 'C'], TV = { 'SS': '--SS', 'S+': '--Sp', 'S': '--S', 'A': '--A', 'B': '--B', 'C': '--C', '?': '--C' };
+let D, DE = null, C, byId, LC, RS, CALC = null, user = null, sb = null, isAdmin = false, TM = 'ov', TE = store.get('astro_te', 'base'), TS = store.get('astro_ts', 'l');
+let S = { q: '', e: '', p: '', r: '', own: '' };
+let fav = store.get('astro_fav', { char: [], build: [] }), prof = Object.assign({ name: '', avatar: '', col: {}, handle: '', bio: '', pub: false, show: [] }, store.get('astro_prof', {}));
+let myTeams = store.get('astro_teams', []), plan = store.get('astro_plan', []), viewed = null, pmsg = '', cur = '', resFn = null;
+const fmtD = d => new Date(d).toLocaleString(LOC(), { dateStyle: 'medium', timeStyle: 'short' });
+const cdTxt = ms => { if (ms <= 0) return L('terminé', 'ended'); const m = Math.floor(ms / 60000), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60); return (d ? d + L(' j ', 'd ') : '') + h + ' h ' + (m % 60) + ' min'; };
 function tick() { document.querySelectorAll('[data-cd]').forEach(e => e.textContent = (e.dataset.pre || '') + cdTxt(new Date(e.dataset.cd) - Date.now())); document.querySelectorAll('[data-cdd]').forEach(e => e.textContent = Math.max(0, Math.ceil((new Date(e.dataset.cdd) - Date.now()) / 864e5))); }
 setInterval(tick, 30000);
-let viewed = null, pmsg = '';
+const evx = e => (LANG === 'en' && e.en ? { ...e, ...e.en } : e);
 
-// ------------------------------------------------------------ compte, favoris, profil
+// langue des données : superpose les textes anglais aux données françaises
+function applyData() {
+  const en = LANG === 'en' && DE;
+  C = D.chars.map(c => { const x = en && DE.c[c.id]; return x ? { ...c, n: x.n, s: c.s.map((k, i) => ({ ...k, n: (x.s[i] || k).n, d: (x.s[i] || k).d })), x: c.x.map((k, i) => ({ n: (x.x[i] || k).n, d: (x.x[i] || k).d })) } : c; });
+  LC = D.lcs.map(l => { const x = en && DE.l[l.id]; return x ? { ...l, ...x } : l; });
+  RS = D.sets.map(s => { const x = en && DE.s[s.id]; return x ? { ...s, ...x } : s; });
+  byId = Object.fromEntries(C.map(c => [c.id, c]));
+}
+async function setLang(l) {
+  LANG = l; store.set('astro_lang', l); document.documentElement.lang = l;
+  if (l === 'en' && !DE) { try { DE = await fetch('data/data_en.json').then(r => r.json()); } catch { DE = null; } }
+  if (D) { applyData(); chrome(); render(); }
+}
+
+// ------------------------------------------------------------ compte, favoris, profil, équipes
 const myStats = () => { const o = Object.keys(prof.col).filter(i => byId[i]); return { n: o.length, n5: o.filter(i => byId[i].r === 5).length, e: o.reduce((s, i) => s + prof.col[i], 0) }; };
 const saveProf = async () => {
   store.set('astro_prof', prof); pmsg = '';
@@ -28,9 +56,9 @@ const saveProf = async () => {
   const base = { user_id: user.id, display_name: prof.name, avatar: prof.avatar, updated_at: new Date().toISOString() };
   const full = { ...base, handle: prof.handle || null, bio: prof.bio, is_public: !!prof.pub && !!prof.handle, showcase: prof.show.filter(s => s.c), stats: myStats() };
   let { error } = await sb.from('profiles').upsert(full);
-  if (error && /handle|unique|duplicate/i.test(error.message)) { pmsg = 'Ce nom d’utilisateur est déjà pris ou invalide (3 à 20 caractères : a-z, 0-9, - et _).'; ({ error } = await sb.from('profiles').upsert(base)); }
-  else if (error) { pmsg = 'Profil public indisponible : exécutez supabase/schema_v3.sql. (' + error.message + ')'; ({ error } = await sb.from('profiles').upsert(base)); }
-  else pmsg = 'Profil enregistré.';
+  if (error && /handle|unique|duplicate/i.test(error.message)) { pmsg = L('Ce nom d’utilisateur est déjà pris ou invalide (3 à 20 caractères : a-z, 0-9, - et _).', 'This username is taken or invalid (3–20 characters: a-z, 0-9, - and _).'); ({ error } = await sb.from('profiles').upsert(base)); }
+  else if (error) { pmsg = L('Profil public indisponible : exécutez supabase/schema_v3.sql. (', 'Public profile unavailable: run supabase/schema_v3.sql. (') + error.message + ')'; ({ error } = await sb.from('profiles').upsert(base)); }
+  else pmsg = L('Profil enregistré.', 'Profile saved.');
 };
 async function toggleFav(kind, id) {
   const on = fav[kind].includes(id); fav[kind] = on ? fav[kind].filter(x => x !== id) : [...fav[kind], id]; store.set('astro_fav', fav);
@@ -43,7 +71,8 @@ async function setOwn(id, eid) {
 }
 async function pullAll() {
   if (!sb || !user) return;
-  const [f, p, c] = await Promise.all([sb.from('favorites').select('kind,item_id'), sb.from('profiles').select('*').maybeSingle(), sb.from('collection').select('char_id,eidolon')]);
+  const [f, p, c, tm, ad] = await Promise.all([sb.from('favorites').select('kind,item_id'), sb.from('profiles').select('*').eq('user_id', user.id).maybeSingle(), sb.from('collection').select('char_id,eidolon'), sb.from('teams').select('id,name,members'), sb.from('admins').select('user_id').maybeSingle()]);
+  isAdmin = !!(ad && ad.data); chrome();
   const cloud = { char: [], build: [] }; (f.data || []).forEach(r => cloud[r.kind] && cloud[r.kind].push(r.item_id));
   const rows = []; ['char', 'build'].forEach(k => fav[k].forEach(id => { if (!cloud[k].includes(id)) { rows.push({ user_id: user.id, kind: k, item_id: id }); cloud[k].push(id); } }));
   if (rows.length) await sb.from('favorites').upsert(rows); fav = cloud; store.set('astro_fav', fav);
@@ -53,240 +82,574 @@ async function pullAll() {
     Object.keys(prof.col).forEach(id => { if (!(id in cc)) { cr.push({ user_id: user.id, char_id: id, eidolon: prof.col[id] }); cc[id] = prof.col[id]; } });
     if (cr.length) await sb.from('collection').upsert(cr); prof.col = cc;
   }
+  if (!tm.error) {
+    const ids = new Set((tm.data || []).map(r => r.id)), up = myTeams.filter(t => !ids.has(t.id)).map(t => ({ id: t.id, user_id: user.id, name: t.name, members: t.m }));
+    if (up.length) await sb.from('teams').upsert(up);
+    myTeams = [...(tm.data || []).map(r => ({ id: r.id, name: r.name, m: r.members })), ...up.map(t => ({ id: t.id, name: t.name, m: t.members }))]; store.set('astro_teams', myTeams);
+  }
   store.set('astro_prof', prof); render();
 }
 function acct() {
   const el = $('#acct'); if (!el) return;
-  el.innerHTML = !sb ? '' : user ? `<button class="btn" id="out">Déconnexion</button>` : `<button class="btn" id="login">Connexion</button>`;
-  const o = $('#out'); if (o) o.onclick = () => sb.auth.signOut();
-  const l = $('#login'); if (l) l.onclick = () => { $('#msg').textContent = ''; $('#dlg').showModal(); };
+  el.innerHTML = !sb ? '' : user ? `<button class="btn" id="out">${L('Déconnexion', 'Log out')}</button>` : `<button class="btn pri" id="login">${L('Connexion', 'Log in')}</button>`;
 }
 function initAuth() {
   if (!CFG.SUPABASE_URL || !window.supabase) return acct();
   sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
-  const msg = t => $('#msg').textContent = t, cred = () => ({ email: $('#em').value.trim(), password: $('#pw').value });
-  $('#bin').onclick = async () => { const { error } = await sb.auth.signInWithPassword(cred()); if (error) msg(error.message); else $('#dlg').close(); };
-  $('#bup').onclick = async () => { const { data, error } = await sb.auth.signUp(cred()); if (error) msg(error.message); else if (!data.session) msg('Compte créé. Vérifiez votre e-mail pour confirmer.'); else $('#dlg').close(); };
-  $('#bfg').onclick = async () => { const { error } = await sb.auth.resetPasswordForEmail($('#em').value.trim(), { redirectTo: location.href.split('#')[0] }); msg(error ? error.message : 'E-mail de réinitialisation envoyé.'); };
-  $('#bcl').onclick = () => $('#dlg').close();
   sb.auth.getSession().then(({ data }) => { user = data.session ? data.session.user : null; acct(); pullAll(); });
-  sb.auth.onAuthStateChange((_e, s) => { user = s ? s.user : null; acct(); pullAll(); });
+  sb.auth.onAuthStateChange((_e, s) => { user = s ? s.user : null; if (!user) isAdmin = false; acct(); chrome(); pullAll(); });
+}
+const authMsg = t => { const m = $('#msg'); if (m) m.textContent = t; };
+const cred = () => ({ email: $('#em').value.trim(), password: $('#pw').value });
+async function authClick(id) {
+  if (id === 'bin') { const { error } = await sb.auth.signInWithPassword(cred()); if (error) authMsg(error.message); else $('#dlg').close(); }
+  else if (id === 'bup') { const { data, error } = await sb.auth.signUp(cred()); if (error) authMsg(error.message); else if (!data.session) authMsg(L('Compte créé. Vérifiez votre e-mail pour confirmer.', 'Account created. Check your e-mail to confirm.')); else $('#dlg').close(); }
+  else if (id === 'bfg') { const { error } = await sb.auth.resetPasswordForEmail($('#em').value.trim(), { redirectTo: location.href.split('#')[0] }); authMsg(error ? error.message : L('E-mail de réinitialisation envoyé.', 'Reset e-mail sent.')); }
 }
 
-// ------------------------------------------------------------ composants
-const tile = (c, o = {}) => `<a class="cd r${c.r}${o.s ? ' s' : ''}" href="#/perso/${c.id}" title="${c.n}"><span class="pt"><img src="${im('c', c.id)}" alt="" loading="lazy"><i class="el" style="background:${EC[c.e]}"></i></span><span class="nm">${c.n}</span>${o.sub ? `<em>${o.sub}</em>` : ''}</a>`;
-const sec = t => `<div class="st">${t}</div>`;
-const uniq = (a, k) => [...new Set(a.map(x => x[k]))].sort();
-const chips = (arr, v, k, l, suf = '') => `<div class="fl"><span class="lab">${l}</span><button class="chip ${v === '' ? 'on' : ''}" data-f="${k}" data-v="">Tous</button>` + arr.map(x => `<button class="chip ${v == x ? 'on' : ''}" data-f="${k}" data-v="${x}">${x}${suf}</button>`).join('') + '</div>';
-const sbox = ph => `<input type="search" id="q" placeholder="${ph}" value="${S.q}">`;
-const has = n => n.toLowerCase().includes(S.q.toLowerCase());
-const row = (img, n, t) => `<div class="row"><img src="${img}" alt=""><div><b>${n}</b><p>${t}</p></div></div>`;
-const filtC = () => C.filter(c => (!S.e || c.e === S.e) && (!S.p || c.p === S.p) && (!S.r || c.r == S.r) && has(c.n));
-const cbar = () => sbox('Rechercher un personnage…') + chips(uniq(C, 'e'), S.e, 'e', 'Élément') + chips(uniq(C, 'p'), S.p, 'p', 'Voie') + chips([5, 4], S.r, 'r', 'Rareté', '★');
-const tchip = t => `<span class="tag tg" style="--tc:var(${TV[t]})">${t}</span>`;
-const star = (kind, id, lab) => { const on = fav[kind].includes(id); return `<button class="btn ${on ? 'on' : ''}" data-fav="${kind}:${id}">${on ? '★' : '☆'} ${lab}</button>`; };
-function board(cols) {
-  const ok = new Set(filtC().map(c => c.id)), g = `grid-template-columns:78px repeat(${cols.length},minmax(0,1fr))`;
-  return `<div class="bdp">${cols.length > 1 ? `<div class="bh" style="${g}"><span></span>${cols.map(c => `<span>${c[0]}</span>`).join('')}</div>` : ''}` + TIERS.map(t => `<div class="br" style="${g}"><div class="bl" style="--tc:var(${TV[t]})">${t}</div>${cols.map(c => `<div class="bc">${(c[1][t] || []).filter(i => ok.has(i) && byId[i]).map(i => tile(byId[i], { s: 1 })).join('')}</div>`).join('')}</div>`).join('') + '</div>';
+// ------------------------------------------------------------ retours des visiteurs + erreurs automatiques
+let errSent = 0; const errSeen = new Set();
+async function sendFeedback(kind, message) {
+  if (!sb) return false;
+  const { error } = await sb.from('feedback').insert({ kind, message: String(message).slice(0, 1000), page: location.hash.slice(0, 200), agent: navigator.userAgent.slice(0, 200), ...(user ? { user_id: user.id } : {}) });
+  return !error;
 }
+window.addEventListener('error', e => { const m = `${e.message} (${(e.filename || '').split('/').pop()}:${e.lineno})`; if (errSent >= 3 || errSeen.has(m) || !sb) return; errSeen.add(m); errSent++; sendFeedback('auto', m); });
+
+// ------------------------------------------------------------ composants
+const eiImg = id => `<img class="ei" src="${im('e', id)}" alt="${esc(eN(id))}" title="${esc(eN(id))}">`;
+const piImg = id => `<img class="pi" src="${im('pa', id)}" alt="${esc(pN(id))}" title="${esc(pN(id))}">`;
+const tile = (c, o = {}) => `<a class="cd r${c.r}${o.s ? ' s' : ''}" href="#/perso/${c.id}" title="${esc(c.n)}"><span class="pt"><img src="${im('c', c.id)}" alt="" loading="lazy">${eiImg(c.ei)}</span><span class="nm">${esc(c.n)}</span>${o.sub ? `<em>${o.sub}</em>` : ''}</a>`;
+const sec = (t, r = '') => `<div class="st"><span>${t}</span>${r}</div>`;
+const uniq = (a, k) => [...new Set(a.map(x => x[k]))].sort();
+const chips = (arr, v, k, l, nm = x => x) => `<div class="fl"><span class="lab">${l}</span><button class="chip ${v === '' ? 'on' : ''}" data-f="${k}" data-v="">${L('Tous', 'All')}</button>` + arr.map(x => `<button class="chip ${v == x ? 'on' : ''}" data-f="${k}" data-v="${x}">${nm(x)}</button>`).join('') + '</div>';
+const sbox = ph => `<input type="search" id="q" placeholder="${ph}" value="${esc(S.q)}">`;
+const has = n => n.toLowerCase().includes(S.q.toLowerCase());
+const row = (img, n, t) => `<div class="row"><img src="${img}" alt=""><div><b>${esc(n)}</b><p>${t}</p></div></div>`;
+const filtC = () => C.filter(c => (!S.e || c.ei === S.e) && (!S.p || c.pi === S.p) && (!S.r || c.r == S.r) && has(c.n));
+const cbar = () => sbox(L('Rechercher un personnage…', 'Search a character…')) + chips(uniq(C, 'ei'), S.e, 'e', L('Élément', 'Element'), eN) + chips(uniq(C, 'pi'), S.p, 'p', L('Voie', 'Path'), pN) + chips([5, 4], S.r, 'r', L('Rareté', 'Rarity'), x => x + '★');
+const tchip = t => `<span class="tag tg" style="--tc:var(${TV[t]})">${TN[t] || t}</span>`;
+const star = (kind, id, lab) => { const on = fav[kind].includes(id); return `<button class="btn ${on ? 'on' : ''}" data-fav="${kind}:${id}">${on ? '★' : '☆'} ${lab}</button>`; };
+const lcOf = id => LC.find(l => l.id === id);
+
+// ------------------------------------------------------------ tier list
+const trendOf = (mode, id) => ((D.trend || {})[mode] || {})[id];
+function ttile(c, mode) {
+  const tr = trendOf(mode, c.id), note = (D.tnotes || {})[c.id], mine = TE === 'mine';
+  const e = mine ? (c.id in prof.col ? 'E' + prof.col[c.id] : '') : (note || 'E0');
+  const hi = e && e !== 'E0';
+  const trh = tr ? `<i class="tr ${tr}" title="${tr === 'up' ? L('A gagné un rang', 'Moved up') : tr === 'down' ? L('A perdu un rang', 'Moved down') : L('Nouveau dans le classement', 'New in the ranking')}">${tr === 'up' ? '▲' : tr === 'down' ? '▼' : 'NEW'}</i>` : '';
+  return `<a class="tc r${c.r}" href="#/perso/${c.id}" title="${esc(c.n)} · ${eN(c.ei)} · ${pN(c.pi)}"><span class="tp"><img src="${im('c', c.id)}" alt="" loading="lazy">${trh}${e ? `<b class="eb ${hi ? 'hi' : ''}">${esc(e)}</b>` : ''}<span class="tbadge">${eiImg(c.ei)}${piImg(c.pi)}</span></span><span class="nm">${esc(c.n)}</span></a>`;
+}
+function board(cols) {
+  const ok = new Set(filtC().map(c => c.id)), g = `grid-template-columns:96px repeat(${cols.length},minmax(0,1fr));--n:${cols.length}`;
+  return `<div class="tl2 ${TS}">${cols.length > 1 || cols[0][0] ? `<div class="th" style="${g}"><span></span>${cols.map(c => `<span>${c[0] || ''}</span>`).join('')}</div>` : ''}` + TIERS.map(t => {
+    const n = cols.reduce((s, c) => s + (c[1][t] || []).filter(i => ok.has(i) && byId[i]).length, 0);
+    return `<div class="trw" style="${g};--tc:var(${TV[t]})"><div class="tlb"><b>${TN[t]}</b><em>${L(TBR[t][0], TBR[t][1])}</em><small>${n}</small></div>${cols.map(c => `<div class="tcell">${(c[1][t] || []).filter(i => ok.has(i) && byId[i]).map(i => ttile(byId[i], c[2])).join('') || '<span class="empty">—</span>'}</div>`).join('')}</div>`;
+  }).join('') + '</div>';
+}
+const tierOpts = () => `<div class="opts"><div class="seg" role="group"><span class="lab">${L('Éidolon affiché', 'Eidolon shown')}</span><button class="${TE === 'base' ? 'on' : ''}" data-te="base">${L('Base du classement', 'Ranking baseline')}</button><button class="${TE === 'mine' ? 'on' : ''}" data-te="mine">${L('Mes éidolons', 'My eidolons')}</button></div>
+<div class="seg"><span class="lab">${L('Taille', 'Size')}</span><button class="${TS === 'l' ? 'on' : ''}" data-ts="l">${L('Grande', 'Large')}</button><button class="${TS === 's' ? 'on' : ''}" data-ts="s">${L('Compacte', 'Compact')}</button></div>
+<div class="legend"><span><i class="tr up">▲</i> ${L('monte', 'up')}</span><span><i class="tr down">▼</i> ${L('baisse', 'down')}</span><span><i class="tr new">NEW</i> ${L('nouveau', 'new')}</span></div><div class="tleg"><b>${L('Échelle', 'Scale')}</b>${TIERS.map(t => `<span style="--tc:var(${TV[t]})"><i>${TN[t]}</i> ${L(TBR[t][0], TBR[t][1])}</span>`).join('')}<small>${L('Équivalences avec Game8 : SS = T0, S+ = T0.5, S = T1, A = T2, B = T3, C = T4. Ce n’est pas le classement de Prydwen.', 'Mapping from Game8: SS = T0, S+ = T0.5, S = T1, A = T2, B = T3, C = T4. This is not Prydwen’s own ranking.')}</small></div></div>`;
 
 // ------------------------------------------------------------ pages
 const pages = {
   home() {
-    const cards = [['#/tier', 'tier', 'Tier list', 'Par rôle et par mode end game'], ['#/perso', 'users', 'Personnages', 'Kit, build et équipes'], ['#/lc', 'cone', 'Cônes de lumière', 'Tous les cônes et leurs effets'], ['#/rel', 'box', 'Reliques', 'Sets et ornements planaires'], ['#/compare', 'cmp', 'Comparateur', 'Deux personnages côte à côte'], ['#/events', 'cal', 'Événements', 'Guides et calendrier']];
-    return [`<h1>Astrolabe</h1><p class="lead">Le guide Honkai: Star Rail qui regroupe les meilleures sources au même endroit. Version ${D.version || ''}, données mises à jour le ${D.updated}.</p>
-    <div class="g3">${cards.map(c => `<a class="sc" href="${c[0]}">${ico(c[1])}<b>${c[2]}</b><span>${c[3]}</span></a>`).join('')}</div>
-    ${verBanner()}${sec('Bannières en ce moment')}${bannerCards(true)}${sec('Derniers personnages')}<div class="grid">${C.slice(0, 8).map(c => tile(c, { sub: c.e + ' · ' + c.p })).join('')}</div>
-    ${sec('Calendrier end game')}<div class="card tw"><table><tr><th>Mode</th><th>Début</th><th>Fin</th></tr>${D.manual.schedule.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div>`];
+    const cur_ = (D.banners.list || []).filter(b => !b.end || new Date(b.end) > Date.now()), feat = (cur_[0] && cur_[0].chars[0]) || C[0].id;
+    const cards = [['#/tier', 'tier', L('Tier list', 'Tier list'), L('Par rôle et par mode end game', 'By role and end game mode')], ['#/perso', 'users', L('Personnages', 'Characters'), L('Kit, build et équipes', 'Kit, build and teams')], ['#/lc', 'cone', L('Cônes de lumière', 'Light Cones'), L('Tous les cônes et leurs effets', 'Every cone and its effect')], ['#/rel', 'box', L('Reliques', 'Relics'), L('Sets et ornements planaires', 'Sets and planar ornaments')],
+      ['#/calc', 'calc', L('Calculateur', 'Calculator'), L('Matériaux d’ascension et de compétences', 'Ascension and skill materials')], ['#/plan', 'dice', L('Tirages', 'Pull planner'), L('Probabilité d’obtenir un personnage', 'Chance of getting a character')], ['#/teams', 'team', L('Équipes', 'Teams'), L('Composez et partagez vos équipes', 'Build and share your teams')], ['#/stats', 'chart', L('Statistiques', 'Statistics'), L('Ce que jouent les joueurs du site', 'What the site’s players use')]];
+    const ss = (D.tiers.ov.SS || []).filter(i => byId[i]);
+    return [`<section class="hero2"><div class="hx"><span class="lab">Honkai: Star Rail · v${esc(D.version || '')}</span><h1 class="wordmark">ASTROLABE</h1><p class="lead">${L('Le guide Honkai: Star Rail qui regroupe les meilleures sources au même endroit. Données mises à jour le ' + D.updated + '.', 'The Honkai: Star Rail guide that brings the best sources together. Data updated on ' + D.updated + '.')}</p><div class="cta"><a class="btn pri" href="#/tier">${L('Voir la tier list', 'Open the tier list')}</a><a class="btn" href="#/perso">${L('Personnages', 'Characters')}</a><button class="btn" data-search="1">${ico('search')} ${L('Rechercher', 'Search')}</button></div></div><img class="hp" src="${im('p', feat)}" alt=""></section>
+    <div class="cols"><div class="mn"><div class="g4">${cards.map(c => `<a class="sc" href="${c[0]}">${ico(c[1])}<b>${c[2]}</b><span>${c[3]}</span></a>`).join('')}</div>
+    ${sec(L('Tier T0 en ce moment', 'Current T0 tier'), `<a href="#/tier">${L('Tout voir', 'See all')} →</a>`)}<div class="grid">${ss.map(i => ttile(byId[i], 'ov')).join('')}</div>
+    ${sec(L('Derniers personnages', 'Latest characters'))}<div class="grid">${C.slice(0, 10).map(c => tile(c, { sub: eN(c.ei) + ' · ' + pN(c.pi) })).join('')}</div>
+    ${sec(L('Calendrier end game', 'End game schedule'))}<div class="card tw"><table><tr><th>${L('Mode', 'Mode')}</th><th>${L('Début', 'Start')}</th><th>${L('Fin', 'End')}</th></tr>${(LANG === 'en' && D.manual.schedule_en || D.manual.schedule).map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}</table></div></div>
+    <aside class="rail">${verBanner()}${sec(L('Bannières en ce moment', 'Current banners'))}${bannerCards(true)}</aside></div>`];
   },
   tier() {
-    const T = D.tiers, modes = [['ov', 'Vue d’ensemble', 'tier'], ['role', 'Par rôle', 'users'], ['moc', 'Memory of Chaos', 'end'], ['pf', 'Pure Fiction', 'end'], ['as', 'Apocalyptic Shadow', 'end']];
-    const cols = TM === 'role' ? [['DPS', T.dps], ['Support', T.support], ['Sustain', T.sustain]] : [[null, T[TM]]], res = () => board(cols);
-    return [`<h1>Tier list</h1><p class="lead">Version ${D.version || ''}, d’après Game8 : personnages à E0 avec leur équipement idéal. Un même personnage peut apparaître dans plusieurs rôles.</p>
-    <div class="bigtabs">${modes.map(m => `<button class="${TM === m[0] ? 'on' : ''}" data-tm="${m[0]}">${ico(m[2])}${m[1]}</button>`).join('')}</div>${cbar()}<div id="res">${res()}</div>`, res];
+    const T = D.tiers, modes = [['ov', L('Vue d’ensemble', 'Overview'), 'tier'], ['role', L('Par rôle', 'By role'), 'users'], ['moc', 'Memory of Chaos', 'end'], ['pf', 'Pure Fiction', 'end'], ['as', 'Apocalyptic Shadow', 'end']];
+    const cols = TM === 'role' ? [['DPS', T.dps, 'dps'], ['Support', T.support, 'support'], [L('Sustain', 'Sustain'), T.sustain, 'sustain']] : [[null, T[TM], TM]], res = () => board(cols);
+    const since = D.trend_since ? L(`Dernier changement détecté le ${D.trend_since}.`, `Last change detected on ${D.trend_since}.`) : L('Les flèches de tendance apparaîtront dès le premier changement de classement.', 'Trend arrows will appear after the first ranking change.');
+    return [`<h1>${L('Tier list', 'Tier list')}</h1><p class="lead">${L('Version ' + (D.version || '') + ', d’après le classement Game8, présenté sur l’échelle T0 → T4. Le classement suppose des personnages à E0 avec leur équipement idéal. Un même personnage peut apparaître dans plusieurs rôles. ', 'Version ' + (D.version || '') + ', based on the Game8 ranking, shown on a T0 → T4 scale. The ranking assumes E0 characters with their ideal gear. A character can appear in several roles. ')}${since}</p>
+    <div class="bigtabs">${modes.map(m => `<button class="${TM === m[0] ? 'on' : ''}" data-tm="${m[0]}">${ico(m[2])}${m[1]}</button>`).join('')}</div>${tierOpts()}${cbar()}<div id="res">${res()}</div>`, res];
   },
-  perso() { const res = () => `<div class="grid">${filtC().map(c => tile(c, { sub: c.e + ' · ' + c.p })).join('')}</div>`; return [`<h1>Personnages</h1><p class="lead">${C.length} personnages. Cliquez sur l’un d’eux pour son kit, son build et ses équipes.</p>${cbar()}<div id="res">${res()}</div>`, res]; },
+  perso() { const res = () => `<div class="grid">${filtC().map(c => tile(c, { sub: eN(c.ei) + ' · ' + pN(c.pi) })).join('')}</div>`; return [`<h1>${L('Personnages', 'Characters')}</h1><p class="lead">${L(C.length + ' personnages. Cliquez sur l’un d’eux pour son kit, son build et ses équipes.', C.length + ' characters. Click one for its kit, build and teams.')}</p>${cbar()}<div id="res">${res()}</div>`, res]; },
   lc() {
-    const res = () => `<div class="g">${LC.filter(l => (!S.p || l.p === S.p) && (!S.r || l.r == S.r) && has(l.n)).map(l => `<div class="card" style="margin:0">${row(im('l', l.id), l.n, `${l.r}★ · ${l.p}`)}<p style="margin:8px 0 0;font-size:13.5px"><b>${l.k}</b> — ${l.d}</p></div>`).join('')}</div>`;
-    return [`<h1>Cônes de lumière</h1><p class="lead">${LC.length} cônes. Les valeurs vont du rang 1 au rang 5.</p>${sbox('Rechercher un cône…')}${chips(uniq(LC, 'p'), S.p, 'p', 'Voie')}${chips([5, 4, 3], S.r, 'r', 'Rareté', '★')}<div id="res">${res()}</div>`, res];
+    const res = () => `<div class="g">${LC.filter(l => (!S.p || l.pi === S.p) && (!S.r || l.r == S.r) && has(l.n)).map(l => `<div class="card hov" style="margin:0">${row(im('l', l.id), l.n, `${l.r}★ · ${pN(l.pi)}`)}<p style="margin:8px 0 0;font-size:13.5px"><b>${esc(l.k)}</b> — ${esc(l.d)}</p></div>`).join('')}</div>`;
+    return [`<h1>${L('Cônes de lumière', 'Light Cones')}</h1><p class="lead">${L(LC.length + ' cônes. Les valeurs vont du rang 1 au rang 5.', LC.length + ' cones. Values go from rank 1 to rank 5.')}</p>${sbox(L('Rechercher un cône…', 'Search a cone…'))}${chips(uniq(LC, 'pi'), S.p, 'p', L('Voie', 'Path'), pN)}${chips([5, 4, 3], S.r, 'r', L('Rareté', 'Rarity'), x => x + '★')}<div id="res">${res()}</div>`, res];
   },
   rel() {
-    const res = () => `<div class="g">${RS.filter(l => has(l.n)).map(l => `<div class="card" style="margin:0">${row(im('r', l.id), l.n, l.pl ? 'Ornement planaire' : 'Relique')}<p style="margin:8px 0 0;font-size:13.5px"><span class="lab">2 pièces</span> ${l.d[0]}</p>${l.d[1] ? `<p style="margin:6px 0 0;font-size:13.5px"><span class="lab">4 pièces</span> ${l.d[1]}</p>` : ''}</div>`).join('')}</div>`;
-    return [`<h1>Reliques</h1><p class="lead">Ensembles de reliques (4 pièces) et ornements planaires (2 pièces).</p>${sbox('Rechercher un set…')}<div id="res">${res()}</div>`, res];
+    const res = () => `<div class="g">${RS.filter(l => has(l.n)).map(l => `<div class="card hov" style="margin:0">${row(im('r', l.id), l.n, l.pl ? L('Ornement planaire', 'Planar ornament') : L('Relique', 'Relic'))}<p style="margin:8px 0 0;font-size:13.5px"><span class="lab">${L('2 pièces', '2-piece')}</span> ${esc(l.d[0])}</p>${l.d[1] ? `<p style="margin:6px 0 0;font-size:13.5px"><span class="lab">${L('4 pièces', '4-piece')}</span> ${esc(l.d[1])}</p>` : ''}</div>`).join('')}</div>`;
+    return [`<h1>${L('Reliques', 'Relics')}</h1><p class="lead">${L('Ensembles de reliques (4 pièces) et ornements planaires (2 pièces).', 'Relic sets (4 pieces) and planar ornaments (2 pieces).')}</p>${sbox(L('Rechercher un set…', 'Search a set…'))}<div id="res">${res()}</div>`, res];
   },
   end(m) {
-    m = m || 'moc'; const M = D.manual.modes[m] || ['Anomaly Arbitration', 'Mode de combat récurrent. Le classement par personnage n’est pas encore disponible sur le site.'], sch = D.manual.schedule.filter(r => r[0].includes(M[0]));
-    const res = () => board([[null, D.tiers[m]]]);
-    return [`<h1>${M[0]}</h1><p class="lead">${M[1]}</p>${sch.length ? `<div class="card tw"><table><tr><th>Phase</th><th>Début</th><th>Fin</th></tr>${sch.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div>` : ''}${D.tiers[m] ? sec('Classement des personnages') + cbar() + `<div id="res">${res()}</div>` : ''}
-    <p class="note">Classement : Game8. Guides détaillés : ${D.manual.guides.map(g => `<a href="${g.u}" target="_blank" rel="noopener">${g.t}</a>`).join(' · ')}</p>`, D.tiers[m] ? res : null];
+    m = m || 'moc'; const MM = (LANG === 'en' && D.manual.modes_en) || D.manual.modes, M = MM[m] || ['Anomaly Arbitration', L('Mode de combat récurrent. Le classement par personnage n’est pas encore disponible sur le site.', 'Recurring combat mode. A per-character ranking is not available on the site yet.')];
+    const SCH = (LANG === 'en' && D.manual.schedule_en) || D.manual.schedule, sch = SCH.filter(r => r[0].includes(M[0]));
+    const res = () => board([[null, D.tiers[m], m]]);
+    return [`<h1>${esc(M[0])}</h1><p class="lead">${esc(M[1])}</p>${sch.length ? `<div class="card tw"><table><tr><th>${L('Phase', 'Phase')}</th><th>${L('Début', 'Start')}</th><th>${L('Fin', 'End')}</th></tr>${sch.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}</table></div>` : ''}${D.tiers[m] ? sec(L('Classement des personnages', 'Character ranking')) + tierOpts() + cbar() + `<div id="res">${res()}</div>` : ''}
+    <p class="note">${L('Classement : Game8. Guides détaillés : ', 'Ranking: Game8. Detailed guides: ')}${D.manual.guides.map(g => `<a href="${g.u}" target="_blank" rel="noopener">${esc(LANG === 'en' && g.t_en || g.t)}</a>`).join(' · ')}</p>`, D.tiers[m] ? res : null];
   },
   compare(a, b) {
-    const opt = k => `<select data-cmp="${k}"><option value="">Choisir un personnage…</option>${[...C].sort((x, y) => x.n.localeCompare(y.n)).map(c => `<option value="${c.id}" ${c.id === (k === 'a' ? a : b) ? 'selected' : ''}>${c.n}</option>`).join('')}</select>`;
-    const A = byId[a], B = byId[b]; let t = '<p class="sub">Choisissez deux personnages pour les comparer.</p>';
+    const opt = k => `<select data-cmp="${k}"><option value="">${L('Choisir un personnage…', 'Pick a character…')}</option>${[...C].sort((x, y) => x.n.localeCompare(y.n)).map(c => `<option value="${c.id}" ${c.id === (k === 'a' ? a : b) ? 'selected' : ''}>${esc(c.n)}</option>`).join('')}</select>`;
+    const A = byId[a], B = byId[b]; let t = `<p class="sub">${L('Choisissez deux personnages pour les comparer.', 'Pick two characters to compare them.')}</p>`;
     if (A && B) {
       const nm = (arr, rs) => (arr || []).map(i => (rs.find(x => x.id === i) || {}).n).filter(Boolean).join(', ') || '—';
       const num = (l, f, suf = '') => { const x = f(A), y = f(B); return `<tr><td>${l}</td><td class="${x > y ? 'win' : ''}">${x}${suf}</td><td class="${y > x ? 'win' : ''}">${y}${suf}</td></tr>`; };
-      const rk = (l, k) => { const x = A.tr[k], y = B.tr[k], ix = x ? TIERS.indexOf(x) : 9, iy = y ? TIERS.indexOf(y) : 9; return `<tr><td>${l}</td><td class="${ix < iy ? 'win' : ''}">${x || '—'}</td><td class="${iy < ix ? 'win' : ''}">${y || '—'}</td></tr>`; };
-      const bb = (l, f) => `<tr><td>${l}</td><td>${f(A)}</td><td>${f(B)}</td></tr>`, lc = c => { const l = c.b && LC.find(x => x.id === c.b.lc); return l ? l.n : '—'; };
-      const slots = { body: 'Corps', feet: 'Bottes', sphere: 'Sphère', rope: 'Corde' }, tm = c => ((c.b && c.b.teams[0]) || []).map(m => (byId[m.c] || {}).n).filter(n => n && n !== c.n).join(', ') || '—';
+      const rk = (l, k) => { const x = A.tr[k], y = B.tr[k], ix = x ? TIERS.indexOf(x) : 9, iy = y ? TIERS.indexOf(y) : 9; return `<tr><td>${l}</td><td class="${ix < iy ? 'win' : ''}">${x ? TN[x] : '—'}</td><td class="${iy < ix ? 'win' : ''}">${y ? TN[y] : '—'}</td></tr>`; };
+      const bb = (l, f) => `<tr><td>${l}</td><td>${f(A)}</td><td>${f(B)}</td></tr>`, lc = c => { const l = c.b && lcOf(c.b.lc); return l ? esc(l.n) : '—'; };
+      const slots = { body: L('Corps', 'Body'), feet: L('Bottes', 'Feet'), sphere: L('Sphère', 'Sphere'), rope: L('Corde', 'Rope') }, tm = c => ((c.b && c.b.teams[0]) || []).map(m => (byId[m.c] || {}).n).filter(n => n && n !== c.n).join(', ') || '—';
       t = `<div class="card tw"><table><tr><th></th><th>${tile(A, { s: 1 })}</th><th>${tile(B, { s: 1 })}</th></tr>
-      ${rk('Tier général', 'ov')}${rk('Rôle DPS', 'dps')}${rk('Rôle Support', 'support')}${rk('Rôle Sustain', 'sustain')}${rk('Memory of Chaos', 'moc')}${rk('Pure Fiction', 'pf')}${rk('Apocalyptic Shadow', 'as')}
-      ${num('PV', c => c.st.hp)}${num('ATQ', c => c.st.atk)}${num('DÉF', c => c.st.def)}${num('VIT', c => c.st.spd)}${num('Taux crit', c => c.st.cr, '%')}${num('DGT crit', c => c.st.cd, '%')}${num('Énergie', c => c.st.sp)}
-      ${bb('Cône', lc)}${bb('Reliques', c => nm((c.b.rel || []).map(p => p[0]), RS))}${bb('Ornements', c => nm(c.b.orn, RS))}${Object.keys(slots).map(k => bb(slots[k], c => (c.b.parts[k] || []).join(' / ') || '—')).join('')}${bb('Sous-stats', c => (c.b.subs || []).slice(0, 4).join(' > '))}${bb('Équipe type', tm)}</table></div>`;
+      ${rk(L('Tier général', 'Overall tier'), 'ov')}${rk(L('Rôle DPS', 'DPS role'), 'dps')}${rk(L('Rôle Support', 'Support role'), 'support')}${rk(L('Rôle Sustain', 'Sustain role'), 'sustain')}${rk('Memory of Chaos', 'moc')}${rk('Pure Fiction', 'pf')}${rk('Apocalyptic Shadow', 'as')}
+      ${num(L('PV', 'HP'), c => c.st.hp)}${num(L('ATQ', 'ATK'), c => c.st.atk)}${num(L('DÉF', 'DEF'), c => c.st.def)}${num(L('VIT', 'SPD'), c => c.st.spd)}${num(L('Taux crit', 'CRIT Rate'), c => c.st.cr, '%')}${num(L('DGT crit', 'CRIT DMG'), c => c.st.cd, '%')}${num(L('Énergie', 'Energy'), c => c.st.sp)}
+      ${bb(L('Cône', 'Light Cone'), lc)}${bb(L('Reliques', 'Relics'), c => esc(nm((c.b.rel || []).map(p => p[0]), RS)))}${bb(L('Ornements', 'Ornaments'), c => esc(nm(c.b.orn, RS)))}${Object.keys(slots).map(k => bb(slots[k], c => esc((c.b.parts[k] || []).map(stx).join(' / ') || '—'))).join('')}${bb(L('Sous-stats', 'Substats'), c => esc((c.b.subs || []).slice(0, 4).map(stx).join(' > ')))}${bb(L('Équipe type', 'Typical team'), c => esc(tm(c)))}</table></div>`;
     }
-    return [`<h1>Comparateur</h1><p class="lead">Deux personnages côte à côte : classements, stats, build et équipe. Le meilleur chiffre est mis en avant.</p><div class="g">${opt('a')}${opt('b')}</div>${t}`];
+    return [`<h1>${L('Comparateur', 'Compare')}</h1><p class="lead">${L('Deux personnages côte à côte : classements, stats, build et équipe. Le meilleur chiffre est mis en avant.', 'Two characters side by side: rankings, stats, build and team. The better value is highlighted.')}</p><div class="g">${opt('a')}${opt('b')}</div>${t}`];
   },
   events() {
-    const now = new Date().toISOString().slice(0, 10), ord = { 'En cours': 0, 'À venir': 1, '': 2, 'Terminé': 3 };
-    const L = (D.events || []).filter(e => !e.hidden).map(e => ({ ...e, st: e.start && e.end ? (now < e.start ? 'À venir' : now > e.end ? 'Terminé' : 'En cours') : '' })).sort((a, b) => ord[a.st] - ord[b.st]);
-    const ul = (t, a) => a && a.length ? `<div class="lab">${t}</div><ul>${a.map(x => `<li>${x}</li>`).join('')}</ul>` : '';
-    return [`<h1>Événements et guides</h1><p class="lead">Un guide par événement et par mode end game. Le contenu se modifie dans le fichier <b>data/events.json</b>.</p>${L.map(e => `<details class="ev"><summary><b>${e.title}</b><span class="tag">${e.type || 'Guide'}</span>${e.st ? `<span class="tag ${e.st === 'En cours' ? 'tg' : ''}" style="--tc:var(--A)">${e.st}</span>` : ''}${e.start ? `<span class="sub">${e.start} → ${e.end}</span>` : ''}</summary><div><p>${e.summary || ''}</p>${ul('Étapes', e.steps)}${ul('Conseils', e.tips)}${ul('Récompenses', e.rewards)}${e.link ? `<a href="${e.link}" target="_blank" rel="noopener">Source</a>` : ''}</div></details>`).join('') || '<p class="sub">Aucun événement pour l’instant.</p>'}`];
-  },
-  plan() {
-    return [`<h1>Planificateur de tirages</h1><p class="lead">Estimez vos tirages disponibles et la distance jusqu’à la garantie.</p><div class="card"><div class="g3"><label>Jade stellaire<input type="number" id="j" value="0" min="0"></label><label>Passes spéciaux<input type="number" id="t" value="0" min="0"></label><label>Pity actuel<input type="number" id="p" value="0" min="0" max="89"></label></div><p id="po" style="margin:0"></p></div>`, null, () => { const f = () => { const j = +$('#j').value || 0, t = +$('#t').value || 0, p = +$('#p').value || 0, n = Math.floor((j + t * 160) / 160); $('#po').innerHTML = `<b>${n}</b> tirages disponibles · garantie à 90 : encore <b>${Math.max(0, 90 - p - n)}</b> tirage(s) à trouver`; }; ['j', 't', 'p'].forEach(i => $('#' + i).oninput = f); f(); }];
+    const now = new Date().toISOString().slice(0, 10), ord = { 'En cours': 0, 'À venir': 1, '': 2, 'Terminé': 3 }, stl = { 'En cours': L('En cours', 'Ongoing'), 'À venir': L('À venir', 'Upcoming'), 'Terminé': L('Terminé', 'Ended') };
+    const Lst = (D.events || []).filter(e => !e.hidden).map(e => ({ ...evx(e), st: e.start && e.end ? (now < e.start ? 'À venir' : now > e.end ? 'Terminé' : 'En cours') : '' })).sort((a, b) => ord[a.st] - ord[b.st]);
+    const ul = (t, a) => a && a.length ? `<div class="lab">${t}</div><ul>${a.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
+    return [`<h1>${L('Événements et guides', 'Events and guides')}</h1><p class="lead">${L('Un guide par événement et par mode end game. Le contenu se modifie dans le fichier ', 'One guide per event and end game mode. The content is edited in the file ')}<b>data/events.json</b>.</p>${Lst.map(e => `<details class="ev"><summary><b>${esc(e.title)}</b><span class="tag">${esc(e.type || 'Guide')}</span>${e.st ? `<span class="tag ${e.st === 'En cours' ? 'tg' : ''}" style="--tc:var(--A)">${stl[e.st]}</span>` : ''}${e.start ? `<span class="sub">${e.start} → ${e.end}</span>` : ''}</summary><div><p>${esc(e.summary || '')}</p>${ul(L('Étapes', 'Steps'), e.steps)}${ul(L('Conseils', 'Tips'), e.tips)}${ul(L('Récompenses', 'Rewards'), e.rewards)}${e.link ? `<a href="${esc(e.link)}" target="_blank" rel="noopener">Source</a>` : ''}</div></details>`).join('') || `<p class="sub">${L('Aucun événement pour l’instant.', 'No event right now.')}</p>`}`];
   },
   aide() {
-    return [`<h1>Aides</h1><p class="lead">Tout pour progresser sans se perdre.</p>
-    <div class="card"><h2>Stats principales des reliques</h2><div class="tw"><table><tr><th>Emplacement</th><th>Options</th></tr><tr><td>Corps</td><td>Taux/DGT crit, Soins, Taux d’effet, ATQ%, PV%, DÉF%</td></tr><tr><td>Bottes</td><td>VIT, ATQ%, PV%, DÉF%</td></tr><tr><td>Sphère</td><td>Dégâts élémentaires, ATQ%, PV%, DÉF%</td></tr><tr><td>Corde</td><td>Effet de rupture, Recharge d’énergie, ATQ%, PV%, DÉF%</td></tr></table></div></div>
-    <div class="g"><div class="card"><h2>Débuter</h2><p class="sub" style="margin:0">Finissez l’histoire principale, puis construisez un DPS, un soutien et un soigneur.</p></div><div class="card"><h2>Farm efficace</h2><p class="sub" style="margin:0">Dépensez l’énergie sur les domaines de reliques de votre principal et verrouillez les bonnes pièces.</p></div><div class="card"><h2>Tirages</h2><p class="sub" style="margin:0">Gardez vos jades pour les personnages dont vous avez vraiment besoin.</p></div></div>
-    ${sec('Guides externes')}<div class="card">${D.manual.guides.map(g => `<p style="margin:4px 0"><a href="${g.u}" target="_blank" rel="noopener">${g.t}</a></p>`).join('')}</div>`];
+    const tl = (h, ic, t, s) => `<a class="sc" href="${h}">${ico(ic)}<b>${t}</b><span>${s}</span></a>`;
+    const ck = [L('Terminer le prologue et débloquer l’Univers Simulé', 'Finish the prologue and unlock the Simulated Universe'), L('Choisir un DPS principal et le monter niveau 70+ avec ses cônes et reliques', 'Pick a main DPS and level it to 70+ with its cone and relics'), L('Avoir un soutien et un soigneur ou bouclier', 'Get a support and a healer or shield'), L('Dépenser toute l’énergie (Trailblaze Power) chaque jour', 'Spend all your Trailblaze Power every day'), L('Faire les missions quotidiennes et l’assignation', 'Do the dailies and Assignments'), L('Verrouiller les bonnes reliques (bonne stat principale)', 'Lock relics with the right main stat'), L('Consulter les bannières avant de tirer', 'Check the banners before pulling')];
+    const q = [[L('Quelle différence entre E0 et E6 ?', 'What is the difference between E0 and E6?'), L('E0 est le personnage sans éidolon, E6 en a six. La tier list se base sur E0 par défaut.', 'E0 is a character with no eidolons, E6 has all six. The tier list assumes E0 by default.')],
+      [L('Que signifient T0, T1, T2 ?', 'What do T0, T1, T2 mean?'), L('Plus le chiffre est bas, plus le personnage est fort dans le mode choisi. T0 est le haut du classement.', 'The lower the number, the stronger the character in that mode. T0 is the top of the ranking.')],
+      [L('Où se trouvent les données ?', 'Where does the data come from?'), L('Personnages, cônes et reliques viennent de StarRailRes, les builds de HSR Optimizer, le classement de Game8.', 'Characters, cones and relics come from StarRailRes, builds from HSR Optimizer, rankings from Game8.')],
+      [L('Comment signaler une erreur ?', 'How do I report a mistake?'), L('Bouton « Signaler » en haut de chaque page.', 'Use the “Report” button at the top of any page.')],
+      [L('Comment sauvegarder mes équipes ?', 'How do I save my teams?'), L('Créez un compte puis enregistrez-les dans Équipes ; chaque équipe a un lien partageable.', 'Create an account and save them in Teams; each team has a shareable link.')]];
+    const ms = [[L('Corps', 'Body'), L('Taux/DGT crit, Soins, Taux d’effet, ATQ%, PV%, DÉF%', 'CRIT Rate/DMG, Outgoing Healing, Effect Hit Rate, ATK%, HP%, DEF%')], [L('Bottes', 'Feet'), L('VIT, ATQ%, PV%, DÉF%', 'SPD, ATK%, HP%, DEF%')], [L('Sphère', 'Sphere'), L('Dégâts élémentaires, ATQ%, PV%, DÉF%', 'Elemental DMG, ATK%, HP%, DEF%')], [L('Corde', 'Rope'), L('Effet de rupture, Recharge d’énergie, ATQ%, PV%, DÉF%', 'Break Effect, Energy Regen Rate, ATK%, HP%, DEF%')]];
+    return [`<section class="hlp"><span class="lab">${L('Centre d’aide', 'Help center')}</span><h1>${L('Par où commencer ?', 'Where do I start?')}</h1><p class="lead">${L('Raccourcis vers les outils du site, une liste de départ, la FAQ et les guides externes.', 'Shortcuts to the site’s tools, a starter checklist, the FAQ and external guides.')}</p><button class="btn pri" data-search="1">${ico('search')} ${L('Rechercher un personnage ou un cône', 'Search a character or cone')}</button></section>
+    ${sec(L('Outils du site', 'Site tools'))}<div class="g4">${tl('#/calc', 'calc', L('Calculateur', 'Calculator'), L('Matériaux à farmer pour monter un personnage', 'Materials needed to level a character'))}${tl('#/plan', 'dice', L('Tirages', 'Pull planner'), L('Vos chances d’obtenir un 5★', 'Your odds of getting a 5★'))}${tl('#/teams', 'team', L('Équipes', 'Teams'), L('Composez et partagez', 'Build and share'))}${tl('#/compare', 'cmp', L('Comparateur', 'Compare'), L('Deux personnages côte à côte', 'Two characters side by side'))}${tl('#/tier', 'tier', 'Tier list', L('Classement par mode', 'Ranking by mode'))}${tl('#/versions', 'book', L('Résumé de version', 'Version recap'), L('L’histoire, version par version', 'The story, version by version'))}${tl('#/banners', 'star', L('Bannières', 'Banners'), L('Qui est disponible maintenant', 'Who is available now'))}${tl('#/events', 'cal', L('Événements', 'Events'), L('Guides et récompenses', 'Guides and rewards'))}</div>
+    <div class="cols2"><div class="card"><h2>${L('Liste de départ', 'Starter checklist')}</h2><ul class="ck">${ck.map((x, i) => `<li><label><input type="checkbox" data-ck="${i}" ${(store.get('astro_ck', [])).includes(i) ? 'checked' : ''}> <span>${x}</span></label></li>`).join('')}</ul></div>
+    <div class="card"><h2>${L('Stats principales des reliques', 'Relic main stats')}</h2><div class="tw"><table><tr><th>${L('Emplacement', 'Slot')}</th><th>${L('Options', 'Options')}</th></tr>${ms.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table></div></div></div>
+    ${sec(L('Questions fréquentes', 'FAQ'))}${q.map(x => `<details class="ev"><summary><b>${x[0]}</b></summary><div><p>${x[1]}</p></div></details>`).join('')}
+    ${sec(L('Guides externes', 'External guides'))}<div class="card">${D.manual.guides.map(g => `<p style="margin:4px 0"><a href="${g.u}" target="_blank" rel="noopener">${esc(LANG === 'en' && g.t_en || g.t)}</a></p>`).join('')}</div>`];
   },
-  profil(tab) {
-    tab = tab || 'col'; const own = Object.keys(prof.col).filter(i => byId[i]), n5 = own.filter(i => byId[i].r === 5).length, eids = own.reduce((s, i) => s + prof.col[i], 0);
-    const name = prof.name || (user ? user.email.split('@')[0] : 'Voyageur'), since = user ? `Membre depuis le ${new Date(user.created_at).toLocaleDateString('fr-FR')}` : 'Profil local, enregistré dans ce navigateur';
-    const teams = new Map(); own.forEach(i => ((byId[i].b || {}).teams || []).forEach(t => { const ids = [...new Set([i, ...t.map(m => m.c)])]; if (ids.length >= 3 && ids.length <= 4 && ids.every(x => x in prof.col)) teams.set([...ids].sort().join('-'), ids); }));
-    const banner = !sb ? '' : user ? '' : `<div class="card" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span>Connectez-vous pour retrouver votre collection et vos favoris sur tous vos appareils.</span><button class="btn" id="login2">Connexion</button></div>`;
-    const tabs = [['col', 'Collection', 'users'], ['fav', 'Favoris', 'star'], ['teams', 'Équipes possibles', 'cmp'], ['set', 'Paramètres', 'info']];
-    let body = '', res = null;
-    if (tab === 'col') {
-      res = () => `<div class="grid">${C.filter(c => (!S.e || c.e === S.e) && (!S.p || c.p === S.p) && (!S.r || c.r == S.r) && has(c.n) && (!S.own || (S.own === 'Possédés') === (c.id in prof.col))).map(c => { const on = c.id in prof.col; return `<div style="width:88px"><button class="cd own r${c.r}${on ? ' on' : ''}" data-own="${c.id}"><span class="pt"><img src="${im('c', c.id)}" alt="" loading="lazy"><i class="el" style="background:${EC[c.e]}"></i>${on ? `<b class="bd">E${prof.col[c.id]}</b>` : ''}</span><span class="nm">${c.n}</span></button>${on ? `<select data-eid="${c.id}" style="width:88px;padding:3px;margin:4px 0 0;font-size:12px">${[0, 1, 2, 3, 4, 5, 6].map(e => `<option value="${e}" ${prof.col[c.id] == e ? 'selected' : ''}>E${e}</option>`).join('')}</select>` : ''}</div>`; }).join('')}</div>`;
-      body = `<p class="sub">Cliquez sur un personnage pour l’ajouter à votre collection, puis choisissez son éidolon.</p>${cbar()}${chips(['Possédés', 'Manquants'], S.own, 'own', 'Statut')}<div id="res">${res()}</div>`;
-    } else if (tab === 'fav') {
-      const fc = C.filter(c => fav.char.includes(c.id)), fb = C.filter(c => fav.build.includes(c.id));
-      body = sec('Personnages favoris') + (fc.length ? `<div class="grid">${fc.map(c => tile(c, { sub: c.e + ' · ' + c.p })).join('')}</div>` : '<p class="sub">Aucun pour l’instant. Cliquez sur « Personnage favori » dans une fiche.</p>') + sec('Builds favoris') + (fb.length ? fb.map(c => `<div class="card" style="display:flex;gap:14px;align-items:center">${tile(c, { s: 1 })}<div><b>${c.n}</b><br><span class="sub">${c.b ? c.b.subs.slice(0, 4).join(' > ') : ''}</span><br><a href="#/perso/${c.id}/build">Voir le build</a></div></div>`).join('') : '<p class="sub">Aucun pour l’instant. Cliquez sur « Build favori » dans une fiche.</p>');
-    } else if (tab === 'teams') {
-      body = `<p class="sub">Équipes du site dont tous les membres sont dans votre collection.</p>` + ([...teams.values()].slice(0, 30).map(ids => `<div class="team">${ids.map(i => tile(byId[i], { s: 1 })).join('')}</div>`).join('') || '<p class="sub">Aucune équipe complète pour l’instant. Ajoutez des personnages dans l’onglet Collection.</p>');
-    } else {
-      const sorted = [...C].sort((x, y) => x.n.localeCompare(y.n)), shw = Array.from({ length: 6 }, (_, k) => prof.show[k] || { c: '', t: '' });
-      body = `<div class="card"><h2>Profil</h2><label class="lab">Pseudo affiché</label><input type="text" id="pn" value="${esc(prof.name)}" placeholder="Votre pseudo" maxlength="24">
-      <p class="lab" style="margin-top:6px">Avatar</p><div class="grid" style="max-height:190px;overflow:auto;margin-bottom:12px">${C.map(c => `<button class="cd s ${prof.avatar === c.id ? 'on' : ''}" data-av="${c.id}" style="opacity:${prof.avatar === c.id ? 1 : .75}"><span class="pt" style="${prof.avatar === c.id ? 'border-color:var(--ac)' : ''}"><img src="${im('c', c.id)}" alt="" loading="lazy"></span></button>`).join('')}</div></div>
-      <div class="card"><h2>Profil public (communauté)</h2>${!sb || !user ? '<p class="sub">Connectez-vous pour partager votre profil avec la communauté.</p>' : `<label style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><input type="checkbox" id="ppub" ${prof.pub ? 'checked' : ''} style="width:auto;margin:0"> Rendre mon profil public (désactivé par défaut)</label>
-      <label class="lab">Nom d’utilisateur (adresse du profil)</label><input type="text" id="phd" value="${esc(prof.handle)}" placeholder="ex. mon-pseudo" maxlength="20">
-      <label class="lab">Présentation (200 caractères max.)</label><input type="text" id="pbio" value="${esc(prof.bio)}" maxlength="200" placeholder="Une phrase sur vous">
-      <p class="lab" style="margin-top:8px">Vitrine : jusqu’à 6 personnages à mettre en avant</p>${shw.map((s, k) => `<div class="slot"><select id="sc${k}"><option value="">— Emplacement ${k + 1} —</option>${sorted.map(c => `<option value="${c.id}" ${s.c === c.id ? 'selected' : ''}>${esc(c.n)}</option>`).join('')}</select><input type="text" id="st${k}" value="${esc(s.t)}" maxlength="80" placeholder="Commentaire court (80 caractères)"></div>`).join('')}
-      <p class="sub" style="font-size:12.5px">Seuls le pseudo, l’avatar, la présentation, les chiffres de collection et la vitrine sont publics. Jamais votre e-mail ni votre collection complète.</p>`}
-      <button class="btn" id="psave">Enregistrer</button> ${prof.pub && prof.handle ? `<a href="#/community/${esc(prof.handle)}" style="margin-left:10px">Voir mon profil public</a>` : ''}<p class="sub">${esc(pmsg)}</p></div>
-      <div class="card"><h2>Données</h2><p class="sub">Les données de ce navigateur ${sb ? 'sont synchronisées avec votre compte quand vous êtes connecté.' : 'restent dans ce navigateur.'}</p><button class="btn" id="preset">Vider la collection</button></div>`;
-    }
-    return [`<div class="ph">${prof.avatar && byId[prof.avatar] ? `<img class="av" src="${im('c', prof.avatar)}" alt="">` : `<div class="av">${name[0].toUpperCase()}</div>`}<div><h1>${esc(name)}</h1><span class="sub">${since}</span></div></div>${banner}
-    <div class="g3"><div class="stat"><span class="lab">Personnages</span><b>${own.length} / ${C.length}</b></div><div class="stat"><span class="lab">5★ possédés</span><b>${n5}</b></div><div class="stat"><span class="lab">Éidolons cumulés</span><b>${eids}</b></div><div class="stat"><span class="lab">Favoris</span><b>${fav.char.length + fav.build.length}</b></div></div>
-    <div class="bigtabs">${tabs.map(t => `<a class="${tab === t[0] ? 'on' : ''}" href="#/profil/${t[0]}">${ico(t[2])}${t[1]}</a>`).join('')}</div>${body}`, res, () => { const l = $('#login2'); if (l) l.onclick = () => $('#dlg').showModal(); }];
+  notfound() {
+    return [`<div class="nf"><b>404</b><h1>${L('Page introuvable', 'Page not found')}</h1><p class="lead">${L('Cette page n’existe pas ou a été déplacée.', 'This page does not exist or has moved.')}</p><div class="cta"><a class="btn pri" href="#/home">${L('Retour à l’accueil', 'Back to home')}</a><button class="btn" data-search="1">${ico('search')} ${L('Rechercher', 'Search')}</button></div></div>`];
   }
+};
+
+// ------------------------------------------------------------ calculateur de ressources
+let CE = store.get('astro_ce', { c: '', l1: 1, l2: 80, s: [[1, 6], [1, 10], [1, 10], [1, 10]] });
+const SKMAX = [6, 10, 10, 10];
+const loadCalc = async () => { if (!CALC) CALC = window.__CALC__ || await fetch('data/calc.json').then(r => r.json()).catch(() => ({ items: {}, c: {} })); return CALC; };
+function costOf(e) {
+  const d = CALC.c[e.c], out = {}; if (!d) return out;
+  const add = a => { for (let i = 0; i < a.length; i += 2) out[a[i]] = (out[a[i]] || 0) + a[i + 1]; };
+  for (let k = 0; k < 6; k++) { const cap = 20 + 10 * k; if (e.l1 <= cap && e.l2 > cap) add(d.a[k] || []); }
+  e.s.forEach(([a, b], i) => { for (let j = a - 1; j < b - 1; j++) add((d.s[i] || [])[j] || []); });
+  return out;
+}
+const itemGrid = tot => {
+  const ids = Object.keys(tot).sort((a, b) => (a === '2' ? -1 : b === '2' ? 1 : (CALC.items[b] || {}).r - (CALC.items[a] || {}).r || a - b));
+  if (!ids.length) return `<p class="sub">${L('Rien à dépenser avec ces niveaux.', 'Nothing to spend with these levels.')}</p>`;
+  return `<div class="items">${ids.map(i => { const it = CALC.items[i] || { f: i, e: i, r: 1 }; return `<div class="it r${it.r}" title="${esc(L(it.f, it.e))}"><img src="${im('i', i)}" alt="" loading="lazy"><b>${tot[i].toLocaleString(LOC())}</b><span>${esc(L(it.f, it.e))}</span></div>`; }).join('')}</div>`;
+};
+function drawCalc() {
+  const r = $('#cres'); if (!r || !CALC) return;
+  r.innerHTML = CE.c ? itemGrid(costOf(CE)) : `<p class="sub">${L('Choisissez un personnage.', 'Pick a character.')}</p>`;
+  const tot = {}; plan.forEach(e => { const c = costOf(e); Object.keys(c).forEach(k => tot[k] = (tot[k] || 0) + c[k]); });
+  const pl = $('#clist'); if (pl) pl.innerHTML = plan.length ? plan.map((e, i) => `<div class="team">${byId[e.c] ? tile(byId[e.c], { s: 1 }) : ''}<div style="flex:1;min-width:150px"><b>${esc((byId[e.c] || {}).n || e.c)}</b><br><span class="sub">${L('Niv.', 'Lv.')} ${e.l1} → ${e.l2} · ${e.s.map(s => s[0] + '→' + s[1]).join(' / ')}</span></div><button class="btn" data-cdel="${i}">${L('Retirer', 'Remove')}</button></div>`).join('') + sec(L('Total de ma liste', 'Total of my list')) + itemGrid(tot) : `<p class="sub">${L('Votre liste est vide : réglez un personnage puis cliquez sur « Ajouter ».', 'Your list is empty: set up a character then click “Add”.')}</p>`;
+}
+function readCE() {
+  if (!$('#ce_c')) return;
+  CE.c = $('#ce_c').value; const n = (id, d, lo, hi) => Math.min(hi, Math.max(lo, parseInt($(id).value) || d));
+  CE.l1 = n('#ce_l1', 1, 1, 80); CE.l2 = n('#ce_l2', 80, 1, 80); if (CE.l2 < CE.l1) CE.l2 = CE.l1;
+  CE.s = SKMAX.map((m, i) => { let a = n('#ce_a' + i, 1, 1, m), b = n('#ce_b' + i, m, 1, m); if (b < a) b = a; return [a, b]; }); store.set('astro_ce', CE);
+}
+pages.calc = cid => {
+  if (cid && byId[cid]) { CE.c = cid; store.set('astro_ce', CE); }
+  const sk = [L('Attaque normale', 'Basic ATK'), L('Compétence', 'Skill'), L('Ultime', 'Ultimate'), L('Talent', 'Talent')];
+  const sel = (id, max, v) => `<select id="${id}" data-ce="1" style="max-width:90px;margin:0">${Array.from({ length: max }, (_, k) => `<option ${k + 1 === v ? 'selected' : ''}>${k + 1}</option>`).join('')}</select>`;
+  return [`<h1>${L('Calculateur de ressources', 'Resource calculator')}</h1><p class="lead">${L('Matériaux d’ascension et de montée des compétences d’un personnage, avec le total pour toute votre liste. Les points d’EXP de niveau et les traces mineures ne sont pas inclus.', 'Ascension and skill-upgrade materials for a character, with the total for your whole list. Level EXP and minor traces are not included.')}</p>
+  <div class="card"><div class="g"><div><label class="lab">${L('Personnage', 'Character')}</label><select id="ce_c" data-ce="1"><option value="">${L('Choisir…', 'Pick…')}</option>${[...C].sort((a, b) => a.n.localeCompare(b.n)).map(c => `<option value="${c.id}" ${CE.c === c.id ? 'selected' : ''}>${esc(c.n)}</option>`).join('')}</select>
+  <label class="lab">${L('Niveau actuel → visé (1 à 80)', 'Current → target level (1–80)')}</label><div class="rg"><input type="number" id="ce_l1" data-ce="1" min="1" max="80" value="${CE.l1}"><span>→</span><input type="number" id="ce_l2" data-ce="1" min="1" max="80" value="${CE.l2}"></div>
+  <p class="sub" style="font-size:12.5px">${L('Aux niveaux 20, 30… 70 le personnage est supposé ne pas être encore ascensionné.', 'At levels 20, 30… 70 the character is assumed not to be ascended yet.')}</p></div>
+  <div><span class="lab">${L('Compétences (niveau actuel → visé)', 'Skills (current → target level)')}</span>${sk.map((n, i) => `<div class="rg" style="margin:8px 0"><span style="width:130px">${n}</span>${sel('ce_a' + i, SKMAX[i], CE.s[i][0])}<span>→</span>${sel('ce_b' + i, SKMAX[i], CE.s[i][1])}</div>`).join('')}</div></div>
+  <button class="btn pri" data-cadd="1">${ico('plus')} ${L('Ajouter à ma liste', 'Add to my list')}</button></div>
+  ${sec(L('Matériaux pour cette sélection', 'Materials for this selection'))}<div id="cres"><p class="sub">${L('Chargement…', 'Loading…')}</p></div>${sec(L('Ma liste', 'My list'))}<div id="clist"></div>`, null, async () => { await loadCalc(); drawCalc(); }];
+};
+
+// ------------------------------------------------------------ planificateur de tirages
+const BNR = { c: { base: .006, soft: 74, step: .06, hard: 90, up: .5 }, l: { base: .008, soft: 66, step: .07, hard: 80, up: .75 } };
+let PL = store.get('astro_pl', { b: 'c', j: 0, t: 0, x: 0, p: 0, g: false, k: 1 });
+function simulate(cfg, pity0, g0, nmax) {
+  const K = 7, rate = m => (m >= cfg.hard ? 1 : m < cfg.soft ? cfg.base : Math.min(1, cfg.base + cfg.step * (m - cfg.soft + 1)));
+  let cur_ = new Float64Array(cfg.hard * 2 * (K + 1)); const idx = (p, g, c) => (p * 2 + g) * (K + 1) + c;
+  cur_[idx(Math.min(pity0, cfg.hard - 1), g0 ? 1 : 0, 0)] = 1;
+  const cdf = Array.from({ length: K + 1 }, () => new Float64Array(nmax + 1)); // cdf[k][n] = P(au moins k exemplaires après n tirages)
+  for (let n = 1; n <= nmax; n++) {
+    const nx = new Float64Array(cur_.length);
+    for (let p = 0; p < cfg.hard; p++) for (let g = 0; g < 2; g++) for (let c = 0; c <= K; c++) {
+      const v = cur_[idx(p, g, c)]; if (!v) continue;
+      if (c === K) { nx[idx(0, 0, K)] += v; continue; }
+      const r = rate(p + 1);
+      if (r < 1) nx[idx(p + 1, g, c)] += v * (1 - r);
+      const win = g ? 1 : cfg.up;
+      nx[idx(0, 0, c + 1)] += v * r * win; if (win < 1) nx[idx(0, 1, c)] += v * r * (1 - win);
+    }
+    cur_ = nx;
+    const acc = new Float64Array(K + 1);
+    for (let p = 0; p < cfg.hard; p++) for (let g = 0; g < 2; g++) { let s = 0; for (let c = K; c >= 1; c--) { s += cur_[idx(p, g, c)]; acc[c] += s; } }
+    for (let k = 1; k <= K; k++) cdf[k][n] = acc[k];
+  }
+  return cdf;
+}
+function drawPlan() {
+  const o = $('#po'); if (!o) return; const cfg = BNR[PL.b], N = Math.floor(PL.j / 160) + PL.t + Math.floor(PL.x / 160);
+  const nmax = Math.min(1600, Math.max(N + 40, cfg.hard * 8)), cdf = simulate(cfg, Math.min(PL.p, cfg.hard - 1), PL.g, nmax), T = PL.k, pc = v => (v * 100 < 10 ? (v * 100).toFixed(1) : Math.round(v * 100)) + ' %';
+  const need = q => { for (let n = 1; n <= nmax; n++) if (cdf[T][n] >= q) return n; return '> ' + nmax; };
+  const W = 640, H = 220, X = n => 40 + (W - 60) * n / nmax, Y = v => H - 28 - (H - 48) * v, pts = []; for (let n = 0; n <= nmax; n += Math.max(1, Math.floor(nmax / 160))) pts.push(`${X(n).toFixed(1)},${Y(cdf[T][n] || 0).toFixed(1)}`);
+  o.innerHTML = `<div class="g3"><div class="stat"><span class="lab">${L('Tirages disponibles', 'Pulls available')}</span><b>${N}</b></div><div class="stat"><span class="lab">${L('Chance d’obtenir', 'Chance to get')} E${T - 1}</span><b>${pc(cdf[T][Math.min(N, nmax)] || 0)}</b></div><div class="stat"><span class="lab">${L('Prochain 5★ garanti en', 'Next 5★ guaranteed in')}</span><b>${cfg.hard - Math.min(PL.p, cfg.hard - 1)} ${L('tirages max', 'pulls max')}</b></div></div>
+  <div class="card" style="margin-top:14px"><svg viewBox="0 0 ${W} ${H}" class="chartsvg" role="img" aria-label="${L('Probabilité cumulée selon le nombre de tirages', 'Cumulative probability by number of pulls')}">${[0, .25, .5, .75, 1].map(v => `<line x1="40" x2="${W - 20}" y1="${Y(v)}" y2="${Y(v)}" class="gl"/><text x="34" y="${Y(v) + 4}" text-anchor="end" class="gt">${v * 100}%</text>`).join('')}
+  <polyline points="${pts.join(' ')}" fill="none" stroke="var(--ac)" stroke-width="2.5"/><line x1="${X(Math.min(N, nmax))}" x2="${X(Math.min(N, nmax))}" y1="20" y2="${H - 28}" stroke="var(--SS)" stroke-dasharray="4 3"/><text x="${Math.min(X(Math.min(N, nmax)) + 6, W - 90)}" y="34" class="gt" fill="var(--SS)">${L('Vous : ', 'You: ')}${N}</text>
+  ${[0, .25, .5, .75, 1].map(f => `<text x="${X(nmax * f)}" y="${H - 8}" text-anchor="middle" class="gt">${Math.round(nmax * f)}</text>`).join('')}</svg>
+  <div class="tw"><table style="min-width:0"><tr><th>${L('Objectif', 'Goal')}: E${T - 1}</th>${[.5, .75, .9, .99].map(q => `<th>${q * 100}%</th>`).join('')}</tr><tr><td>${L('Tirages nécessaires', 'Pulls needed')}</td>${[.5, .75, .9, .99].map(q => `<td>${need(q)}</td>`).join('')}</tr></table></div></div>
+  <div class="card"><div class="tw"><table style="min-width:0"><tr><th>${L('Avec vos ', 'With your ')}${N} ${L('tirages', 'pulls')}</th>${Array.from({ length: 7 }, (_, k) => `<th>E${k}</th>`).join('')}</tr><tr><td>${L('Chance d’obtenir au moins', 'Chance of at least')}</td>${Array.from({ length: 7 }, (_, k) => `<td>${pc(cdf[k + 1][Math.min(N, nmax)] || 0)}</td>`).join('')}</tr></table></div></div>`;
+}
+pages.plan = () => {
+  const inp = (id, lab, v, mx = 99999999) => `<label>${lab}<input type="number" data-pl="${id}" min="0" max="${mx}" value="${v}"></label>`;
+  return [`<h1>${L('Planificateur de tirages', 'Pull planner')}</h1><p class="lead">${L('Calcule vos chances d’obtenir un personnage (ou un cône) selon vos jades, vos passes, votre pity et la garantie du 50/50. Modèle simplifié basé sur les taux connus : à prendre comme une estimation.', 'Estimates your chances of getting a character (or cone) from your jades, passes, pity and 50/50 guarantee. Simplified model based on known rates: treat it as an estimate.')}</p>
+  <div class="card"><div class="g3"><label>${L('Type de bannière', 'Banner type')}<select data-pl="b"><option value="c" ${PL.b === 'c' ? 'selected' : ''}>${L('Personnage (90, 50/50)', 'Character (90, 50/50)')}</option><option value="l" ${PL.b === 'l' ? 'selected' : ''}>${L('Cône de lumière (80, 75/25)', 'Light Cone (80, 75/25)')}</option></select></label>
+  ${inp('j', L('Jade stellaire', 'Stellar Jade'), PL.j)}${inp('t', L('Passes spéciaux', 'Special Passes'), PL.t)}${inp('x', L('Jades à venir (événements…)', 'Upcoming jades (events…)'), PL.x)}${inp('p', L('Pity actuel', 'Current pity'), PL.p, 89)}
+  <label>${L('Exemplaires visés', 'Copies targeted')}<select data-pl="k">${Array.from({ length: 7 }, (_, k) => `<option value="${k + 1}" ${PL.k === k + 1 ? 'selected' : ''}>E${k}${k ? '' : L(' (1 exemplaire)', ' (1 copy)')}</option>`).join('')}</select></label></div>
+  <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" data-pl="g" ${PL.g ? 'checked' : ''} style="width:auto;margin:0"> ${L('Le prochain 5★ est garanti (j’ai perdu mon dernier 50/50)', 'My next 5★ is guaranteed (I lost my last 50/50)')}</label></div><div id="po"></div>
+  <p class="note">${L('160 jades = 1 tirage. Hypothèses : personnage 0,6 % (pity doux dès 74, garantie à 90) ; cône 0,8 % (dès 66, garantie à 80). Les taux réels du jeu peuvent légèrement différer.', '160 jades = 1 pull. Assumptions: character 0.6% (soft pity from 74, guarantee at 90); cone 0.8% (from 66, guarantee at 80). Real in-game rates may differ slightly.')}</p>`, null, drawPlan];
+};
+
+// ------------------------------------------------------------ statistiques de la communauté
+pages.stats = () => [`<h1>${L('Statistiques', 'Statistics')}</h1><p class="lead">${L('Ce que possèdent et aiment les joueurs inscrits sur Astrolabe. Les chiffres sont anonymes : aucun nom, seulement des totaux.', 'What the players registered on Astrolabe own and like. Figures are anonymous: no names, only totals.')}</p><div id="stt"><p class="sub">${L('Chargement…', 'Loading…')}</p></div>`, null, async () => {
+  const el = $('#stt'); if (!el) return;
+  if (!sb) { el.innerHTML = `<p class="sub">${L('Les statistiques demandent les comptes (Supabase).', 'Statistics need accounts (Supabase).')}</p>`; return; }
+  const { data, error } = await sb.rpc('site_stats'); if (!$('#stt')) return;
+  if (error || !data) { el.innerHTML = `<p class="sub">${L('Statistiques indisponibles : exécutez supabase/schema_v4.sql.', 'Statistics unavailable: run supabase/schema_v4.sql.')}</p>`; return; }
+  const players = data.players || 0, own = Object.entries(data.own || {}).filter(([i]) => byId[i]).sort((a, b) => b[1].n - a[1].n), fc = Object.entries(data.favc || {}).filter(([i]) => byId[i]).sort((a, b) => b[1] - a[1]), fb = Object.entries(data.favb || {}).filter(([i]) => byId[i]).sort((a, b) => b[1] - a[1]);
+  const bars = (arr, f, sub) => arr.length ? arr.slice(0, 12).map(([i, v]) => `<a class="bar" href="#/perso/${i}"><img src="${im('c', i)}" alt=""><span class="bn2">${esc(byId[i].n)}</span><span class="bt"><i style="width:${Math.max(3, f(v))}%"></i></span><em>${sub(v)}</em></a>`).join('') : `<p class="sub">${L('Pas encore de données.', 'No data yet.')}</p>`;
+  el.innerHTML = `<div class="g3"><div class="stat"><span class="lab">${L('Joueurs avec collection', 'Players with a collection')}</span><b>${players}</b></div><div class="stat"><span class="lab">${L('Personnages différents possédés', 'Different characters owned')}</span><b>${own.length}</b></div><div class="stat"><span class="lab">${L('Favoris enregistrés', 'Saved favourites')}</span><b>${fc.reduce((s, x) => s + x[1], 0) + fb.reduce((s, x) => s + x[1], 0)}</b></div></div>
+  <div class="g" style="margin-top:14px"><div class="card"><h2>${L('Les plus possédés', 'Most owned')}</h2>${bars(own, v => players ? v.n / players * 100 : 0, v => (players ? Math.round(v.n / players * 100) : 0) + ' % · E' + v.e)}</div>
+  <div class="card"><h2>${L('Personnages favoris', 'Favourite characters')}</h2>${bars(fc, v => v / (fc[0][1] || 1) * 100, v => '♥ ' + v)}</div>
+  <div class="card"><h2>${L('Builds favoris', 'Favourite builds')}</h2>${bars(fb, v => v / (fb[0][1] || 1) * 100, v => '♥ ' + v)}</div></div>
+  ${sec(L('Équipes les plus enregistrées', 'Most saved teams'))}${(data.teams || []).length ? data.teams.map(t => `<div class="team">${(t.m || []).filter(i => byId[i]).map(i => tile(byId[i], { s: 1 })).join('')}<span class="sub" style="margin-left:auto">${t.n}×</span></div>`).join('') : `<p class="sub">${L('Aucune équipe enregistrée pour l’instant.', 'No team saved yet.')}</p>`}`;
+}];
+
+// ------------------------------------------------------------ équipes
+let TB = store.get('astro_tb', { name: '', m: [{ c: '', l: '' }, { c: '', l: '' }, { c: '', l: '' }, { c: '', l: '' }] }), pickSlot = 0;
+const teamCode = m => m.filter(x => x.c).map(x => x.c + '-' + (x.l || '')).join('_');
+const parseTeam = s => (s || '').split('_').map(p => p.split('-')).filter(p => byId[p[0]]).slice(0, 4).map(p => ({ c: p[0], l: lcOf(p[1]) ? p[1] : '' }));
+const shareUrl = m => location.href.split('#')[0] + '#/team/' + teamCode(m);
+function teamAnalysis(m) {
+  const ms = m.filter(x => byId[x.c]).map(x => byId[x.c]); if (!ms.length) return '';
+  const paths = ms.map(c => c.pi), tips = [];
+  if (!paths.some(p => ['Priest', 'Knight'].includes(p)) && !ms.some(c => c.pi === 'Memory')) tips.push(L('Aucun soigneur ni protecteur : prévoyez des boucliers ou du soin.', 'No healer or protector: plan for shields or healing.'));
+  if (!paths.some(p => ['Shaman', 'Warlock'].includes(p))) tips.push(L('Pas de soutien Harmonie/Nihilité : les dégâts risquent d’être limités.', 'No Harmony/Nihility support: damage may be limited.'));
+  if (ms.length < 4) tips.push(L('Équipe incomplète : ajoutez ' + (4 - ms.length) + ' personnage(s).', 'Incomplete team: add ' + (4 - ms.length) + ' character(s).'));
+  const sc = ms.map(c => c.t).filter(t => TIERS.includes(t));
+  return `<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${ms.map(c => eiImg(c.ei) + piImg(c.pi)).join('')}${sc.length ? `<span class="sub" style="margin-left:8px">${L('Tiers : ', 'Tiers: ')}${ms.map(c => tchip(c.t)).join(' ')}</span>` : ''}</div>${tips.length ? `<ul class="tips">${tips.map(t => `<li>${t}</li>`).join('')}</ul>` : `<p class="sub" style="margin:8px 0 0">${L('Composition équilibrée sur le papier.', 'Balanced on paper.')}</p>`}</div>`;
+}
+const teamView = (m, o = {}) => `<div class="team big">${m.map(x => { const c = byId[x.c], l = x.l && lcOf(x.l); return c ? `<div class="tm">${tile(c)}<div class="lcm">${l ? `<img src="${im('l', l.id)}" alt=""><span>${esc(l.n)}</span>` : `<span class="sub">${L('Pas de cône', 'No cone')}</span>`}</div></div>` : ''; }).join('')}</div>`;
+pages.teams = () => {
+  const slots = TB.m.map((x, i) => { const c = byId[x.c]; const lcs = c ? LC.filter(l => l.pi === c.pi).sort((a, b) => b.r - a.r || a.n.localeCompare(b.n)) : []; return `<div class="slotb">${c ? tile(c) : `<button class="addslot" data-pick="${i}">${ico('plus')}</button>`}${c ? `<select data-tl="${i}"><option value="">${L('Cône de lumière…', 'Light Cone…')}</option>${lcs.map(l => `<option value="${l.id}" ${x.l === l.id ? 'selected' : ''}>${l.r}★ ${esc(l.n)}</option>`).join('')}</select><div style="display:flex;gap:6px"><button class="btn" data-pick="${i}">${L('Changer', 'Change')}</button><button class="btn" data-tclear="${i}">✕</button></div>` : `<span class="sub">${L('Emplacement', 'Slot')} ${i + 1}</span>`}</div>`; }).join('');
+  const code = teamCode(TB.m);
+  return [`<h1>${L('Équipes', 'Teams')}</h1><p class="lead">${L('Composez une équipe de 4 personnages avec leurs cônes, enregistrez-la et partagez-la avec un simple lien.', 'Build a 4-character team with their cones, save it and share it with a simple link.')}</p>
+  <div class="slots">${slots}</div><div id="tan">${teamAnalysis(TB.m)}</div>
+  <div class="card"><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input type="text" id="tname" placeholder="${L('Nom de l’équipe', 'Team name')}" maxlength="40" value="${esc(TB.name)}" style="max-width:280px;margin:0"><button class="btn pri" data-tsave="1">${L('Enregistrer', 'Save')}</button><button class="btn" data-tshare="1" ${code ? '' : 'disabled'}>${L('Copier le lien', 'Copy link')}</button><button class="btn" data-treset="1">${L('Vider', 'Clear')}</button></div>
+  <input type="text" id="tlink" readonly value="${code ? esc(shareUrl(TB.m)) : ''}" placeholder="${L('Le lien de partage apparaît ici', 'The share link shows up here')}" style="max-width:none;margin:10px 0 0"><p class="sub" id="tmsg" style="margin:6px 0 0"></p></div>
+  ${sec(L('Mes équipes', 'My teams'))}${myTeams.length ? myTeams.map(t => `<div class="card"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><b style="font:700 18px var(--se)">${esc(t.name)}</b><span style="margin-left:auto;display:flex;gap:6px"><button class="btn" data-tload="${t.id}">${L('Modifier', 'Edit')}</button><a class="btn" href="#/team/${teamCode(t.m)}">${L('Ouvrir', 'Open')}</a><button class="btn" data-tdel="${t.id}">${L('Supprimer', 'Delete')}</button></span></div>${teamView(t.m)}</div>`).join('') : `<p class="sub">${L('Aucune équipe enregistrée.' + (sb && !user ? ' Connectez-vous pour les retrouver partout.' : ''), 'No saved team.' + (sb && !user ? ' Log in to keep them everywhere.' : ''))}</p>`}`];
+};
+pages.team = code => {
+  const m = parseTeam(code); if (!m.length) return pages.notfound();
+  return [`<h1>${L('Équipe partagée', 'Shared team')}</h1><p class="lead">${L('Une équipe composée sur Astrolabe.', 'A team built on Astrolabe.')}</p>${teamView(m)}${teamAnalysis(m)}<div class="cta"><button class="btn pri" data-tcopy="${esc(code)}">${L('Modifier dans le constructeur', 'Edit in the builder')}</button><a class="btn" href="#/teams">${L('Mes équipes', 'My teams')}</a></div>`];
+};
+
+// ------------------------------------------------------------ administration
+let adm = { tab: 'fb', f: 'open' };
+pages.admin = tab => {
+  if (!isAdmin) return [`<div class="nf"><b>🔒</b><h1>${L('Accès réservé', 'Restricted')}</h1><p class="lead">${L('Cette page est réservée à l’administrateur du site. Connectez-vous avec le compte administrateur.', 'This page is for the site administrator. Log in with the administrator account.')}</p></div>`];
+  adm.tab = tab || adm.tab || 'fb';
+  return [`<h1>${L('Administration', 'Administration')}</h1><p class="lead">${L('Retours des visiteurs, erreurs détectées automatiquement et signalements de profils.', 'Visitor feedback, automatically detected errors and profile reports.')}</p>
+  <div class="bigtabs"><a class="${adm.tab === 'fb' ? 'on' : ''}" href="#/admin/fb">${ico('flag')}${L('Retours & erreurs', 'Feedback & errors')}</a><a class="${adm.tab === 'rp' ? 'on' : ''}" href="#/admin/rp">${ico('shield')}${L('Signalements', 'Reports')}</a></div>
+  <div class="opts"><div class="seg"><button class="${adm.f === 'open' ? 'on' : ''}" data-af="open">${L('À traiter', 'Open')}</button><button class="${adm.f === 'closed' ? 'on' : ''}" data-af="closed">${L('Traités', 'Done')}</button></div></div><div id="adm"><p class="sub">${L('Chargement…', 'Loading…')}</p></div>`, null, loadAdmin];
+};
+async function loadAdmin() {
+  const el = $('#adm'); if (!el || !sb || !isAdmin) return;
+  const tb = adm.tab === 'rp' ? 'reports' : 'feedback', { data, error } = await sb.from(tb).select('*').eq('status', adm.f).order('created_at', { ascending: false }).limit(200);
+  if (!$('#adm')) return;
+  if (error) { el.innerHTML = `<p class="sub">${L('Erreur : exécutez supabase/schema_v4.sql. ', 'Error: run supabase/schema_v4.sql. ')}(${esc(error.message)})</p>`; return; }
+  if (!data.length) { el.innerHTML = `<div class="card"><p class="sub" style="margin:0">${L('Rien ici pour l’instant 🎉', 'Nothing here for now 🎉')}</p></div>`; return; }
+  const act = (id, closed) => `<span class="acts">${closed ? `<button class="btn" data-aset="${tb}:${id}:open">${L('Rouvrir', 'Reopen')}</button>` : `<button class="btn pri" data-aset="${tb}:${id}:closed">${L('Marquer traité', 'Mark done')}</button>`}<button class="btn" data-adel="${tb}:${id}">${L('Supprimer', 'Delete')}</button></span>`;
+  if (tb === 'feedback') { const K = { bug: L('Bug', 'Bug'), data: L('Donnée fausse', 'Wrong data'), idea: L('Idée', 'Idea'), other: L('Autre', 'Other'), auto: L('Erreur auto', 'Auto error') };
+    el.innerHTML = data.map(f => `<div class="card fbk ${f.kind}"><div class="fh"><span class="tag ${f.kind === 'auto' || f.kind === 'bug' ? 'tg' : ''}" style="--tc:var(--SS)">${K[f.kind] || f.kind}</span><span class="sub">${fmtD(f.created_at)}</span>${f.page ? `<a href="${esc(f.page)}">${esc(f.page)}</a>` : ''}${act(f.id, adm.f === 'closed')}</div><p class="fmsg">${esc(f.message)}</p><small class="sub">${esc(f.agent || '')}${f.user_id ? ' · ' + L('utilisateur connecté', 'logged-in user') : ''}</small></div>`).join('');
+  } else {
+    const ids = [...new Set(data.map(r => r.profile_id))], { data: ps } = await sb.from('profiles').select('user_id,handle,display_name,is_public,bio').in('user_id', ids), pm = Object.fromEntries((ps || []).map(p => [p.user_id, p]));
+    const cnt = {}; data.forEach(r => cnt[r.profile_id] = (cnt[r.profile_id] || 0) + 1);
+    el.innerHTML = data.map(r => { const p = pm[r.profile_id]; return `<div class="card fbk"><div class="fh"><b>${p ? esc(p.display_name || p.handle || '—') : L('Profil supprimé', 'Deleted profile')}</b>${p && p.handle ? `<a href="#/community/${esc(p.handle)}">@${esc(p.handle)}</a>` : ''}<span class="tag ${p && p.is_public ? 'tg' : ''}" style="--tc:var(--A)">${p && p.is_public ? L('public', 'public') : L('masqué', 'hidden')}</span><span class="tag">${cnt[r.profile_id]}× ${L('signalé', 'reported')}</span><span class="sub">${fmtD(r.created_at)}</span>${act(r.id, adm.f === 'closed')}</div><p class="fmsg">${esc(r.reason)}</p>${p ? `<small class="sub">${esc(p.bio || '')}</small><div style="margin-top:8px"><button class="btn" data-ahide="${r.profile_id}:${p.is_public ? 0 : 1}">${p.is_public ? L('Masquer ce profil', 'Hide this profile') : L('Rendre public à nouveau', 'Make public again')}</button></div>` : ''}</div>`; }).join('');
+  }
+}
+
+// ------------------------------------------------------------ profil, bannières, communauté
+pages.profil = tab => {
+  tab = tab || 'col'; const own = Object.keys(prof.col).filter(i => byId[i]), n5 = own.filter(i => byId[i].r === 5).length, eids = own.reduce((s, i) => s + prof.col[i], 0);
+  const name = prof.name || (user ? user.email.split('@')[0] : L('Voyageur', 'Traveler')), since = user ? L('Membre depuis le ', 'Member since ') + new Date(user.created_at).toLocaleDateString(LOC()) : L('Profil local, enregistré dans ce navigateur', 'Local profile, saved in this browser');
+  const teams = new Map(); own.forEach(i => ((byId[i].b || {}).teams || []).forEach(t => { const ids = [...new Set([i, ...t.map(m => m.c)])]; if (ids.length >= 3 && ids.length <= 4 && ids.every(x => x in prof.col)) teams.set([...ids].sort().join('-'), ids); }));
+  const banner = !sb ? '' : user ? '' : `<div class="card" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span>${L('Connectez-vous pour retrouver votre collection et vos favoris sur tous vos appareils.', 'Log in to keep your collection and favourites on all your devices.')}</span><button class="btn pri" id="login">${L('Connexion', 'Log in')}</button></div>`;
+  const tabs = [['col', L('Collection', 'Collection'), 'users'], ['fav', L('Favoris', 'Favourites'), 'star'], ['teams', L('Équipes possibles', 'Possible teams'), 'cmp'], ['set', L('Paramètres', 'Settings'), 'info']];
+  let body = '', res = null;
+  if (tab === 'col') {
+    res = () => `<div class="grid">${C.filter(c => (!S.e || c.ei === S.e) && (!S.p || c.pi === S.p) && (!S.r || c.r == S.r) && has(c.n) && (!S.own || (S.own === 'own') === (c.id in prof.col))).map(c => { const on = c.id in prof.col; return `<div style="width:88px"><button class="cd own r${c.r}${on ? ' on' : ''}" data-own="${c.id}"><span class="pt"><img src="${im('c', c.id)}" alt="" loading="lazy">${eiImg(c.ei)}${on ? `<b class="bd">E${prof.col[c.id]}</b>` : ''}</span><span class="nm">${esc(c.n)}</span></button>${on ? `<select data-eid="${c.id}" style="width:88px;padding:3px;margin:4px 0 0;font-size:12px">${[0, 1, 2, 3, 4, 5, 6].map(e => `<option value="${e}" ${prof.col[c.id] == e ? 'selected' : ''}>E${e}</option>`).join('')}</select>` : ''}</div>`; }).join('')}</div>`;
+    body = `<p class="sub">${L('Cliquez sur un personnage pour l’ajouter à votre collection, puis choisissez son éidolon.', 'Click a character to add it to your collection, then pick its eidolon.')}</p>${cbar()}<div class="fl"><span class="lab">${L('Statut', 'Status')}</span><button class="chip ${S.own === '' ? 'on' : ''}" data-f="own" data-v="">${L('Tous', 'All')}</button><button class="chip ${S.own === 'own' ? 'on' : ''}" data-f="own" data-v="own">${L('Possédés', 'Owned')}</button><button class="chip ${S.own === 'miss' ? 'on' : ''}" data-f="own" data-v="miss">${L('Manquants', 'Missing')}</button></div><div id="res">${res()}</div>`;
+  } else if (tab === 'fav') {
+    const fc = C.filter(c => fav.char.includes(c.id)), fb = C.filter(c => fav.build.includes(c.id));
+    body = sec(L('Personnages favoris', 'Favourite characters')) + (fc.length ? `<div class="grid">${fc.map(c => tile(c, { sub: eN(c.ei) + ' · ' + pN(c.pi) })).join('')}</div>` : `<p class="sub">${L('Aucun pour l’instant. Cliquez sur « Personnage favori » dans une fiche.', 'None yet. Click “Favourite character” on a character page.')}</p>`) + sec(L('Builds favoris', 'Favourite builds')) + (fb.length ? fb.map(c => `<div class="card" style="display:flex;gap:14px;align-items:center">${tile(c, { s: 1 })}<div><b>${esc(c.n)}</b><br><span class="sub">${c.b ? esc(c.b.subs.slice(0, 4).map(stx).join(' > ')) : ''}</span><br><a href="#/perso/${c.id}/build">${L('Voir le build', 'See the build')}</a></div></div>`).join('') : `<p class="sub">${L('Aucun pour l’instant. Cliquez sur « Build favori » dans une fiche.', 'None yet. Click “Favourite build” on a character page.')}</p>`);
+  } else if (tab === 'teams') {
+    body = `<p class="sub">${L('Équipes du site dont tous les membres sont dans votre collection.', 'Site teams whose members are all in your collection.')}</p>` + ([...teams.values()].slice(0, 30).map(ids => `<div class="team">${ids.map(i => tile(byId[i], { s: 1 })).join('')}<a class="btn" style="margin-left:auto" href="#/team/${ids.map(i => i + '-').join('_')}">${L('Ouvrir', 'Open')}</a></div>`).join('') || `<p class="sub">${L('Aucune équipe complète pour l’instant. Ajoutez des personnages dans l’onglet Collection.', 'No complete team yet. Add characters in the Collection tab.')}</p>`);
+  } else {
+    const sorted = [...C].sort((x, y) => x.n.localeCompare(y.n)), shw = Array.from({ length: 6 }, (_, k) => prof.show[k] || { c: '', t: '' });
+    body = `<div class="card"><h2>${L('Profil', 'Profile')}</h2><label class="lab">${L('Pseudo affiché', 'Display name')}</label><input type="text" id="pn" value="${esc(prof.name)}" placeholder="${L('Votre pseudo', 'Your name')}" maxlength="24">
+    <p class="lab" style="margin-top:6px">Avatar</p><div class="grid" style="max-height:190px;overflow:auto;margin-bottom:12px">${C.map(c => `<button class="cd s ${prof.avatar === c.id ? 'on' : ''}" data-av="${c.id}" style="opacity:${prof.avatar === c.id ? 1 : .75}"><span class="pt" style="${prof.avatar === c.id ? 'border-color:var(--ac)' : ''}"><img src="${im('c', c.id)}" alt="" loading="lazy"></span></button>`).join('')}</div></div>
+    <div class="card"><h2>${L('Profil public (communauté)', 'Public profile (community)')}</h2>${!sb || !user ? `<p class="sub">${L('Connectez-vous pour partager votre profil avec la communauté.', 'Log in to share your profile with the community.')}</p>` : `<label style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><input type="checkbox" id="ppub" ${prof.pub ? 'checked' : ''} style="width:auto;margin:0"> ${L('Rendre mon profil public (désactivé par défaut)', 'Make my profile public (off by default)')}</label>
+    <label class="lab">${L('Nom d’utilisateur (adresse du profil)', 'Username (profile address)')}</label><input type="text" id="phd" value="${esc(prof.handle)}" placeholder="${L('ex. mon-pseudo', 'e.g. my-name')}" maxlength="20">
+    <label class="lab">${L('Présentation (200 caractères max.)', 'Bio (200 characters max.)')}</label><input type="text" id="pbio" value="${esc(prof.bio)}" maxlength="200" placeholder="${L('Une phrase sur vous', 'One sentence about you')}">
+    <p class="lab" style="margin-top:8px">${L('Vitrine : jusqu’à 6 personnages à mettre en avant', 'Showcase: up to 6 characters to highlight')}</p>${shw.map((s, k) => `<div class="slot"><select id="sc${k}"><option value="">— ${L('Emplacement', 'Slot')} ${k + 1} —</option>${sorted.map(c => `<option value="${c.id}" ${s.c === c.id ? 'selected' : ''}>${esc(c.n)}</option>`).join('')}</select><input type="text" id="st${k}" value="${esc(s.t)}" maxlength="80" placeholder="${L('Commentaire court (80 caractères)', 'Short comment (80 characters)')}"></div>`).join('')}
+    <p class="sub" style="font-size:12.5px">${L('Seuls le pseudo, l’avatar, la présentation, les chiffres de collection et la vitrine sont publics. Jamais votre e-mail ni votre collection complète.', 'Only the name, avatar, bio, collection figures and showcase are public. Never your e-mail or your full collection.')}</p>`}
+    <button class="btn pri" id="psave">${L('Enregistrer', 'Save')}</button> ${prof.pub && prof.handle ? `<a href="#/community/${esc(prof.handle)}" style="margin-left:10px">${L('Voir mon profil public', 'See my public profile')}</a>` : ''}<p class="sub">${esc(pmsg)}</p></div>
+    <div class="card"><h2>${L('Données', 'Data')}</h2><p class="sub">${L('Les données de ce navigateur ' + (sb ? 'sont synchronisées avec votre compte quand vous êtes connecté.' : 'restent dans ce navigateur.'), 'The data in this browser ' + (sb ? 'is synced with your account when you are logged in.' : 'stays in this browser.'))}</p><button class="btn" id="preset">${L('Vider la collection', 'Clear collection')}</button></div>`;
+  }
+  return [`<div class="ph">${prof.avatar && byId[prof.avatar] ? `<img class="av" src="${im('c', prof.avatar)}" alt="">` : `<div class="av">${esc(name[0].toUpperCase())}</div>`}<div><h1>${esc(name)}</h1><span class="sub">${since}</span></div></div>${banner}
+  <div class="g3"><div class="stat"><span class="lab">${L('Personnages', 'Characters')}</span><b>${own.length} / ${C.length}</b></div><div class="stat"><span class="lab">${L('5★ possédés', '5★ owned')}</span><b>${n5}</b></div><div class="stat"><span class="lab">${L('Éidolons cumulés', 'Total eidolons')}</span><b>${eids}</b></div><div class="stat"><span class="lab">${L('Favoris', 'Favourites')}</span><b>${fav.char.length + fav.build.length}</b></div></div>
+  <div class="bigtabs">${tabs.map(t => `<a class="${tab === t[0] ? 'on' : ''}" href="#/profil/${t[0]}">${ico(t[2])}${t[1]}</a>`).join('')}</div>${body}`, res];
 };
 function verBanner() {
   const nx = D.banners && D.banners.next; if (!nx) return '';
   const d = Math.ceil((new Date(nx.date) - Date.now()) / 864e5);
-  return `<a class="vs" href="#/banners"><div><span class="lab">Prochaine version</span><b>Version ${esc(nx.version)}</b><span class="sub">${esc(nx.headliner || '')}</span></div><div class="vn"><b data-cdd="${nx.date}">${Math.max(0, d)}</b><span>jours</span></div><div><span class="ct" data-cd="${nx.date}"></span><br><span class="sub">${nx.estimated ? 'Date estimée, à confirmer' : 'Date confirmée'}</span></div></a>`;
+  return `<a class="vs" href="#/banners"><div><span class="lab">${L('Prochaine version', 'Next version')}</span><b>${L('Version ', 'Version ')}${esc(nx.version)}</b><span class="sub">${esc(LANG === 'en' && nx.headliner_en || nx.headliner || '')}</span></div><div class="vn"><b data-cdd="${nx.date}">${Math.max(0, d)}</b><span>${L('jours', 'days')}</span></div><div><span class="ct" data-cd="${nx.date}"></span><br><span class="sub">${nx.estimated ? L('Date estimée, à confirmer', 'Estimated date, to be confirmed') : L('Date confirmée', 'Confirmed date')}</span></div></a>`;
 }
-function bannerCards(short) {
+function bannerCards() {
   const B = (D.banners && D.banners.list) || [], now = Date.now();
-  const L = B.filter(b => !b.end || new Date(b.end) > now).sort((x, y) => (x.end ? new Date(x.end) : 9e15) - (y.end ? new Date(y.end) : 9e15));
-  if (!L.length) return '<p class="sub">Aucune bannière renseignée.</p>';
-  return L.map(b => { const up = new Date(b.start) > now; return `<div class="card bn"><div class="bnimg">${b.chars.map(i => byId[i] ? `<a href="#/perso/${i}"><img src="${im('p', i)}" alt="${esc(byId[i].n)}"></a>` : '').join('')}</div><div><span class="tag tg" style="--tc:var(--ac)">${esc(b.kind)}</span><span class="tag">${up ? 'À venir' : 'En cours'}</span>
+  const Lst = B.filter(b => !b.end || new Date(b.end) > now).sort((x, y) => (x.end ? new Date(x.end) : 9e15) - (y.end ? new Date(y.end) : 9e15));
+  if (!Lst.length) return `<p class="sub">${L('Aucune bannière renseignée.', 'No banner listed.')}</p>`;
+  return Lst.map(b => { const up = new Date(b.start) > now; return `<div class="card bn"><div class="bnimg">${b.chars.map(i => byId[i] ? `<a href="#/perso/${i}"><img src="${im('p', i)}" alt="${esc(byId[i].n)}"></a>` : '').join('')}</div><div><span class="tag tg" style="--tc:var(--ac)">${esc(LANG === 'en' && b.kind_en || b.kind)}</span><span class="tag">${up ? L('À venir', 'Upcoming') : L('En cours', 'Ongoing')}</span>
   <h2 style="margin:8px 0 4px">${b.chars.map(i => byId[i] ? esc(byId[i].n) : '').join(' + ')}</h2>
-  ${b.lcs.map(i => { const l = LC.find(x => x.id === i); return l ? `<div class="row" style="padding:6px 0"><img src="${im('l', i)}" alt="" style="width:36px;height:36px"><div><b>${esc(l.n)}</b></div></div>` : ''; }).join('')}
-  <p class="ct" style="margin:8px 0 2px" ${up ? `data-cd="${b.start}" data-pre="Démarre dans "` : b.end ? `data-cd="${b.end}" data-pre="Se termine dans "` : ''}>${b.end || up ? '' : 'Sans date de fin annoncée'}</p>
-  <span class="sub" style="font-size:13px">${fmtD(b.start)} → ${b.end ? fmtD(b.end) : 'non annoncée'}</span></div></div>`; }).join('');
+  ${b.lcs.map(i => { const l = lcOf(i); return l ? `<div class="row" style="padding:6px 0"><img src="${im('l', i)}" alt="" style="width:36px;height:36px"><div><b>${esc(l.n)}</b></div></div>` : ''; }).join('')}
+  <p class="ct" style="margin:8px 0 2px" ${up ? `data-cd="${b.start}" data-pre="${L('Démarre dans ', 'Starts in ')}"` : b.end ? `data-cd="${b.end}" data-pre="${L('Se termine dans ', 'Ends in ')}"` : ''}>${b.end || up ? '' : L('Sans date de fin annoncée', 'No end date announced')}</p>
+  <span class="sub" style="font-size:13px">${fmtD(b.start)} → ${b.end ? fmtD(b.end) : L('non annoncée', 'not announced')}</span></div></div>`; }).join('');
 }
 pages.banners = () => {
   const r = (D.banners && D.banners.rateup4) || [];
-  return [`<h1>Bannières</h1><p class="lead">Les bannières en cours et à venir, avec le temps restant. Dates à l’heure de votre appareil, mises à jour par le site chaque semaine.</p>${verBanner()}${sec('En cours et à venir')}${bannerCards()}${r.length ? sec('Personnages 4★ à taux augmenté') + `<div class="grid">${r.map(i => byId[i] ? tile(byId[i]) : '').join('')}</div>` : ''}<p class="note">Les dates de bannières viennent de data/banners.json, mis à jour à chaque phase. Sources : Game8, Prydwen et HoYoverse.</p>`, null, tick];
+  return [`<h1>${L('Bannières', 'Banners')}</h1><p class="lead">${L('Les bannières en cours et à venir, avec le temps restant. Heures affichées dans le fuseau de votre appareil.', 'Current and upcoming banners with the time left. Times are shown in your device’s time zone.')}</p>${verBanner()}${sec(L('En cours et à venir', 'Ongoing and upcoming'))}${bannerCards()}${r.length ? sec(L('Personnages 4★ à taux augmenté', 'Boosted 4★ characters')) + `<div class="grid">${r.map(i => byId[i] ? tile(byId[i]) : '').join('')}</div>` : ''}<p class="note">${L('Les dates de bannières viennent de data/banners.json, mis à jour à chaque phase. Sources : Game8, Prydwen et HoYoverse.', 'Banner dates come from data/banners.json, updated each phase. Sources: Game8, Prydwen and HoYoverse.')}</p>`, null, tick];
 };
+const hue = s => { let h = 0; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; };
+const avOf = (p, cls = '') => p.avatar && byId[p.avatar] ? `<img class="av ${cls}" src="${im('c', p.avatar)}" alt="">` : `<div class="av ${cls}">${esc((p.display_name || p.handle || '?')[0].toUpperCase())}</div>`;
+const cover = p => { const h = hue(p.handle); return `style="--h1:${h};--h2:${(h + 70) % 360}"`; };
 pages.community = h => {
-  if (!sb) return ['<h1>Communauté</h1><p class="lead">La communauté nécessite les comptes (Supabase) : renseignez config.js.</p>'];
-  if (h) return [`<div id="cm"><p class="sub">Chargement…</p></div>`, null, () => loadProfile(h)];
-  return [`<h1>Communauté</h1><p class="lead">Les profils que les joueurs ont choisi de rendre publics : pseudo, avatar, collection en chiffres et vitrine de personnages. Rendez le vôtre public dans Mon profil → Paramètres.</p><div id="cm" class="g3"><p class="sub">Chargement…</p></div>`, null, async () => {
-    const { data, error } = await sb.from('profiles').select('handle,display_name,avatar,stats,bio').eq('is_public', true).not('handle', 'is', null).order('updated_at', { ascending: false }).limit(48);
+  if (!sb) return [`<h1>${L('Communauté', 'Community')}</h1><p class="lead">${L('La communauté nécessite les comptes (Supabase) : renseignez config.js.', 'The community needs accounts (Supabase): fill in config.js.')}</p>`];
+  if (h) return [`<div id="cm"><p class="sub">${L('Chargement…', 'Loading…')}</p></div>`, null, () => loadProfile(h)];
+  return [`<section class="soc"><div><span class="lab">${L('Réseau des joueurs', 'Player network')}</span><h1>${L('Communauté', 'Community')}</h1><p class="lead">${L('Découvrez les vitrines des autres Trailblazers, aimez leurs profils et partagez le vôtre. Rendez-le public dans Mon profil → Paramètres.', 'Discover other Trailblazers’ showcases, like their profiles and share yours. Make it public in My profile → Settings.')}</p></div><a class="btn pri" href="#/profil/settings">${L('Créer mon profil public', 'Create my public profile')}</a></section>
+  <div class="socbar"><input type="search" id="cmq" placeholder="${L('Rechercher un joueur…', 'Search a player…')}" autocomplete="off"><div class="seg"><button class="on" data-cms="new">${L('Récents', 'Recent')}</button><button data-cms="top">${L('Populaires', 'Popular')}</button></div></div>
+  <div id="cm" class="feed"><p class="sub">${L('Chargement…', 'Loading…')}</p></div>`, null, async () => {
+    const { data, error } = await sb.from('profiles').select('user_id,handle,display_name,avatar,stats,bio,showcase').eq('is_public', true).not('handle', 'is', null).order('updated_at', { ascending: false }).limit(48);
     const el = $('#cm'); if (!el) return;
-    el.innerHTML = error ? '<p class="sub">Communauté indisponible : exécutez supabase/schema_v3.sql.</p>' : (data || []).map(p => `<a class="sc" href="#/community/${esc(p.handle)}">${p.avatar && byId[p.avatar] ? `<img class="av" style="width:56px;height:56px;margin-bottom:8px" src="${im('c', p.avatar)}" alt="">` : ''}<b>${esc(p.display_name || p.handle)}</b><span>@${esc(p.handle)} · ${p.stats && p.stats.n != null ? p.stats.n + ' personnages' : ''}</span></a>`).join('') || '<p class="sub">Aucun profil public pour l’instant. Soyez le premier !</p>';
+    if (error) { el.innerHTML = `<p class="sub">${L('Communauté indisponible : exécutez supabase/schema_v3.sql.', 'Community unavailable: run supabase/schema_v3.sql.')}</p>`; return; }
+    const list = data || [], lk = {};
+    try { const r = await sb.from('profile_likes').select('profile_id').in('profile_id', list.map(p => p.user_id)); (r.data || []).forEach(x => { lk[x.profile_id] = (lk[x.profile_id] || 0) + 1; }); } catch { }
+    let sort = 'new', qq = '';
+    const draw = () => {
+      let rows = list.filter(p => !qq || (p.handle + ' ' + (p.display_name || '')).toLowerCase().includes(qq));
+      if (sort === 'top') rows = rows.slice().sort((a, b) => (lk[b.user_id] || 0) - (lk[a.user_id] || 0));
+      el.innerHTML = rows.map(p => { const st = p.stats || {}, sh = (Array.isArray(p.showcase) ? p.showcase : []).filter(s => byId[s.c]).slice(0, 4);
+        return `<a class="pcard" href="#/community/${esc(p.handle)}"><div class="pcov" ${cover(p)}></div>${avOf(p, 'pav')}<div class="pbody"><b>${esc(p.display_name || p.handle)}</b><span class="sub">@${esc(p.handle)}</span><p>${esc((p.bio || '').slice(0, 110))}</p>
+        <div class="pst"><span>${st.n ?? '—'} ${L('persos', 'chars')}</span><span>${st.n5 ?? '—'} 5★</span><span class="lk">♥ ${lk[p.user_id] || 0}</span></div>
+        ${sh.length ? `<div class="psh">${sh.map(s => `<img src="${im('c', s.c)}" alt="" loading="lazy">`).join('')}</div>` : ''}</div></a>`; }).join('') || `<p class="sub">${L('Aucun profil trouvé. Soyez le premier !', 'No profile found. Be the first!')}</p>`;
+    };
+    draw();
+    const qi = $('#cmq'); if (qi) qi.oninput = e => { qq = e.target.value.trim().toLowerCase(); draw(); };
+    document.querySelectorAll('[data-cms]').forEach(bt => bt.onclick = () => { sort = bt.dataset.cms; document.querySelectorAll('[data-cms]').forEach(x => x.classList.toggle('on', x === bt)); draw(); });
   }];
 };
 async function loadProfile(h) {
   const el = $('#cm'); if (!el) return;
   const { data: p } = await sb.from('profiles').select('*').eq('handle', h).eq('is_public', true).maybeSingle();
-  if (!p) { el.innerHTML = '<h1>Profil introuvable</h1><p class="sub">Ce profil n’existe pas ou n’est pas public.</p>'; return; }
+  if (!p) { el.innerHTML = `<h1>${L('Profil introuvable', 'Profile not found')}</h1><p class="sub">${L('Ce profil n’existe pas ou n’est pas public.', 'This profile does not exist or is not public.')}</p>`; return; }
   viewed = p; const [{ count }, mine] = await Promise.all([sb.from('profile_likes').select('*', { count: 'exact', head: true }).eq('profile_id', p.user_id), user ? sb.from('profile_likes').select('profile_id').eq('profile_id', p.user_id).eq('user_id', user.id) : { data: [] }]);
   const liked = !!(mine.data && mine.data.length), st = p.stats || {};
   const sh = (Array.isArray(p.showcase) ? p.showcase : []).filter(s => byId[s.c]).slice(0, 6);
-  el.innerHTML = `<a class="back" href="#/community" style="color:var(--ac)">← Communauté</a><div class="ph">${p.avatar && byId[p.avatar] ? `<img class="av" src="${im('c', p.avatar)}" alt="">` : `<div class="av">${esc((p.display_name || p.handle)[0].toUpperCase())}</div>`}<div><h1>${esc(p.display_name || p.handle)}</h1><span class="sub">@${esc(p.handle)}</span><p style="margin:8px 0 0">${esc(p.bio || '')}</p></div></div>
-  <div class="g3"><div class="stat"><span class="lab">Personnages</span><b>${st.n ?? '—'}</b></div><div class="stat"><span class="lab">5★</span><b>${st.n5 ?? '—'}</b></div><div class="stat"><span class="lab">Éidolons cumulés</span><b>${st.e ?? '—'}</b></div><div class="stat"><span class="lab">J’aime</span><b>${count || 0}</b></div></div>
-  <div style="display:flex;gap:8px;margin:14px 0;flex-wrap:wrap">${user ? `<button class="btn ${liked ? 'on' : ''}" data-like="1">${liked ? '♥ J’aime' : '♡ J’aime'}</button><button class="btn" data-report="1">Signaler</button>` : '<span class="sub">Connectez-vous pour aimer ou signaler ce profil.</span>'}</div>
-  ${sec('Vitrine')}${sh.length ? sh.map(s => { const c = byId[s.c]; return `<div class="card" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">${tile(c, { sub: c.e + ' · ' + c.p })}<div style="flex:1;min-width:200px"><p style="margin:0 0 6px">${esc(s.t || '')}</p><a href="#/perso/${c.id}/build">Voir le build recommandé</a></div></div>`; }).join('') : '<p class="sub">Vitrine vide.</p>'}`;
+  el.innerHTML = `<a class="back" href="#/community" style="color:var(--ac)">← ${L('Communauté', 'Community')}</a><div class="pfx"><div class="pcov big" ${cover(p)}></div><div class="pfh">${avOf(p, 'lg')}<div class="pfn"><h1>${esc(p.display_name || p.handle)}</h1><span class="sub">@${esc(p.handle)}</span></div><div class="pfa">${user ? `<button class="btn ${liked ? 'on' : ''}" data-like="1">${liked ? '♥' : '♡'} ${L('J’aime', 'Like')}</button><button class="btn" data-report="1">${L('Signaler', 'Report')}</button>` : ''}</div></div>${p.bio ? `<p class="pfb">${esc(p.bio)}</p>` : ''}
+  <div class="pfs"><div><b>${st.n ?? '—'}</b><span>${L('Personnages', 'Characters')}</span></div><div><b>${st.n5 ?? '—'}</b><span>5★</span></div><div><b>${st.e ?? '—'}</b><span>${L('Éidolons', 'Eidolons')}</span></div><div><b>♥ ${count || 0}</b><span>${L('J’aime', 'Likes')}</span></div></div>${user ? '' : `<p class="sub" style="padding:0 18px 14px">${L('Connectez-vous pour aimer ou signaler ce profil.', 'Log in to like or report this profile.')}</p>`}</div>
+  ${sec(L('Vitrine', 'Showcase'))}<div class="posts">${sh.length ? sh.map(s => { const c = byId[s.c]; return `<article class="post"><a class="pimg" href="#/perso/${c.id}"><img src="${im('p', c.id)}" alt="" loading="lazy"></a><div class="ptx"><b>${esc(c.n)}</b><span class="sub">${eN(c.ei)} · ${pN(c.pi)}</span><p>${esc(s.t || '')}</p><a href="#/perso/${c.id}/build">${L('Voir le build recommandé', 'See the recommended build')} →</a></div></article>`; }).join('') : `<p class="sub">${L('Vitrine vide.', 'Empty showcase.')}</p>`}</div>`;
 }
-const slotName = { body: 'Corps', feet: 'Bottes', sphere: 'Sphère', rope: 'Corde' };
+
+// ------------------------------------------------------------ résumé de version
+let VER = null;
+pages.versions = () => [`<section class="hlp"><span class="lab">${L('Histoire du jeu', 'Game story')}</span><h1>${L('Résumé de version', 'Version recap')}</h1><p class="lead">${L('Un résumé rapide de l’histoire, version par version, de la 1.0 à la 4.7. Attention : spoilers.', 'A quick story recap, version by version, from 1.0 to 4.7. Beware: spoilers.')}</p></section><div id="vr"><p class="sub">${L('Chargement…', 'Loading…')}</p></div>`, null, async () => {
+  const el = $('#vr'); if (!el) return;
+  if (!VER) { try { VER = await fetch('data/versions.json').then(r => r.json()); } catch { VER = null; } }
+  if (!VER) { el.innerHTML = `<p class="sub">${L('Données indisponibles.', 'Data unavailable.')}</p>`; return; }
+  let arc = '', spo = store.get('astro_spo', '1') === '1', sorted = false;
+  const A = Object.fromEntries(VER.arcs.map(a => [a.id, a])), cur = D.version || '';
+  const fmt = d => { if (!d) return ''; const [y, m] = d.split('-'); return new Date(+y, +m - 1, 1).toLocaleDateString(LOC(), { month: 'long', year: 'numeric' }); };
+  const draw = () => {
+    const rows = VER.v.filter(v => !arc || v.arc === arc).slice();
+    if (sorted) rows.reverse();
+    el.innerHTML = `<div class="vctl"><div class="chips">${[['', L('Tous', 'All')], ...VER.arcs.map(a => [a.id, LANG === 'en' ? a.en : a.fr])].map(a => `<button class="chip ${arc === a[0] ? 'on' : ''}" data-va="${a[0]}">${esc(a[1])}</button>`).join('')}</div><div class="seg"><button class="${spo ? 'on' : ''}" data-vs="1">${L('Spoilers visibles', 'Spoilers shown')}</button><button class="${spo ? '' : 'on'}" data-vs="0">${L('Masqués', 'Hidden')}</button><button class="${sorted ? 'on' : ''}" data-vo="1">${sorted ? '↑' : '↓'} ${L('Ordre', 'Order')}</button></div></div>
+    <p class="sub vnote">${esc(LANG === 'en' ? VER.note_en : VER.note_fr)}</p>
+    <div class="vtl">${rows.map(v => { const a = A[v.arc], cp = parseFloat(cur) === parseFloat(v.v), pend = v.up || parseFloat(v.v) > parseFloat(cur);
+      return `<article class="vc ${cp ? 'now' : ''} ${spo && !v.up ? '' : 'hid'}" style="--vc:${a.c}"><div class="vh"><b class="vn">${v.v}</b><div><h3>${v.t ? esc(v.t) : L('Version ' + v.v, 'Version ' + v.v)}</h3><span class="sub">${esc(LANG === 'en' ? a.en : a.fr)}${v.d ? ' · ' + fmt(v.d) : ''}</span></div>${cp ? `<span class="tag tg" style="--tc:var(--ac)">${L('Actuelle', 'Current')}</span>` : ''}${pend && !cp ? `<span class="tag" >${L('À venir', 'Upcoming')}</span>` : ''}${v.ok < 2 && !v.up ? `<span class="tag" title="${L('Peu de sources vérifiées', 'Few verified sources')}">${L('approximatif', 'approx.')}</span>` : ''}</div><p class="vt">${esc(LANG === 'en' ? v.en : v.fr)}</p>${!spo && !v.up ? `<button class="btn vrv" data-vr="1">${L('Afficher (spoiler)', 'Reveal (spoiler)')}</button>` : ''}</article>`; }).join('')}</div>`;
+    el.querySelectorAll('[data-va]').forEach(b => b.onclick = () => { arc = b.dataset.va; draw(); });
+    el.querySelectorAll('[data-vs]').forEach(b => b.onclick = () => { spo = b.dataset.vs === '1'; store.set('astro_spo', spo ? '1' : '0'); draw(); });
+    el.querySelectorAll('[data-vo]').forEach(b => b.onclick = () => { sorted = !sorted; draw(); });
+    el.querySelectorAll('[data-vr]').forEach(b => b.onclick = () => b.closest('.vc').classList.remove('hid') || b.remove());
+  };
+  draw();
+}];
+
+// ------------------------------------------------------------ fiche personnage
 function buildView(c) {
-  const b = c.b; if (!b) return '<p class="sub">Pas de build disponible.</p>';
-  const lc = b.lc && LC.find(l => l.id === b.lc), setRow = (id, f) => { const s = RS.find(x => x.id === id); return s ? row(im('r', id), s.n, f(s)) : ''; };
-  const rel = (b.rel || []).map(p => p[0] === p[1] ? setRow(p[0], s => '4 pièces : ' + s.d[s.d.length - 1]) : setRow(p[0], s => '2 pièces : ' + s.d[0]) + setRow(p[1], s => '2 pièces : ' + s.d[0])).join('');
-  const orn = (b.orn || []).map(i => setRow(i, s => '2 pièces : ' + s.d[0])).join('');
-  const teams = (b.teams || []).map(t => `<div class="team">${[{ c: c.id, l: b.lc }, ...t.filter(m => m.c !== c.id)].map(m => { const x = byId[m.c], l = m.l && LC.find(z => z.id === m.l); return x ? tile(x, { sub: l ? l.n : '' }) : ''; }).join('')}</div>`).join('');
-  const src = b.curated ? 'Sets et équipes vérifiés à la main.' : b.fallback ? 'Sets indicatifs : les plus utilisés par les personnages de la même voie.' : 'Données communautaires HSR Optimizer.';
-  return `<div class="g"><div class="card"><h2>Cône de lumière</h2>${lc ? row(im('l', lc.id), lc.n, `${lc.k} — ${lc.d}`) : '<p class="sub">Non renseigné.</p>'}<h2 style="margin-top:18px">Reliques</h2>${rel || '<p class="sub">Non renseigné.</p>'}<h2 style="margin-top:18px">Ornements planaires</h2>${orn || '<p class="sub">Non renseigné.</p>'}</div>
-  <div class="card"><h2>Stats à viser</h2><div class="tw"><table><tr><th>Pièce</th><th>Stat principale</th></tr>${Object.keys(slotName).map(k => `<tr><td>${slotName[k]}</td><td>${(b.parts[k] || []).join(' / ') || '—'}</td></tr>`).join('')}</table></div><p class="lab" style="margin:14px 0 6px">Sous-stats par priorité</p>${(b.subs || []).map((s, i) => `<span class="pill">${i + 1}. ${s}</span>`).join('')}</div></div>
-  ${sec('Équipes conseillées')}${teams || '<p class="sub">Pas d’équipe renseignée pour l’instant.</p>'}${b.teams_from_others ? '<p class="note" style="margin-top:0">Équipes tirées des builds d’autres personnages où celui-ci apparaît.</p>' : ''}<p class="note">${src} À adapter à vos pièces et à votre équipe.</p>`;
+  const b = c.b; if (!b) return `<p class="sub">${L('Pas de build disponible.', 'No build available.')}</p>`;
+  const slotName = { body: L('Corps', 'Body'), feet: L('Bottes', 'Feet'), sphere: L('Sphère', 'Sphere'), rope: L('Corde', 'Rope') };
+  const lc = b.lc && lcOf(b.lc), setRow = (id, f) => { const s = RS.find(x => x.id === id); return s ? row(im('r', id), s.n, esc(f(s))) : ''; };
+  const p2 = L('2 pièces : ', '2-piece: '), p4 = L('4 pièces : ', '4-piece: ');
+  const rel = (b.rel || []).map(p => p[0] === p[1] ? setRow(p[0], s => p4 + s.d[s.d.length - 1]) : setRow(p[0], s => p2 + s.d[0]) + setRow(p[1], s => p2 + s.d[0])).join('');
+  const orn = (b.orn || []).map(i => setRow(i, s => p2 + s.d[0])).join('');
+  const teams = (b.teams || []).map(t => { const mem = [{ c: c.id, l: b.lc }, ...t.filter(m => m.c !== c.id)]; return `<div class="team">${mem.map(m => { const x = byId[m.c], l = m.l && lcOf(m.l); return x ? tile(x, { sub: l ? esc(l.n) : '' }) : ''; }).join('')}<a class="btn" style="margin-left:auto" href="#/team/${mem.map(m => m.c + '-' + (m.l || '')).join('_')}">${L('Ouvrir', 'Open')}</a></div>`; }).join('');
+  const src = b.curated ? L('Sets et équipes vérifiés à la main.', 'Sets and teams checked by hand.') : b.fallback ? L('Sets indicatifs : les plus utilisés par les personnages de la même voie.', 'Indicative sets: the most used by characters of the same path.') : L('Données communautaires HSR Optimizer.', 'Community data from HSR Optimizer.');
+  return `<div class="g"><div class="card"><h2>${L('Cône de lumière', 'Light Cone')}</h2>${lc ? row(im('l', lc.id), lc.n, `${esc(lc.k)} — ${esc(lc.d)}`) : `<p class="sub">${L('Non renseigné.', 'Not provided.')}</p>`}<h2 style="margin-top:18px">${L('Reliques', 'Relics')}</h2>${rel || `<p class="sub">${L('Non renseigné.', 'Not provided.')}</p>`}<h2 style="margin-top:18px">${L('Ornements planaires', 'Planar ornaments')}</h2>${orn || `<p class="sub">${L('Non renseigné.', 'Not provided.')}</p>`}</div>
+  <div class="card"><h2>${L('Stats à viser', 'Target stats')}</h2><div class="tw"><table><tr><th>${L('Pièce', 'Piece')}</th><th>${L('Stat principale', 'Main stat')}</th></tr>${Object.keys(slotName).map(k => `<tr><td>${slotName[k]}</td><td>${esc((b.parts[k] || []).map(stx).join(' / ') || '—')}</td></tr>`).join('')}</table></div><p class="lab" style="margin:14px 0 6px">${L('Sous-stats par priorité', 'Substats by priority')}</p>${(b.subs || []).map((s, i) => `<span class="pill">${i + 1}. ${esc(stx(s))}</span>`).join('')}</div></div>
+  ${sec(L('Équipes conseillées', 'Recommended teams'))}${teams || `<p class="sub">${L('Pas d’équipe renseignée pour l’instant.', 'No team listed yet.')}</p>`}${b.teams_from_others ? `<p class="note" style="margin-top:0">${L('Équipes tirées des builds d’autres personnages où celui-ci apparaît.', 'Teams taken from other characters’ builds where this one appears.')}</p>` : ''}<p class="note">${src} ${L('À adapter à vos pièces et à votre équipe.', 'Adapt to your pieces and your team.')}</p>`;
 }
 function detail(id, tab) {
-  const c = byId[id]; if (!c) return ['<p class="sub">Personnage introuvable.</p>']; tab = tab || 'kit'; document.title = c.n + ' — Astrolabe';
+  const c = byId[id]; if (!c) return pages.notfound(); tab = tab || 'kit'; document.title = c.n + ' — Astrolabe';
   const f = (l, v) => `<div><dt>${l}</dt><dd>${v}</dd></div>`, s = c.st;
-  const tabs = [['kit', 'Kit', 'info'], ['build', 'Build & équipes', 'cone'], ['rank', 'Classements', 'end'], ['eid', 'Éidolons', 'star']];
-  const R = { ov: 'Vue d’ensemble', dps: 'Rôle DPS', support: 'Rôle Support', sustain: 'Rôle Sustain', moc: 'Memory of Chaos', pf: 'Pure Fiction', as: 'Apocalyptic Shadow' };
+  const tabs = [['kit', L('Kit', 'Kit'), 'info'], ['build', L('Build & équipes', 'Build & teams'), 'cone'], ['rank', L('Classements', 'Rankings'), 'end'], ['eid', L('Éidolons', 'Eidolons'), 'star']];
+  const R = { ov: L('Vue d’ensemble', 'Overview'), dps: L('Rôle DPS', 'DPS role'), support: L('Rôle Support', 'Support role'), sustain: L('Rôle Sustain', 'Sustain role'), moc: 'Memory of Chaos', pf: 'Pure Fiction', as: 'Apocalyptic Shadow' };
   let body = '';
-  if (tab === 'kit') body = `${sec('Caractéristiques (niveau 80)')}<div class="card"><dl>${f('PV', s.hp)}${f('ATQ', s.atk)}${f('DÉF', s.def)}${f('VIT', s.spd)}${f('Taux crit', s.cr + '%')}${f('DGT crit', s.cd + '%')}${f('Aggro', s.ta)}${f('Énergie', s.sp)}</dl></div>${sec('Compétences')}<div class="card">${c.s.map(k => `<div class="sk"><small>${k.t}</small><b>${k.n}</b><p>${k.d}</p></div>`).join('')}</div>`;
+  if (tab === 'kit') body = `${sec(L('Caractéristiques (niveau 80)', 'Stats (level 80)'))}<div class="card"><dl>${f(L('PV', 'HP'), s.hp)}${f(L('ATQ', 'ATK'), s.atk)}${f(L('DÉF', 'DEF'), s.def)}${f(L('VIT', 'SPD'), s.spd)}${f(L('Taux crit', 'CRIT Rate'), s.cr + '%')}${f(L('DGT crit', 'CRIT DMG'), s.cd + '%')}${f('Aggro', s.ta)}${f(L('Énergie', 'Energy'), s.sp)}</dl></div>${sec(L('Compétences', 'Skills'))}<div class="card">${c.s.map(k => `<div class="sk"><small>${L(k.t, SKT[k.t] || k.t)}</small><b>${esc(k.n)}</b><p>${esc(k.d)}</p></div>`).join('')}</div>`;
   else if (tab === 'build') body = buildView(c);
-  else if (tab === 'rank') body = `${sec('Classements (Game8)')}<div class="card tw"><table><tr><th>Classement</th><th>Tier</th></tr>${Object.keys(R).map(k => `<tr><td>${R[k]}</td><td>${c.tr[k] ? tchip(c.tr[k]) : '<span class="sub">—</span>'}</td></tr>`).join('')}</table></div>`;
-  else body = `${sec('Éidolons')}<div class="card">${c.x.map((k, i) => `<div class="sk"><small>E${i + 1}</small><b>${k.n}</b><p>${k.d}</p></div>`).join('')}</div>`;
-  return [`<div class="hero"><img src="${im('p', c.id)}" alt="${c.n}"><div><h1>${c.n}</h1><span class="tag">${'★'.repeat(c.r)}</span><span class="tag" style="color:${EC[c.e]};border-color:${EC[c.e]}">${c.e}</span><span class="tag">${c.p}</span>${tchip(c.t)}
-  <p class="sub" style="max-width:520px">Tier ${c.t} en vue d’ensemble. ${c.tr.dps ? 'Rôle DPS : ' + c.tr.dps + '. ' : ''}${c.tr.support ? 'Rôle Support : ' + c.tr.support + '. ' : ''}${c.tr.sustain ? 'Rôle Sustain : ' + c.tr.sustain + '.' : ''}</p>
-  <div style="display:flex;gap:8px;flex-wrap:wrap">${star('char', c.id, 'Personnage favori')}${star('build', c.id, 'Build favori')}<a class="btn" href="#/compare/${c.id}">Comparer</a></div></div></div>
+  else if (tab === 'rank') body = `${sec(L('Classements (Game8)', 'Rankings (Game8)'))}<div class="card tw"><table><tr><th>${L('Classement', 'Ranking')}</th><th>Tier</th></tr>${Object.keys(R).map(k => `<tr><td>${R[k]}</td><td>${c.tr[k] ? tchip(c.tr[k]) : '<span class="sub">—</span>'}${trendOf(k, c.id) ? ` <i class="tr ${trendOf(k, c.id)}">${{ up: '▲', down: '▼', new: 'NEW' }[trendOf(k, c.id)]}</i>` : ''}</td></tr>`).join('')}</table></div>`;
+  else body = `${sec(L('Éidolons', 'Eidolons'))}<div class="card">${c.x.map((k, i) => `<div class="sk"><small>E${i + 1}</small><b>${esc(k.n)}</b><p>${esc(k.d)}</p></div>`).join('')}</div>`;
+  return [`<div class="hero"><img src="${im('p', c.id)}" alt="${esc(c.n)}"><div><h1>${esc(c.n)}</h1><span class="tag">${'★'.repeat(c.r)}</span><span class="tag etag" style="color:${eC(c.ei)};border-color:${eC(c.ei)}">${eiImg(c.ei)} ${eN(c.ei)}</span><span class="tag etag">${piImg(c.pi)} ${pN(c.pi)}</span>${tchip(c.t)}
+  <p class="sub" style="max-width:560px">${L('Tier ' + c.t + ' en vue d’ensemble. ', 'Tier ' + c.t + ' overall. ')}${c.tr.dps ? L('Rôle DPS : ', 'DPS role: ') + c.tr.dps + '. ' : ''}${c.tr.support ? L('Rôle Support : ', 'Support role: ') + c.tr.support + '. ' : ''}${c.tr.sustain ? L('Rôle Sustain : ', 'Sustain role: ') + c.tr.sustain + '.' : ''}</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">${star('char', c.id, L('Personnage favori', 'Favourite character'))}${star('build', c.id, L('Build favori', 'Favourite build'))}<a class="btn" href="#/compare/${c.id}">${L('Comparer', 'Compare')}</a><a class="btn" href="#/calc/${c.id}">${L('Calculer les matériaux', 'Materials')}</a></div></div></div>
   <div class="bigtabs">${tabs.map(t => `<a class="${tab === t[0] ? 'on' : ''}" href="#/perso/${id}/${t[0]}">${ico(t[2])}${t[1]}</a>`).join('')}</div><div class="fade">${body}</div>`];
 }
 
+// ------------------------------------------------------------ cadre du site : menu, en-tête, fenêtres
+function dialogs() {
+  return `<dialog id="dlg"><h2 class="dt">${L('Compte', 'Account')}</h2><p class="sub" style="margin:0 0 12px;font-size:13px">${L('Pour retrouver vos favoris et votre collection sur tous vos appareils.', 'To keep your favourites and collection on all your devices.')}</p>
+  <input type="text" id="em" placeholder="E-mail" autocomplete="email"><input type="password" id="pw" placeholder="${L('Mot de passe (8 caractères min.)', 'Password (8 characters min.)')}" autocomplete="current-password">
+  <div class="msg" id="msg"></div><div class="dact"><button class="btn pri" id="bin">${L('Se connecter', 'Log in')}</button><button class="btn" id="bup">${L('Créer un compte', 'Create account')}</button><button class="btn" id="bfg">${L('Mot de passe oublié', 'Forgot password')}</button><button class="btn" data-close="dlg">${L('Fermer', 'Close')}</button></div></dialog>
+  <dialog id="sdlg" class="wide"><input type="search" id="sq" placeholder="${L('Rechercher un personnage, un cône, un set, une page…', 'Search a character, cone, set or page…')}" autocomplete="off"><div id="sr" class="sres"></div><div class="dact"><span class="sub" style="font-size:12px">${L('Échap pour fermer', 'Esc to close')}</span><button class="btn" data-close="sdlg">${L('Fermer', 'Close')}</button></div></dialog>
+  <dialog id="fdlg"><h2 class="dt">${L('Signaler un problème', 'Report a problem')}</h2><p class="sub" style="margin:0 0 12px;font-size:13px">${L('Un bug, une donnée fausse, une idée ? Votre message arrive directement à l’administrateur.', 'A bug, wrong data, an idea? Your message goes straight to the administrator.')}</p>
+  <select id="fk"><option value="bug">${L('Un bug', 'A bug')}</option><option value="data">${L('Une donnée fausse', 'Wrong data')}</option><option value="idea">${L('Une idée', 'An idea')}</option><option value="other">${L('Autre', 'Other')}</option></select>
+  <textarea id="ft" rows="5" maxlength="1000" placeholder="${L('Décrivez ce qui ne va pas (page concernée, ce que vous attendiez…)', 'Describe what is wrong (which page, what you expected…)')}"></textarea><div class="msg" id="fm"></div><div class="dact"><button class="btn pri" id="fsend">${L('Envoyer', 'Send')}</button><button class="btn" data-close="fdlg">${L('Fermer', 'Close')}</button></div></dialog>
+  <dialog id="pdlg" class="wide"><input type="search" id="pq" placeholder="${L('Choisir un personnage…', 'Pick a character…')}" autocomplete="off"><div id="pg" class="grid pgrid"></div><div class="dact"><button class="btn" data-close="pdlg">${L('Fermer', 'Close')}</button></div></dialog>`;
+}
+function chrome() {
+  const NAV = [['', [['#/home', 'home', L('Accueil', 'Home')]]], [L('Base de données', 'Database'), [['#/perso', 'users', L('Personnages', 'Characters')], ['#/lc', 'cone', L('Cônes de lumière', 'Light Cones')], ['#/rel', 'box', L('Reliques', 'Relics')]]], [L('Classements', 'Rankings'), [['#/tier', 'tier', 'Tier list'], ['#/banners', 'star', L('Bannières', 'Banners')]]],
+    [L('End game', 'End game'), [['#/end/moc', 'end', 'Memory of Chaos'], ['#/end/pf', 'end', 'Pure Fiction'], ['#/end/as', 'end', 'Apocalyptic Shadow'], ['#/end/aa', 'end', 'Anomaly Arbitration']]],
+    [L('Outils', 'Tools'), [['#/compare', 'cmp', L('Comparateur', 'Compare')], ['#/calc', 'calc', L('Calculateur', 'Calculator')], ['#/plan', 'dice', L('Tirages', 'Pull planner')], ['#/teams', 'team', L('Équipes', 'Teams')]]], [L('Guides', 'Guides'), [['#/versions', 'book', L('Résumé de version', 'Version recap')], ['#/events', 'cal', L('Événements', 'Events')], ['#/aide', 'book', L('Aides', 'Help')]]],
+    [L('Communauté', 'Community'), [['#/community', 'users', L('Joueurs', 'Players')], ['#/stats', 'chart', L('Statistiques', 'Statistics')]]], [L('Compte', 'Account'), [['#/profil', 'user', L('Mon profil', 'My profile')], ['#/profil/fav', 'star', L('Favoris', 'Favourites')]]], ...(isAdmin ? [[L('Administration', 'Admin'), [['#/admin', 'shield', L('Retours & signalements', 'Feedback & reports')]]]] : [])];
+  $('#side').innerHTML = `<a class="brand" href="#/home"><svg class="logo" viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".55" stop-color="#e0b050"/><stop offset="1" stop-color="#b98cff"/></linearGradient></defs><g stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round"><circle cx="32" cy="32" r="26" class="r1"/><circle cx="32" cy="32" r="17" stroke-dasharray="2 4" class="r2"/><path d="M32 3v58M3 32h58" opacity=".55"/><path d="M32 12l5 15 15 5-15 5-5 15-5-15-15-5 15-5z" fill="url(#lg)" fill-opacity=".22"/></g><circle cx="32" cy="32" r="3" fill="#fff"/></svg><div class="wm"><b>ASTROLABE</b><i>${L('Guide HSR', 'HSR guide')}</i><small>HSR v${esc(D.version || '')} · ${D.updated}</small></div></a>
+  <nav class="nv">${NAV.map(g => (g[0] ? `<h4>${g[0]}</h4>` : '') + g[1].map(i => `<a href="${i[0]}">${ico(i[1])}${i[2]}</a>`).join('')).join('')}</nav><div class="sf"><small>${L('Site de fans non officiel. Images et noms © HoYoverse. Classements : Game8.', 'Unofficial fan site. Images and names © HoYoverse. Rankings: Game8.')}</small></div>`;
+  $('#hd').innerHTML = `<button class="btn io" id="burger" aria-label="Menu">${ico('menu')}</button><button class="srch" data-search="1">${ico('search')}<span>${L('Rechercher…', 'Search…')}</span><kbd>Ctrl K</kbd></button><span class="sp"></span>
+  <div class="seg lang"><button data-lang="fr" class="${LANG === 'fr' ? 'on' : ''}">FR</button><button data-lang="en" class="${LANG === 'en' ? 'on' : ''}">EN</button></div><button class="btn io" id="theme" aria-label="${L('Thème', 'Theme')}">${ico('sun')}</button>${sb ? `<button class="btn" id="fbk" title="${L('Signaler un problème', 'Report a problem')}">${ico('flag')}<span class="hs">${L('Signaler', 'Report')}</span></button>` : ''}<span id="acct"></span>`;
+  $('#dlgs').innerHTML = dialogs(); acct();
+}
+function runSearch(q) {
+  q = q.trim().toLowerCase(); const out = $('#sr'); if (!out) return;
+  const PG = [['#/home', L('Accueil', 'Home')], ['#/tier', 'Tier list'], ['#/banners', L('Bannières', 'Banners')], ['#/compare', L('Comparateur', 'Compare')], ['#/calc', L('Calculateur', 'Calculator')], ['#/plan', L('Planificateur de tirages', 'Pull planner')], ['#/teams', L('Équipes', 'Teams')], ['#/versions', L('Résumé de version', 'Version recap')], ['#/events', L('Événements', 'Events')], ['#/stats', L('Statistiques', 'Statistics')], ['#/community', L('Communauté', 'Community')], ['#/profil', L('Mon profil', 'My profile')], ['#/end/moc', 'Memory of Chaos'], ['#/end/pf', 'Pure Fiction'], ['#/end/as', 'Apocalyptic Shadow']];
+  const m = (n) => n.toLowerCase().includes(q);
+  const ch = q ? C.filter(c => m(c.n)).slice(0, 8) : C.slice(0, 6), lc = q ? LC.filter(l => m(l.n)).slice(0, 5) : [], rs = q ? RS.filter(r => m(r.n)).slice(0, 5) : [], pg = q ? PG.filter(p => m(p[1])).slice(0, 5) : PG.slice(0, 6);
+  const it = (h, img, t, s) => `<a class="sit" href="${h}">${img ? `<img src="${img}" alt="">` : '<span class="pgi">→</span>'}<b>${esc(t)}</b><em>${esc(s || '')}</em></a>`;
+  out.innerHTML = (ch.length ? `<h5>${L('Personnages', 'Characters')}</h5>` + ch.map(c => it('#/perso/' + c.id, im('c', c.id), c.n, eN(c.ei) + ' · ' + pN(c.pi))).join('') : '') + (lc.length ? `<h5>${L('Cônes de lumière', 'Light Cones')}</h5>` + lc.map(l => it('#/lc', im('l', l.id), l.n, l.r + '★ · ' + pN(l.pi))).join('') : '') + (rs.length ? `<h5>${L('Reliques', 'Relics')}</h5>` + rs.map(r => it('#/rel', im('r', r.id), r.n, r.pl ? L('Ornement', 'Ornament') : L('Relique', 'Relic'))).join('') : '') + (pg.length ? '<h5>Pages</h5>' + pg.map(p => it(p[0], '', p[1], '')).join('') : '') || `<p class="sub">${L('Aucun résultat.', 'No result.')}</p>`;
+}
+function openSearch() { const d = $('#sdlg'); if (!d || d.open) return; d.showModal(); $('#sq').value = ''; runSearch(''); $('#sq').focus(); }
+function openPick(i) { pickSlot = i; const d = $('#pdlg'); $('#pq').value = ''; fillPick(''); d.showModal(); $('#pq').focus(); }
+function fillPick(q) { q = q.toLowerCase(); $('#pg').innerHTML = C.filter(c => c.n.toLowerCase().includes(q)).map(c => `<button class="cd s r${c.r}" data-pg="${c.id}" title="${esc(c.n)}"><span class="pt"><img src="${im('c', c.id)}" alt="" loading="lazy">${eiImg(c.ei)}</span><span class="nm">${esc(c.n)}</span></button>`).join(''); }
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); }));
+const padTeam = m => { const a = m.map(x => ({ c: x.c, l: x.l || '' })); while (a.length < 4) a.push({ c: '', l: '' }); return a; };
+
 // ------------------------------------------------------------ routeur
-let cur = '', resFn = null;
 function render() {
   if (!D) return;
   const [, page = 'home', a, b] = location.hash.split('/'), key = page;
   if (key !== cur) { S = { q: '', e: '', p: '', r: '', own: '' }; document.title = 'Astrolabe — Honkai: Star Rail'; cur = key; }
-  const full = '#/' + page + (a ? '/' + a : '');
-  document.querySelectorAll('.nv a').forEach(x => x.classList.toggle('on', x.getAttribute('href') === full || (!a && x.getAttribute('href') === '#/' + page) || (page === 'perso' && x.getAttribute('href') === '#/perso')));
-  const out = page === 'perso' && a ? detail(a, b) : page === 'fav' ? pages.profil('fav') : (pages[page] || pages.home)(a, b);
+  const full = '#/' + page + (a ? '/' + a : ''), links = [...document.querySelectorAll('.nv a')], nav = page === 'team' ? '#/teams' : null;
+  let hit = links.filter(x => x.getAttribute('href') === full); if (!hit.length) hit = links.filter(x => x.getAttribute('href') === (nav || '#/' + page));
+  links.forEach(x => x.classList.toggle('on', hit.includes(x)));
+  const out = page === 'perso' && a ? detail(a, b) : page === 'fav' ? pages.profil('fav') : page === 'notfound' ? pages.notfound() : (pages[page] || pages.notfound)(a, b);
   app.innerHTML = out[0]; app.firstElementChild && app.firstElementChild.classList.add('fade'); resFn = out[1]; if (out[2]) out[2]();
   tick(); const q = $('#q'); if (q && resFn) q.oninput = e => { S.q = e.target.value; $('#res').innerHTML = resFn(); };
 }
 document.addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.f) { S[b.dataset.f] = b.dataset.v; render(); }
-  else if (b.dataset.tm) { TM = b.dataset.tm; render(); }
-  else if (b.dataset.fav) { const [k, i] = b.dataset.fav.split(':'); toggleFav(k, i); }
-  else if (b.dataset.own) { const i = b.dataset.own; setOwn(i, i in prof.col ? null : 0); const q = $('#q'); render(); }
-  else if (b.dataset.av) { prof.avatar = b.dataset.av; saveProf(); render(); }
-  else if (b.id === 'psave') { prof.name = $('#pn').value.trim(); if ($('#phd')) { prof.pub = $('#ppub').checked; prof.handle = $('#phd').value.trim().toLowerCase(); prof.bio = $('#pbio').value.trim(); prof.show = [0, 1, 2, 3, 4, 5].map(k => ({ c: $('#sc' + k).value, t: $('#st' + k).value.trim() })).filter(s => s.c); if (prof.pub && !/^[a-z0-9_-]{3,20}$/.test(prof.handle)) { pmsg = 'Nom d’utilisateur invalide : 3 à 20 caractères (a-z, 0-9, - et _).'; render(); return; } } saveProf().then(render); }
-  else if (b.dataset.like) { const p = viewed; sb.from('profile_likes').select('profile_id').eq('profile_id', p.user_id).eq('user_id', user.id).then(async r => { if (r.data && r.data.length) await sb.from('profile_likes').delete().match({ profile_id: p.user_id, user_id: user.id }); else await sb.from('profile_likes').insert({ profile_id: p.user_id, user_id: user.id }); loadProfile(p.handle); }); }
-  else if (b.dataset.report) { const r = prompt('Pourquoi signalez-vous ce profil ?'); if (r && r.trim()) sb.from('reports').insert({ profile_id: viewed.user_id, reason: r.trim().slice(0, 300) }).then(x => alert(x.error ? 'Échec du signalement.' : 'Merci, le signalement a été envoyé.')); }
-  else if (b.id === 'preset') { if (confirm('Vider toute la collection ?')) { Object.keys(prof.col).forEach(i => setOwn(i, null)); render(); } }
+  const a = e.target.closest('a'); if (a && a.closest('dialog')) { const d = a.closest('dialog'); if (d.open) d.close(); }
+  const b = e.target.closest('button'); if (!b) return; const ds = b.dataset;
+  if (ds.f !== undefined) { S[ds.f] = ds.v; render(); }
+  else if (ds.tm) { TM = ds.tm; render(); }
+  else if (ds.te) { TE = ds.te; store.set('astro_te', TE); render(); }
+  else if (ds.ts) { TS = ds.ts; store.set('astro_ts', TS); render(); }
+  else if (ds.fav) { const [k, i] = ds.fav.split(':'); toggleFav(k, i); }
+  else if (ds.own) { const i = ds.own; setOwn(i, i in prof.col ? null : 0); render(); }
+  else if (ds.av) { prof.avatar = ds.av; saveProf(); render(); }
+  else if (ds.lang) setLang(ds.lang);
+  else if (ds.search) openSearch();
+  else if (ds.close) $('#' + ds.close).close();
+  else if (ds.pick !== undefined) openPick(+ds.pick);
+  else if (ds.pg) { const c = byId[ds.pg], old = TB.m[pickSlot]; TB.m[pickSlot] = { c: c.id, l: old && old.c === c.id ? old.l : (c.b && c.b.lc) || '' }; store.set('astro_tb', TB); $('#pdlg').close(); render(); }
+  else if (ds.tclear !== undefined) { TB.m[+ds.tclear] = { c: '', l: '' }; store.set('astro_tb', TB); render(); }
+  else if (ds.treset) { TB = { name: '', m: padTeam([]) }; store.set('astro_tb', TB); render(); }
+  else if (ds.tsave) {
+    const m = TB.m.filter(x => x.c); if (!m.length) { $('#tmsg').textContent = L('Ajoutez au moins un personnage.', 'Add at least one character.'); return; }
+    const name = ($('#tname').value.trim() || L('Mon équipe', 'My team')).slice(0, 40), id = TB.id || uid(), t = { id, name, m }, i = myTeams.findIndex(x => x.id === id);
+    if (i >= 0) myTeams[i] = t; else myTeams.push(t); TB.id = id; TB.name = name; store.set('astro_tb', TB); store.set('astro_teams', myTeams);
+    if (sb && user) sb.from('teams').upsert({ id, user_id: user.id, name, members: m }).then(r => { if (r.error) console.warn(r.error.message); });
+    render(); const tm = $('#tmsg'); if (tm) tm.textContent = L('Équipe enregistrée.', 'Team saved.');
+  }
+  else if (ds.tshare) { const u = shareUrl(TB.m); (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(() => $('#tmsg').textContent = L('Lien copié !', 'Link copied!')).catch(() => { $('#tlink').select(); $('#tmsg').textContent = L('Copiez le lien ci-dessus (Ctrl+C).', 'Copy the link above (Ctrl+C).'); }); }
+  else if (ds.tload) { const t = myTeams.find(x => x.id === ds.tload); if (t) { TB = { id: t.id, name: t.name, m: padTeam(t.m) }; store.set('astro_tb', TB); render(); scrollTo(0, 0); } }
+  else if (ds.tdel) { if (confirm(L('Supprimer cette équipe ?', 'Delete this team?'))) { myTeams = myTeams.filter(x => x.id !== ds.tdel); store.set('astro_teams', myTeams); if (sb && user) sb.from('teams').delete().eq('id', ds.tdel).then(() => {}); render(); } }
+  else if (ds.tcopy) { TB = { name: '', m: padTeam(parseTeam(ds.tcopy)) }; store.set('astro_tb', TB); location.hash = '#/teams'; }
+  else if (ds.cadd) { readCE(); if (!CE.c) return; plan.push(JSON.parse(JSON.stringify(CE))); store.set('astro_plan', plan); drawCalc(); }
+  else if (ds.cdel !== undefined) { plan.splice(+ds.cdel, 1); store.set('astro_plan', plan); drawCalc(); }
+  else if (ds.af) { adm.f = ds.af; render(); }
+  else if (ds.aset) { const [tb, id, st] = ds.aset.split(':'); sb.from(tb).update({ status: st }).eq('id', id).then(loadAdmin); }
+  else if (ds.adel) { const [tb, id] = ds.adel.split(':'); if (confirm(L('Supprimer définitivement ?', 'Delete permanently?'))) sb.from(tb).delete().eq('id', id).then(loadAdmin); }
+  else if (ds.ahide) { const [u, v] = ds.ahide.split(':'); sb.from('profiles').update({ is_public: v === '1' }).eq('user_id', u).then(loadAdmin); }
+  else if (b.id === 'psave') { prof.name = $('#pn').value.trim(); if ($('#phd')) { prof.pub = $('#ppub').checked; prof.handle = $('#phd').value.trim().toLowerCase(); prof.bio = $('#pbio').value.trim(); prof.show = [0, 1, 2, 3, 4, 5].map(k => ({ c: $('#sc' + k).value, t: $('#st' + k).value.trim() })).filter(s => s.c); if (prof.pub && !/^[a-z0-9_-]{3,20}$/.test(prof.handle)) { pmsg = L('Nom d’utilisateur invalide : 3 à 20 caractères (a-z, 0-9, - et _).', 'Invalid username: 3–20 characters (a-z, 0-9, - and _).'); render(); return; } } saveProf().then(render); }
+  else if (ds.like) { const p = viewed; sb.from('profile_likes').select('profile_id').eq('profile_id', p.user_id).eq('user_id', user.id).then(async r => { if (r.data && r.data.length) await sb.from('profile_likes').delete().match({ profile_id: p.user_id, user_id: user.id }); else await sb.from('profile_likes').insert({ profile_id: p.user_id, user_id: user.id }); loadProfile(p.handle); }); }
+  else if (ds.report) { const r = prompt(L('Pourquoi signalez-vous ce profil ?', 'Why are you reporting this profile?')); if (r && r.trim()) sb.from('reports').insert({ profile_id: viewed.user_id, reason: r.trim().slice(0, 300) }).then(x => alert(x.error ? L('Échec du signalement.', 'Report failed.') : L('Merci, le signalement a été envoyé.', 'Thanks, your report was sent.'))); }
+  else if (b.id === 'preset') { if (confirm(L('Vider toute la collection ?', 'Clear the whole collection?'))) { Object.keys(prof.col).forEach(i => setOwn(i, null)); render(); } }
   else if (b.id === 'burger') $('#side').classList.toggle('open');
   else if (b.id === 'theme') { const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = t; store.set('astro_theme', t); }
+  else if (b.id === 'login') { authMsg(''); $('#dlg').showModal(); }
+  else if (b.id === 'out') sb.auth.signOut();
+  else if (['bin', 'bup', 'bfg'].includes(b.id)) authClick(b.id);
+  else if (b.id === 'fbk') { $('#fm').textContent = ''; $('#fdlg').showModal(); }
+  else if (b.id === 'fsend') { const t = $('#ft').value.trim(); if (t.length < 3) { $('#fm').textContent = L('Écrivez au moins quelques mots.', 'Please write a few words.'); return; } sendFeedback($('#fk').value, t).then(ok => { $('#fm').textContent = ok ? L('Merci ! Votre message a été envoyé.', 'Thank you! Your message was sent.') : L('Envoi impossible pour le moment.', 'Could not send right now.'); if (ok) $('#ft').value = ''; }); }
 });
 document.addEventListener('change', e => {
-  const t = e.target; if (t.dataset.eid) setOwn(t.dataset.eid, +t.value).then(render);
-  else if (t.dataset.cmp) { const [, , a, b] = location.hash.split('/'), v = t.value, na = t.dataset.cmp === 'a' ? v : a || '', nb = t.dataset.cmp === 'b' ? v : b || ''; location.hash = `#/compare/${na}/${nb}`; }
+  const t = e.target, ds = t.dataset;
+  if (ds.ck !== undefined) { const s = new Set(store.get('astro_ck', [])); t.checked ? s.add(+ds.ck) : s.delete(+ds.ck); store.set('astro_ck', [...s]); }
+  else if (ds.eid) setOwn(ds.eid, +t.value).then(render);
+  else if (ds.cmp) { const [, , a, b] = location.hash.split('/'), v = t.value, na = ds.cmp === 'a' ? v : a || '', nb = ds.cmp === 'b' ? v : b || ''; location.hash = `#/compare/${na}/${nb}`; }
+  else if (ds.tl !== undefined) { TB.m[+ds.tl].l = t.value; store.set('astro_tb', TB); const el = $('#tlink'); if (el) el.value = shareUrl(TB.m); }
 });
+document.addEventListener('input', e => {
+  const t = e.target, ds = t.dataset;
+  if (ds.ce) { readCE(); drawCalc(); }
+  else if (ds.pl) { PL[ds.pl] = t.type === 'checkbox' ? t.checked : (ds.pl === 'b' ? t.value : Math.max(0, +t.value || 0)); if (ds.pl === 'k') PL.k = Math.min(7, Math.max(1, PL.k)); store.set('astro_pl', PL); drawPlan(); }
+  else if (t.id === 'tname') { TB.name = t.value; store.set('astro_tb', TB); }
+  else if (t.id === 'sq') runSearch(t.value);
+  else if (t.id === 'pq') fillPick(t.value);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { const d = document.querySelector('dialog[open]'); if (d) { e.preventDefault(); d.close(); } return; } if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch(); } else if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '') && !document.querySelector('dialog[open]')) { e.preventDefault(); openSearch(); } });
 window.addEventListener('hashchange', () => { $('#side').classList.remove('open'); render(); scrollTo(0, 0); });
-document.documentElement.dataset.theme = store.get('astro_theme', 'dark');
-$('#side').innerHTML = `<a class="brand" href="#/home" style="color:var(--tx)"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="20" cy="20" r="16"/><circle cx="20" cy="20" r="9"/><path d="M20 4v32M4 20h32M9 9l22 22M31 9L9 31" opacity=".5"/></svg><div><b>Astrolabe</b><small id="ver"></small></div></a>
-<nav class="nv">${NAV.map(g => (g[0] ? `<h4>${g[0]}</h4>` : '') + g[1].map(i => `<a href="${i[0]}">${ico(i[1])}${i[2]}</a>`).join('')).join('')}</nav><div class="sf"><button class="btn" id="theme">Thème</button><span id="acct"></span></div>`;
-(window.__DATA__ ? Promise.resolve(window.__DATA__) : fetch('data/data.json').then(r => r.json())).then(d => {
-  D = d; C = d.chars; LC = d.lcs; RS = d.sets; byId = Object.fromEntries(C.map(c => [c.id, c])); $('#ver').textContent = `HSR v${d.version || ''} · ${d.updated}`;
-  render(); initAuth();
-}).catch(() => { app.innerHTML = '<p class="sub">Impossible de charger les données.</p>'; });
+
+// ------------------------------------------------------------ démarrage
+document.documentElement.dataset.theme = store.get('astro_theme', 'dark'); document.documentElement.lang = LANG;
+if (!TB.m || TB.m.length !== 4) TB = { name: '', m: padTeam(TB.m || []) };
+Promise.all([window.__DATA__ ? Promise.resolve(window.__DATA__) : fetch('data/data.json').then(r => r.json()), LANG === 'en' ? (window.__DATA_EN__ ? Promise.resolve(window.__DATA_EN__) : fetch('data/data_en.json').then(r => r.json()).catch(() => null)) : Promise.resolve(null)]).then(([d, en]) => {
+  D = d; DE = en || window.__DATA_EN__ || null; applyData(); chrome(); render(); initAuth();
+}).catch(err => { console.error(err); app.innerHTML = '<p class="sub">Impossible de charger les données / Could not load the data.</p>'; });
 })();

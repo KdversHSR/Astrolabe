@@ -45,23 +45,69 @@
  "guides": [
   {
    "t": "Tier list complète (Game8)",
-   "u": "https://game8.co/games/Honkai-Star-Rail/archives/409604"
+   "u": "https://game8.co/games/Honkai-Star-Rail/archives/409604",
+   "t_en": "Full tier list (Game8)"
   },
   {
    "t": "Meilleures équipes (Game8)",
-   "u": "https://game8.co/games/Honkai-Star-Rail/archives/409824"
+   "u": "https://game8.co/games/Honkai-Star-Rail/archives/409824",
+   "t_en": "Best teams (Game8)"
   },
   {
    "t": "Meilleurs cônes de lumière (Game8)",
-   "u": "https://game8.co/games/Honkai-Star-Rail/archives/410922"
+   "u": "https://game8.co/games/Honkai-Star-Rail/archives/410922",
+   "t_en": "Best Light Cones (Game8)"
   },
   {
    "t": "Tier list de relance de compte (Game8)",
-   "u": "https://game8.co/games/Honkai-Star-Rail/archives/409825"
+   "u": "https://game8.co/games/Honkai-Star-Rail/archives/409825",
+   "t_en": "Account restart tier list (Game8)"
   },
   {
    "t": "Accueil des guides Honkai: Star Rail (Game8)",
-   "u": "https://game8.co/games/Honkai-Star-Rail"
+   "u": "https://game8.co/games/Honkai-Star-Rail",
+   "t_en": "Honkai: Star Rail guides home (Game8)"
   }
- ]
+ ],
+ "schedule_en": [
+  [
+   "Anomaly Arbitration",
+   "September 28",
+   "November 11"
+  ],
+  [
+   "Memory of Chaos “Crossing the Afterlife”",
+   "September 28",
+   "November 2"
+  ],
+  [
+   "Apocalyptic Shadow",
+   "October 5",
+   "November 16"
+  ],
+  [
+   "Pure Fiction",
+   "October 19",
+   "November 30"
+  ],
+  [
+   "Memory of Chaos, 2nd phase",
+   "November 2",
+   "December 14"
+  ]
+ ],
+ "modes_en": {
+  "moc": [
+   "Memory of Chaos",
+   "Timed cycle combat against several waves of enemies. You need two balanced teams able to handle duration and multiple targets."
+  ],
+  "pf": [
+   "Pure Fiction",
+   "Score mode: chain defeats to accumulate points. AoE damage and follow-up attacks are very effective here."
+  ],
+  "as": [
+   "Apocalyptic Shadow",
+   "Boss encounters with mechanics to manage. Controlling pacing and ultimate energy matters a lot."
+  ]
+ }
 }

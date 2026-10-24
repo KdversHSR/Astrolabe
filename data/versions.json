@@ -1,0 +1,327 @@
+{
+ "note_fr": "Résumés originaux, volontairement courts et indicatifs. Ils contiennent des spoilers. Pour le détail exact, consultez le jeu ou le wiki officiel.",
+ "note_en": "Original, deliberately short and indicative summaries. They contain spoilers. For exact detail, check the game or the official wiki.",
+ "arcs": [
+  {
+   "id": "jarilo",
+   "fr": "Station Herta & Jarilo-VI",
+   "en": "Herta Station & Jarilo-VI",
+   "c": "#7dd3fc"
+  },
+  {
+   "id": "luofu",
+   "fr": "Luofu (Xianzhou)",
+   "en": "Xianzhou Luofu",
+   "c": "#fbbf24"
+  },
+  {
+   "id": "penacony",
+   "fr": "Penacony",
+   "en": "Penacony",
+   "c": "#f472b6"
+  },
+  {
+   "id": "amphoreus",
+   "fr": "Amphoreus",
+   "en": "Amphoreus",
+   "c": "#a78bfa"
+  },
+  {
+   "id": "planarcadia",
+   "fr": "Planarcadia",
+   "en": "Planarcadia",
+   "c": "#34d399"
+  }
+ ],
+ "v": [
+  {
+   "v": "1.0",
+   "d": "2023-04",
+   "arc": "jarilo",
+   "t": "",
+   "ok": 2,
+   "fr": "Le Trailblazer se réveille sans souvenirs, rejoint l'Astral Express et affronte la Légion Antimatière sur la station spatiale Herta. L'équipe gagne ensuite Jarilo-VI, planète gelée menacée par un Stellaron, et la ville de Belobog.",
+   "en": "The Trailblazer wakes without memories, joins the Astral Express and fights the Antimatter Legion aboard Herta Space Station. The crew then reaches Jarilo-VI, a frozen planet threatened by a Stellaron, and the city of Belobog."
+  },
+  {
+   "v": "1.1",
+   "d": "2023-06",
+   "arc": "luofu",
+   "t": "Galactic Roaming",
+   "ok": 3,
+   "fr": "L'Astral Express arrive sur le Xianzhou Luofu, vaisseau-cité à la dérive. L'équipage découvre la crise des Mara-frappés et la menace de Phantylia l'Immortelle, avec Jing Yuan et Yanqing aux commandes.",
+   "en": "The Astral Express reaches the Xianzhou Luofu, a drifting ship-city. The crew uncovers the Mara-Struck crisis and the threat of Phantylia the Undying, with Jing Yuan and Yanqing leading the defence."
+  },
+  {
+   "v": "1.2",
+   "d": "2023-07",
+   "arc": "luofu",
+   "t": "",
+   "ok": 3,
+   "fr": "Conclusion de l'histoire du Luofu : combat contre Phantylia et révélations sur Dan Heng • Imbibitor Lunae. Deux nouvelles zones sont ajoutées : la Commission d'Alchimie et le Scalegorge.",
+   "en": "Conclusion of the Luofu story: the fight against Phantylia and revelations about Dan Heng • Imbibitor Lunae. Two new areas are added: the Alchemy Commission and Scalegorge Waterscape."
+  },
+  {
+   "v": "1.3",
+   "d": "2023-08",
+   "arc": "luofu",
+   "t": "Celestial Eyes Above Mortal Ruins",
+   "ok": 3,
+   "fr": "Après la crise, le Luofu se reconstruit : on découvre l'Allée de l'Or (Aurum Alley). L'Univers Simulé se concentre sur Tayzzyronth, Éon de la Propagation, et sur un ancien cataclysme d'essaims.",
+   "en": "After the crisis the Luofu rebuilds, and Aurum Alley opens up. The Simulated Universe focuses on Tayzzyronth, Aeon of Propagation, and an ancient swarm catastrophe."
+  },
+  {
+   "v": "1.4",
+   "d": "2023-10",
+   "arc": "jarilo",
+   "t": "Jolted Awake From a Winter Dream",
+   "ok": 3,
+   "fr": "Retour sur Jarilo-VI : les zones du Vieux Terrain d'essais d'armes et des Piliers de la Création s'ouvrent. Topaz arrive pour des affaires de l'IPC et l'équipage enquête sur un différend avec la planète.",
+   "en": "Back on Jarilo-VI: the Old Weapons Testing Ground and Pillars of Creation open up. Topaz arrives on IPC business and the crew looks into a dispute with the planet."
+  },
+  {
+   "v": "1.5",
+   "d": "2023-11",
+   "arc": "luofu",
+   "t": "",
+   "ok": 1,
+   "fr": "Version d'événements et de nouveaux personnages (Huohuo, Argenti). Peu d'avancée majeure dans le fil principal : résumé approximatif.",
+   "en": "An events and characters update (Huohuo, Argenti) with little main-plot progress. Approximate summary."
+  },
+  {
+   "v": "1.6",
+   "d": "2023-12",
+   "arc": "luofu",
+   "t": "",
+   "ok": 1,
+   "fr": "Dernière version avant Penacony : arrivée de Ruan Mei et du Dr Ratio, et mise en place du voyage vers la Planète des Rêves. Résumé approximatif.",
+   "en": "The last version before Penacony: Ruan Mei and Dr. Ratio arrive and the trip to the Planet of Festivities is set up. Approximate summary."
+  },
+  {
+   "v": "2.0",
+   "d": "2024-02",
+   "arc": "penacony",
+   "t": "If One Dreams At Midnight",
+   "ok": 3,
+   "fr": "L'Astral Express est invité à Penacony, planète du divertissement tenue par la Famille. Entre Rêverie et réalité, une conspiration se dessine autour du festival de l'Heure d'or. Premiers pas de Sunday.",
+   "en": "The Astral Express is invited to Penacony, the entertainment planet run by the Family. Between dream and reality, a conspiracy builds around the Golden Hour festival. First steps with Sunday."
+  },
+  {
+   "v": "2.1",
+   "d": "2024-03",
+   "arc": "penacony",
+   "t": "",
+   "ok": 2,
+   "fr": "L'intrigue de Penacony s'intensifie : conflits dans le Rêve, enjeux autour de la Famille et arrivée d'Acheron. Résumé approximatif.",
+   "en": "The Penacony plot intensifies: conflicts in the Dream, stakes around the Family and Acheron's arrival. Approximate summary."
+  },
+  {
+   "v": "2.2",
+   "d": "2024-05",
+   "arc": "penacony",
+   "t": "Then Wake to Weep",
+   "ok": 3,
+   "fr": "Le point culminant de Penacony : l'équipage prépare le nouvel album de Robin et affronte un affrontement majeur. Robin et Boothill rejoignent la scène.",
+   "en": "The Penacony climax: the crew prepares Robin's new album and faces a major confrontation. Robin and Boothill take the stage."
+  },
+  {
+   "v": "2.3",
+   "d": "2024-06",
+   "arc": "penacony",
+   "t": "Farewell Penacony",
+   "ok": 3,
+   "fr": "Conclusion de l'aventure à Penacony et épilogue du voyage, avec Firefly et Jade. L'équipage quitte la Planète des Rêves.",
+   "en": "The Penacony adventure concludes with its epilogue, featuring Firefly and Jade. The crew leaves the Planet of Festivities."
+  },
+  {
+   "v": "2.4",
+   "d": "2024-07",
+   "arc": "penacony",
+   "t": "",
+   "ok": 1,
+   "fr": "Version de transition après Penacony, centrée sur de nouveaux personnages et événements. Résumé approximatif.",
+   "en": "A transition update after Penacony, focused on new characters and events. Approximate summary."
+  },
+  {
+   "v": "2.5",
+   "d": "2024-09",
+   "arc": "penacony",
+   "t": "",
+   "ok": 1,
+   "fr": "Suite des événements post-Penacony : nouveaux personnages et contenu de fin de jeu. Résumé approximatif.",
+   "en": "Post-Penacony follow-up with new characters and end-game content. Approximate summary."
+  },
+  {
+   "v": "2.6",
+   "d": "2024-10",
+   "arc": "penacony",
+   "t": "",
+   "ok": 1,
+   "fr": "Dernier palier avant le retour à Penacony : nouveaux personnages et événements. Résumé approximatif.",
+   "en": "The last step before returning to Penacony: new characters and events. Approximate summary."
+  },
+  {
+   "v": "2.7",
+   "d": "2024-12",
+   "arc": "penacony",
+   "t": "",
+   "ok": 3,
+   "fr": "Le Trailblazer retourne une dernière fois à Penacony : Sunday semble sur la voie de la rédemption. Un système de récapitulatif d'histoire apparaît, ainsi qu'un nouvel espace dans l'Astral Express. Aperçu de l'arc Amphoreus.",
+   "en": "The Trailblazer returns to Penacony one last time: Sunday appears to be on a path to redemption. A story recap system arrives, plus a new Astral Express space. A first look at the Amphoreus arc."
+  },
+  {
+   "v": "3.0",
+   "d": "2025-01",
+   "arc": "amphoreus",
+   "t": "Paean of Era Nova",
+   "ok": 3,
+   "fr": "L'Astral Express arrive à Amphoreus, monde caché dans un tourbillon chaotique où l'on vénère des Titans. Le Trailblazer rencontre Oronyx, Titan du Temps, et découvre Okhema, dernier refuge des humains.",
+   "en": "The Astral Express reaches Amphoreus, a world hidden in a chaotic vortex where Titans are worshipped. The Trailblazer meets Oronyx, Titan of Time, and discovers Okhema, humanity's last refuge."
+  },
+  {
+   "v": "3.1",
+   "d": "2025-02",
+   "arc": "amphoreus",
+   "t": "Light Slips the Gate, Shadow Greets the Throne",
+   "ok": 3,
+   "fr": "Le Trailblazer devient messager et poursuit la quête des Coreflames vers le Bosquet de l'Épiphanie, avec Tribbie et Mydei.",
+   "en": "The Trailblazer becomes a messenger and continues the Coreflame journey to the Grove of Epiphany, with Tribbie and Mydei."
+  },
+  {
+   "v": "3.2",
+   "d": "2025-04",
+   "arc": "amphoreus",
+   "t": "Through the Petals in the Land of Repose",
+   "ok": 3,
+   "fr": "L'histoire se poursuit dans les terres de Styxia, avec le Conseil des Anciens. Castorice et Anaxa font leur apparition.",
+   "en": "The story continues in Styxia, with the Council of Elders. Castorice and Anaxa appear."
+  },
+  {
+   "v": "3.3",
+   "d": "2025-05",
+   "arc": "amphoreus",
+   "t": "",
+   "ok": 1,
+   "fr": "Poursuite du voyage des Coreflames à Amphoreus. Résumé approximatif.",
+   "en": "The Coreflame journey continues across Amphoreus. Approximate summary."
+  },
+  {
+   "v": "3.4",
+   "d": "2025-07",
+   "arc": "amphoreus",
+   "t": "For the Sun is Set to Die",
+   "ok": 3,
+   "fr": "Apogée de l'arc Amphoreus : le Trailblazer et Phainon veulent livrer la dernière Coreflame au Vortex de la Genèse. La brume se dissipe et la racine de la tragédie est révélée. Collaboration Fate/stay night.",
+   "en": "The Amphoreus climax: the Trailblazer and Phainon try to deliver the last Coreflame to the Vortex of Genesis. The fog clears and the root of the tragedy is revealed. Fate/stay night collab."
+  },
+  {
+   "v": "3.5",
+   "d": "2025-08",
+   "arc": "amphoreus",
+   "t": "",
+   "ok": 1,
+   "fr": "Suites de l'arc Amphoreus. Résumé approximatif.",
+   "en": "Follow-up to the Amphoreus arc. Approximate summary."
+  },
+  {
+   "v": "3.6",
+   "d": "2025-09",
+   "arc": "amphoreus",
+   "t": "",
+   "ok": 1,
+   "fr": "Suites de l'arc Amphoreus. Résumé approximatif.",
+   "en": "Follow-up to the Amphoreus arc. Approximate summary."
+  },
+  {
+   "v": "3.7",
+   "d": "2025-11",
+   "arc": "amphoreus",
+   "t": "",
+   "ok": 2,
+   "fr": "Fin de l'histoire d'Amphoreus. Collaboration Crunchyroll en parallèle.",
+   "en": "The end of the Amphoreus story. A Crunchyroll collab runs alongside."
+  },
+  {
+   "v": "3.8",
+   "d": null,
+   "arc": "penacony",
+   "t": "Memories are the Prelude to Dreams",
+   "ok": 3,
+   "fr": "Après Amphoreus, retour à Penacony : les souvenirs du Trailblazer sont incomplets car des morceaux ont été volés. On revit les événements du point de vue de Firefly. Nouveau personnage : Constance « La Dahlia ».",
+   "en": "After Amphoreus the story returns to Penacony: the Trailblazer's memories are incomplete because key pieces were stolen. Events are seen from Firefly's perspective. New character: Constance \"The Dahlia\"."
+  },
+  {
+   "v": "4.0",
+   "d": null,
+   "arc": "planarcadia",
+   "t": "No Aha at Full Moon",
+   "ok": 3,
+   "fr": "Nouveau chapitre : Planarcadia et Duomension City. Les Jeux du Phantasmoon et la menace de l'Oroboros ouvrent l'arc, avec Yao Guang et Sparxie.",
+   "en": "A new chapter: Planarcadia and Duomension City. The Phantasmoon Games and the Oroboros threat open the arc, with Yao Guang and Sparxie."
+  },
+  {
+   "v": "4.1",
+   "d": "2026-03",
+   "arc": "planarcadia",
+   "t": "Unraveled for Daybreak",
+   "ok": 2,
+   "fr": "Suite de l'arc Planarcadia (arrivée annoncée le 25 mars). Détails d'histoire non vérifiés.",
+   "en": "Continuation of the Planarcadia arc (release announced for March 25). Story details not verified."
+  },
+  {
+   "v": "4.2",
+   "d": null,
+   "arc": "planarcadia",
+   "t": "",
+   "ok": 1,
+   "fr": "Suite de l'arc Planarcadia. Résumé approximatif.",
+   "en": "Continuation of the Planarcadia arc. Approximate summary."
+  },
+  {
+   "v": "4.3",
+   "d": "2026-06",
+   "arc": "planarcadia",
+   "t": "The Lethe Below the Living",
+   "ok": 3,
+   "fr": "Le Trailblazer et Mortenax Blade prennent des chemins séparés : Blade entre dans le Monde sur Toile pour affronter son destin, tandis que le Trailblazer prévient Graphia à l'Ermitage d'Inkford. Le secret de Planarcadia, lié à l'Éon Voracité, est révélé.",
+   "en": "The Trailblazer and Mortenax Blade take separate paths: Blade enters the World in Canvas to face his fate while the Trailblazer warns Graphia at Inkford Hermitage. The secret of Planarcadia, tied to the Aeon Voracity, is revealed."
+  },
+  {
+   "v": "4.4",
+   "d": "2026-07",
+   "arc": "planarcadia",
+   "t": "In Ravages Does the Whistle Sound",
+   "ok": 2,
+   "fr": "Suite de l'arc Planarcadia (arrivée annoncée le 15 juillet). Détails d'histoire non vérifiés.",
+   "en": "Continuation of the Planarcadia arc (release announced for July 15). Story details not verified."
+  },
+  {
+   "v": "4.5",
+   "d": null,
+   "arc": "planarcadia",
+   "t": "",
+   "ok": 1,
+   "fr": "Suite de l'arc Planarcadia. Résumé approximatif.",
+   "en": "Continuation of the Planarcadia arc. Approximate summary."
+  },
+  {
+   "v": "4.6",
+   "d": null,
+   "arc": "planarcadia",
+   "t": "",
+   "ok": 1,
+   "fr": "Suite de l'arc Planarcadia. Résumé approximatif.",
+   "en": "Continuation of the Planarcadia arc. Approximate summary."
+  },
+  {
+   "v": "4.7",
+   "d": "2026-11",
+   "arc": "planarcadia",
+   "t": "",
+   "ok": 0,
+   "up": true,
+   "fr": "Version à venir (environ mi-novembre 2026). L'histoire n'est pas encore annoncée : aucun résumé possible pour l'instant.",
+   "en": "Upcoming version (around mid-November 2026). The story has not been announced, so there is no summary yet."
+  }
+ ]
+}

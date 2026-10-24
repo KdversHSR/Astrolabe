@@ -8,6 +8,10 @@ Tier list, builds, cônes de lumière, reliques, end game, favoris et comptes. S
 - `data/manual.json` : calendrier end game, descriptions des modes, liens de guides. **À modifier à la main à chaque version** (2 minutes, directement sur GitHub).
 - `data/banners.json` : bannières en cours (personnages, cônes, dates de début et de fin en UTC) et date de la prochaine version. **À mettre à jour à chaque phase** (début et milieu de version). Le site calcule tout seul les comptes à rebours.
 - `data/events.json` : guides d’événements et de modes end game. Copiez le bloc « exemple » (il est masqué par `"hidden": true`) pour ajouter un événement avec dates, étapes, conseils et récompenses.
+- `data/tier_notes.json` (facultatif) : pour afficher un badge d’éidolon particulier sur un personnage dans la tier list (par défaut **E0**, base du classement Game8). Exemple : `"Firefly": "E6"`.
+- `data/tier_history.json` : géré automatiquement. Il garde les deux derniers classements pour afficher les flèches vertes (▲ monte), rouges (▼ baisse) et NEW. **Ne le modifiez pas.**
+- `data/data_en.json` et `data/calc.json` : générés automatiquement (traduction anglaise, matériaux du calculateur).
+- `data/versions.json` : résumés d’histoire par version (FR/EN). **À compléter à la main** à chaque nouvelle version : copiez un bloc, changez `v`, `t` (titre officiel), `d` (année-mois), `arc`, `fr`, `en`. `ok` : 0 à 3 (3 = vérifié).
 - `data/curated_builds.json` : sets et équipes vérifiés à la main, utilisés quand la source n’en fournit pas.
 
 ## Mise en ligne (gratuit, environ 20 minutes)
@@ -28,7 +32,7 @@ Tier list, builds, cônes de lumière, reliques, end game, favoris et comptes. S
 
 ### 2. Comptes et favoris (Supabase, gratuit)
 1. Créez un compte sur supabase.com, puis **New project** (choisissez une région européenne).
-2. **SQL Editor → New query** : collez le contenu de `supabase/schema.sql` → **Run**. Faites la même chose avec `supabase/schema_v2.sql` (profil et collection des joueurs), puis `supabase/schema_v3.sql` (profils publics, J'aime, signalements), chacun dans une nouvelle requête.
+2. **SQL Editor → New query** : collez le contenu de `supabase/schema.sql` → **Run**. Faites la même chose avec `supabase/schema_v2.sql` (profil et collection des joueurs), puis `supabase/schema_v3.sql` (profils publics, J'aime, signalements), puis `supabase/schema_v4.sql` (administration, retours des visiteurs, statistiques, équipes enregistrées), chacun dans une nouvelle requête et **dans cet ordre**.
 3. **Project Settings → API** : copiez le *Project URL* et la clé *anon public*. Cette clé est faite pour être publique, la sécurité vient des règles du fichier SQL (chacun ne voit que ses favoris). Ne copiez jamais la clé *service_role*.
 4. Collez les deux valeurs dans `config.js`, enregistrez, puis `git add -A && git commit -m "Config comptes" && git push`.
 5. **Authentication → URL Configuration** : mettez l’adresse de votre site dans *Site URL* et dans *Redirect URLs*.
@@ -58,7 +62,13 @@ python -m http.server 8000     # puis ouvrez http://localhost:8000
 - Environ 25 personnages n’ont pas de sets de reliques dans la source ; le site l’indique. Complétez-les dans `data/curated_builds.json` (noms anglais) si vous le souhaitez.
 
 ## Fonctions du site
-Menu à gauche, tier list (vue d’ensemble, par rôle DPS/Support/Sustain, Memory of Chaos, Pure Fiction, Apocalyptic Shadow), fiches personnage à onglets (kit, build et équipes, classements, éidolons), cônes, reliques, comparateur, événements, planificateur de tirages et profil joueur (collection avec éidolons, équipes réalisables, favoris, avatar).
+Menu à gauche et recherche rapide (Ctrl + K), version **français / anglais**, tier list sur l’échelle **T0 → T4** (équivalences Game8 : SS = T0, S+ = T0.5, S = T1, A = T2, B = T3, C = T4), résumé de version, centre d’aide, tier list (vue d’ensemble, par rôle, Memory of Chaos, Pure Fiction, Apocalyptic Shadow) avec badges d’éidolon, éléments, voies et flèches de tendance, fiches personnage à onglets, cônes, reliques, comparateur, **calculateur de ressources**, **planificateur de tirages** (probabilités avec pity et 50/50), **équipes** enregistrables et partageables par lien, **statistiques** anonymes de la communauté, bannières avec comptes à rebours, événements, profil joueur et profils publics.
+
+## Administration
+1. Créez votre compte sur le site, puis dans Supabase → SQL Editor, lancez (en remplaçant l’adresse par la vôtre) :
+   `insert into public.admins (user_id) select id from auth.users where email = 'VOTRE-ADRESSE' on conflict do nothing;`
+2. Reconnectez-vous : une entrée **Administration** apparaît dans le menu (`#/admin`). Elle liste les retours des visiteurs (bouton « Signaler » en haut du site), les erreurs détectées automatiquement et les signalements de profils, avec les actions *marquer traité*, *supprimer* et *masquer le profil*.
+3. Personne d’autre ne peut lire ces données : c’est la base de données qui l’impose, pas le site.
 
 ## Communauté et modération
-Les profils publics sont désactivés par défaut. Les signalements arrivent dans Supabase → Table Editor → `reports`. Pour masquer un profil abusif : Table Editor → `profiles`, décochez `is_public` sur sa ligne.
+Les profils publics sont désactivés par défaut. Les signalements arrivent dans la page Administration du site (et dans Supabase → Table Editor → `reports`). Pour masquer un profil abusif, utilisez le bouton « Masquer ce profil » de la page Administration.

@@ -8,7 +8,14 @@
   "summary": "Récompenses de connexion de la version 4.6.",
   "rewards": [
    "10 Passes spéciaux Star Rail en vous connectant 7 jours"
-  ]
+  ],
+  "en": {
+   "type": "Event 4.6",
+   "summary": "Login rewards for version 4.6.",
+   "rewards": [
+    "10 Star Rail Special Passes for logging in 7 days"
+   ]
+  }
  },
  {
   "id": "imagea",
@@ -19,7 +26,14 @@
   "summary": "Tirages de créatures Astral Imagea.",
   "tips": [
    "Les 6 Trendible Vouchers offerts en 4.6 servent à ces tirages."
-  ]
+  ],
+  "en": {
+   "type": "Event 4.6",
+   "summary": "Astral Imagea creature draws.",
+   "tips": [
+    "The 6 Trendible Vouchers given in 4.6 are used for these draws."
+   ]
+  }
  },
  {
   "id": "lgr",
@@ -27,7 +41,11 @@
   "type": "Événement 4.6",
   "start": "2026-09-28",
   "end": "2026-11-11",
-  "summary": "Événement de la version 4.6."
+  "summary": "Événement de la version 4.6.",
+  "en": {
+   "type": "Event 4.6",
+   "summary": "Version 4.6 event."
+  }
  },
  {
   "id": "wish",
@@ -35,7 +53,11 @@
   "type": "Événement 4.6",
   "start": "2026-09-28",
   "end": "2026-11-11",
-  "summary": "Événement de la version 4.6."
+  "summary": "Événement de la version 4.6.",
+  "en": {
+   "type": "Event 4.6",
+   "summary": "Version 4.6 event."
+  }
  },
  {
   "id": "onetake",
@@ -43,7 +65,11 @@
   "type": "Événement 4.6",
   "start": "2026-10-21",
   "end": "2026-11-11",
-  "summary": "Événement de la version 4.6."
+  "summary": "Événement de la version 4.6.",
+  "en": {
+   "type": "Event 4.6",
+   "summary": "Version 4.6 event."
+  }
  },
  {
   "id": "planar",
@@ -51,7 +77,11 @@
   "type": "Événement 4.6",
   "start": "2026-10-12",
   "end": "2026-10-25",
-  "summary": "Événement de la version 4.6."
+  "summary": "Événement de la version 4.6.",
+  "en": {
+   "type": "Event 4.6",
+   "summary": "Version 4.6 event."
+  }
  },
  {
   "id": "garden",
@@ -59,7 +89,11 @@
   "type": "Événement 4.6",
   "start": "2026-10-30",
   "end": "2026-11-11",
-  "summary": "Événement de la version 4.6."
+  "summary": "Événement de la version 4.6.",
+  "en": {
+   "type": "Event 4.6",
+   "summary": "Version 4.6 event."
+  }
  },
  {
   "id": "moc",
@@ -74,7 +108,20 @@
   "tips": [
    "Un soigneur ou un bouclier évite de perdre des cycles sur les dégâts subis.",
    "Réessayez avec un autre ordre de personnages si un combat se complique."
-  ]
+  ],
+  "en": {
+   "type": "End game",
+   "summary": "Cycle-based combat mode with several waves. You need two full teams.",
+   "steps": [
+    "Build two teams that share no character.",
+    "Check the enemy weaknesses of each half before building your teams.",
+    "Save ultimates for the hard waves and do not waste Skill Points."
+   ],
+   "tips": [
+    "A healer or a shield keeps you from losing cycles to damage taken.",
+    "Retry with a different character order if a fight goes badly."
+   ]
+  }
  },
  {
   "id": "pf",
@@ -88,7 +135,19 @@
   ],
   "tips": [
    "Visez les 4 000 points des paliers de récompense avant de chercher le score maximum."
-  ]
+  ],
+  "en": {
+   "type": "End game",
+   "summary": "Score mode: the faster you defeat enemies, the more you score.",
+   "steps": [
+    "Favor AoE damage and follow-up attacks.",
+    "Pick the stage buffs that match your main element.",
+    "Defeat the highest-value enemies first."
+   ],
+   "tips": [
+    "Aim for the 4,000-point reward tiers before chasing the maximum score."
+   ]
+  }
  },
  {
   "id": "as",
@@ -101,7 +160,18 @@
   ],
   "tips": [
    "Un personnage qui actionne tôt aide à tenir les conditions de score."
-  ]
+  ],
+  "en": {
+   "type": "End game",
+   "summary": "Boss fights with mechanics to handle and score conditions.",
+   "steps": [
+    "Read the boss mechanics before starting the fight.",
+    "Time your ultimate to use the vulnerability windows."
+   ],
+   "tips": [
+    "A character that acts early helps you meet the score conditions."
+   ]
+  }
  },
  {
   "_exemple": "Copiez ce bloc pour ajouter un événement",

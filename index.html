@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr" data-theme="dark"><head><meta charset="utf-8"><title>Astrolabe — Honkai: Star Rail</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Tier list, builds, cônes de lumière, reliques, end game, comparateur et profil pour Honkai: Star Rail, mis à jour chaque semaine.">
+<meta name="description" content="Tier list, builds, cônes de lumière, reliques, end game, calculateur, tirages, équipes et profil pour Honkai: Star Rail, mis à jour chaque semaine. / Tier list, builds, light cones, relics, calculator and pull planner for Honkai: Star Rail.">
 <meta property="og:title" content="Astrolabe — Honkai: Star Rail"><meta property="og:type" content="website">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="style.css">
 </head><body>
-<div class="top" id="top"><button class="btn" id="burger" aria-label="Menu">Menu</button><a href="#/home"><b>Astrolabe</b></a></div>
 <aside class="side" id="side"></aside>
-<main class="main" id="app"><p class="sub">Chargement…</p></main>
-<dialog id="dlg"><h2 style="font:700 22px Fraunces,serif;margin:0 0 6px">Compte</h2><p class="sub" style="margin:0 0 12px;font-size:13px">Pour retrouver vos favoris et votre collection sur tous vos appareils.</p>
-<input type="text" id="em" placeholder="E-mail" autocomplete="email"><input type="password" id="pw" placeholder="Mot de passe (8 caractères min.)" autocomplete="current-password">
-<div class="msg" id="msg"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="bin">Se connecter</button><button class="btn" id="bup">Créer un compte</button><button class="btn" id="bfg">Mot de passe oublié</button><button class="btn" id="bcl">Fermer</button></div></dialog>
+<div class="wrap"><header class="hd" id="hd"></header>
+<main class="main" id="app"><p class="sub">Chargement… / Loading…</p></main></div>
+<div id="dlgs"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script src="app.js"></script>

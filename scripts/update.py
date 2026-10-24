@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Astrolabe : génère data/data.json et les images à partir de sources ouvertes.
+"""Astrolabe : génère data/data.json, data_en.json, calc.json et les images à partir de sources ouvertes.
 
 Sources
   - StarRailRes (personnages, cônes, reliques, images)   : github.com/Mar-7th/StarRailRes
@@ -25,6 +25,7 @@ EL = {'Fire': 'Feu', 'Ice': 'Glace', 'Thunder': 'Foudre', 'Wind': 'Vent', 'Physi
 PA = {'Warrior': 'Destruction', 'Rogue': 'Chasse', 'Mage': 'Érudition', 'Shaman': 'Harmonie', 'Warlock': 'Nihilité', 'Knight': 'Préservation', 'Priest': 'Abondance', 'Memory': 'Souvenir', 'Elation': 'Allégresse'}
 STAT_FR = {'ATK': 'ATQ', 'ATK_P': 'ATQ%', 'HP': 'PV', 'HP_P': 'PV%', 'DEF': 'DÉF', 'DEF_P': 'DÉF%', 'SPD': 'VIT', 'CR': 'Taux crit', 'CD': 'DGT crit',
            'EHR': 'Taux d’effet', 'RES': 'Rés. d’effet', 'BE': 'Effet de rupture', 'ERR': 'Recharge d’énergie', 'OHB': 'Soins'}
+PATH_ICON = {'Warrior': 'Destruction', 'Rogue': 'Hunt', 'Mage': 'Erudition', 'Shaman': 'Harmony', 'Warlock': 'Nihility', 'Knight': 'Preservation', 'Priest': 'Abundance', 'Memory': 'Remembrance', 'Elation': 'Elation'}
 ELEM_DMG = {'Physical': 'Physique', 'Fire': 'Feu', 'Ice': 'Glace', 'Lightning': 'Foudre', 'Wind': 'Vent', 'Quantum': 'Quantique', 'Imaginary': 'Imaginaire'}
 
 
@@ -204,6 +205,87 @@ def scrape_game8():
     return res, gen, eg, ver[1] if ver else None
 
 
+
+# ------------------------------------------------------------------ tendances (historique des classements)
+ORDER = ['SS', 'S+', 'S', 'A', 'B', 'C']
+
+
+def tier_trends(inv):
+    """Compare le classement actuel au précédent. Le fichier tier_history.json garde les deux derniers états."""
+    f = DATA / 'tier_history.json'
+    h = json.loads(f.read_text('utf-8')) if f.exists() else {}
+    cur = h.get('current')
+    if cur != inv:
+        h = {'previous': cur, 'current': inv, 'since': datetime.date.today().isoformat()}
+        f.write_text(json.dumps(h, ensure_ascii=False, separators=(',', ':')), 'utf-8')
+    prev, trend = h.get('previous'), {}
+    if prev:
+        for m, d in inv.items():
+            pm, tm = prev.get(m, {}), {}
+            for i, t in d.items():
+                if i not in pm:
+                    tm[i] = 'new'
+                elif ORDER.index(t) < ORDER.index(pm[i]):
+                    tm[i] = 'up'
+                elif ORDER.index(t) > ORDER.index(pm[i]):
+                    tm[i] = 'down'
+            trend[m] = tm
+    return trend, (h.get('since') if prev else None)
+
+
+# ------------------------------------------------------------------ calculateur + traductions anglaises
+def build_calc(fr, ids, jobs, im):
+    """Matériaux d'ascension et de compétences (data/calc.json), noms d'objets FR/EN."""
+    P, T = getj('character_promotions', 'fr'), getj('character_skill_trees', 'fr')
+    IF, IE = getj('items', 'fr'), getj('items', 'en')
+    used, calc = set(), {}
+    pack = lambda ms: [x for m in ms for x in (m['id'], m['num'])]
+    for k in ids:
+        asc = [pack(m) for m in P[k]['materials'][:6]]
+        sk = []
+        for anchor in ('Point01', 'Point02', 'Point03', 'Point04'):
+            node = next((T[t] for t in fr[k]['skill_trees'] if t in T and T[t].get('anchor') == anchor), None)
+            sk.append([pack(l['materials']) for l in node['levels'][1:]] if node else [])
+        for lst in asc + [x for s_ in sk for x in s_]:
+            used.update(lst[0::2])
+        calc[k] = {'a': asc, 's': sk}
+    items = {i: {'f': IF[i]['name'], 'e': IE[i]['name'], 'r': IF[i]['rarity']} for i in used if i in IF}
+    (DATA / 'calc.json').write_text(json.dumps({'items': items, 'c': calc}, ensure_ascii=False, separators=(',', ':')), 'utf-8')
+    for i in items:
+        jobs.append((IF[i]['icon'], im / f'i/{i}.webp', 64, 75))
+    print(f'   calc.json : {len(calc)} personnages, {len(items)} objets')
+
+
+def build_en(S, fr, chars, lcs, sets, LCe_, RSe_):
+    en, Se, Re = getj('characters', 'en'), getj('character_skills', 'en'), getj('character_ranks', 'en')
+    LRe = getj('light_cone_ranks', 'en')
+    PAE = {'Warrior': 'Destruction', 'Rogue': 'The Hunt', 'Mage': 'Erudition', 'Shaman': 'Harmony', 'Warlock': 'Nihility', 'Knight': 'Preservation', 'Priest': 'Abundance', 'Memory': 'Remembrance', 'Elation': 'Elation'}
+    clean = lambda d: re.sub(r'<[^>]+>', '', d or '')
+    out = {'c': {}, 'l': {}, 's': {}}
+    for c in chars:
+        k, v = c['id'], en[c['id']]
+        n = v['name'] if '{NICKNAME}' not in v['name'] else 'Trailblazer · ' + PAE[v['path']]
+        sk = [{'n': Se[s]['name'], 'd': Se[s]['simple_desc'] or ''} for s in fr[k]['skills'] if s in Se and (s in S and S[s]['type_text'] in ('Attaque normale', 'Compétence', 'Ultime', 'Talent', 'Technique'))]
+        out['c'][k] = {'n': n, 's': sk, 'x': [{'n': Re[r]['name'], 'd': clean(Re[r]['desc'])} for r in fr[k]['ranks'] if r in Re]}
+    for l in lcs:
+        k = l['id']
+        if k in LCe_ and k in LRe:
+            out['l'][k] = {'n': LCe_[k]['name'], 'k': LRe[k]['skill'], 'd': fmt_g(LRe[k]['desc'], LRe[k]['params'])}
+    for x in sets:
+        if x['id'] in RSe_:
+            out['s'][x['id']] = {'n': RSe_[x['id']]['name'], 'd': RSe_[x['id']]['desc']}
+    (DATA / 'data_en.json').write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), 'utf-8')
+    print('   data_en.json écrit')
+
+
+def fmt_g(d, pa):
+    def f(m):
+        x, y = pa[0][int(m[1]) - 1], pa[-1][int(m[1]) - 1]
+        g = (lambda v: '%g' % round(v * 100, 2)) if m[2] == '%' else (lambda v: '%g' % round(v, 2))
+        return (g(x) + '→' + g(y) if x != y else g(x)) + m[2]
+    return re.sub(r'#(\d)\[(?:i|f\d)\](%?)', f, d)
+
+
 # ------------------------------------------------------------------ main
 def main():
     ap = argparse.ArgumentParser()
@@ -268,6 +350,12 @@ def main():
     tiers_out = {'ov': ids_of(tiers), **{k: ids_of(v) for k, v in gen.items()}, **{k: ids_of(v) for k, v in eg.items()}}
     inv = {m: {i: t for t, l in d.items() for i in l} for m, d in tiers_out.items()}
     tier = inv['ov']
+    trend, since = tier_trends(inv)
+    tnotes = {}
+    if (DATA / 'tier_notes.json').exists():
+        for n_, note in json.loads((DATA / 'tier_notes.json').read_text('utf-8')).items():
+            if not n_.startswith('_') and rid(n_):
+                tnotes[rid(n_)] = note
     events = json.loads((DATA / 'events.json').read_text('utf-8')) if (DATA / 'events.json').exists() else []
     bj = json.loads((DATA / 'banners.json').read_text('utf-8'))
     lcn = {nz(v['name']): k for k, v in LCe.items()}
@@ -296,7 +384,7 @@ def main():
         rk = [{'n': R[r]['name'], 'd': re.sub(r'<[^>]+>', '', R[r]['desc'])} for r in v['ranks'] if r in R]
         pv = P[k]['values'][6]
         f = lambda s: round(pv[s]['base'] + pv[s]['step'] * 79)
-        c = {'id': k, 'n': n, 'r': v['rarity'], 'e': EL[v['element']], 'p': PA[v['path']], 's': sk, 'x': rk, 't': tier.get(k, '?'), 'tr': {m: inv[m][k] for m in inv if k in inv[m]},
+        c = {'id': k, 'n': n, 'r': v['rarity'], 'e': EL[v['element']], 'p': PA[v['path']], 'ei': v['element'], 'pi': v['path'], 's': sk, 'x': rk, 't': tier.get(k, '?'), 'tr': {m: inv[m][k] for m in inv if k in inv[m]},
              'st': {'hp': f('hp'), 'atk': f('atk'), 'def': f('def'), 'spd': round(pv['spd']['base']), 'cr': round(pv['crit_rate']['base'] * 100),
                     'cd': round(pv['crit_dmg']['base'] * 100), 'ta': round(pv['taunt']['base']), 'sp': v['max_sp']}}
         b = builds.get(k)
@@ -339,18 +427,26 @@ def main():
                         seen.append(team)
             b['teams'] = seen
             b['teams_from_others'] = bool(seen)
-    lcs = [{'id': k, 'n': v['name'], 'r': v['rarity'], 'p': PA[v['path']], 'k': LR[k]['skill'], 'd': fmt(LR[k]['desc'], LR[k]['params'])} for k, v in LCf.items()]
+    lcs = [{'id': k, 'n': v['name'], 'r': v['rarity'], 'p': PA[v['path']], 'pi': v['path'], 'k': LR[k]['skill'], 'd': fmt(LR[k]['desc'], LR[k]['params'])} for k, v in LCf.items()]
     lcs.sort(key=lambda x: (-x['r'], x['n']))
     sets = [{'id': k, 'n': v['name'], 'd': v['desc'], 'pl': len(v['desc']) == 1} for k, v in RSf.items()]
     sets.sort(key=lambda x: (x['pl'], x['n']))
-    out = {'version': version, 'updated': datetime.date.today().isoformat(), 'chars': chars, 'lcs': lcs, 'sets': sets, 'tiers': tiers_out, 'events': events, 'banners': bj, 'manual': manual}
+    out = {'version': version, 'updated': datetime.date.today().isoformat(), 'chars': chars, 'lcs': lcs, 'sets': sets, 'tiers': tiers_out, 'trend': trend, 'trend_since': since, 'tnotes': tnotes, 'events': events, 'banners': bj, 'manual': manual}
     (DATA / 'data.json').write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), 'utf-8')
     print(f'   {len(chars)} personnages, {len(lcs)} cônes, {len(sets)} sets, {sum(1 for c in chars if "b" in c)} builds')
+
+    extra = []
+    build_calc(fr, ids, extra, ROOT / 'img')
+    build_en(S, fr, chars, lcs, sets, LCe, RSe)
 
     if not a.skip_images:
         print('4/5 images…')
         im = ROOT / 'img'
-        jobs = []
+        jobs = list(extra)
+        for e_ in ('Fire', 'Ice', 'Thunder', 'Wind', 'Physical', 'Quantum', 'Imaginary'):
+            jobs.append((f'icon/element/{e_}.png', im / f'e/{e_}.webp', 48, 85))
+        for p_ in PA:
+            jobs.append((f'icon/path/{PATH_ICON[p_]}.png', im / f'pa/{p_}.webp', 48, 85))
         for k in ids:
             jobs += [(fr[k]['icon'], im / f'c/{k}.webp', 96, 80), (fr[k]['preview'], im / f'p/{k}.webp', 300, 72)]
         jobs += [(v['icon'], im / f'l/{k}.webp', 96, 75) for k, v in LCf.items()]
@@ -364,8 +460,9 @@ def main():
         h = (ROOT / 'index.html').read_text('utf-8')
         h = h.replace('<link rel="stylesheet" href="style.css">', '<style>' + (ROOT / 'style.css').read_text('utf-8') + '</style>')
         h = h.replace('<script src="config.js"></script>', '<script>window.CFG={}</script>')
+        h = re.sub(r'<script src="https://cdn.jsdelivr.net[^>]*></script>', '', h)
         h = h.replace('<script src="app.js"></script>', '<script>window.__DATA__=' + json.dumps(out, ensure_ascii=False, separators=(',', ':')) +
-                      ';window.__IMG__=' + json.dumps(imgs) + ';</script><script>' + (ROOT / 'app.js').read_text('utf-8') + '</script>')
+                      ';window.__DATA_EN__=' + (DATA / 'data_en.json').read_text('utf-8') + ';window.__CALC__=' + (DATA / 'calc.json').read_text('utf-8') + ';window.__IMG__=' + json.dumps(imgs) + ';</script><script>' + (ROOT / 'app.js').read_text('utf-8') + '</script>')
         Path(a.inline).write_text(h, 'utf-8')
     print('Terminé.')
 
