@@ -115,3 +115,6 @@ La carte « Prochaine version » de l’accueil affiche le personnage à venir ;
 
 ## Aperçu de partage (v7.4)
 Quand on colle le lien du site sur Discord, X ou WhatsApp, une carte avec le logo s’affiche (`img/og.jpg`). L’adresse complète du site est insérée automatiquement par le workflow (remplace `__SITE_URL__` dans `index.html`).
+
+## Connexion Discord : activer ou désactiver
+Elle est **désactivée** par défaut (inscription par e-mail uniquement). Pour la réactiver : dans `app.js`, remplacez `const USE_DISCORD = false;` par `true`, après avoir configuré Discord dans Supabase.

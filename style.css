@@ -297,3 +297,21 @@ h2.sec,.sec{letter-spacing:.04em}
 button.btn.pri{box-shadow:0 4px 18px var(--hl)}button.btn.pri:hover,a.btn.pri:hover{box-shadow:0 6px 24px var(--ac);transform:translateY(-1px)}
 ::selection{background:var(--ac);color:#0b0d17}
 @media(max-width:760px){.hero2::after{display:none}}
+.authbar{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:99;max-width:min(640px,92vw);display:flex;gap:10px;align-items:center;padding:12px 16px;border-radius:12px;background:#3a1620;color:#ffd9d9;border:1px solid #f07a7a;box-shadow:0 10px 30px #0009;font-size:14px}.authbar button{background:none;border:0;color:inherit;font-size:20px;cursor:pointer;margin-left:auto}
+:root[data-discord=off] .oauth{display:none!important}
+/* v7.5 : accueil sublimé */
+.hero2{grid-template-columns:1fr minmax(220px,380px)}
+.hpw{position:relative;align-self:end;display:flex;justify-content:center;min-height:300px}
+.hpw .hp{position:relative;z-index:2}
+.hpw .hs{position:absolute;bottom:0;max-height:240px;width:46%;z-index:1;opacity:.85;filter:drop-shadow(0 8px 20px rgba(0,0,0,.5)) saturate(.9)}
+.hpw .hs1{left:-34%;transform:rotate(-4deg)}.hpw .hs2{right:-30%;transform:rotate(4deg)}
+.hpw .hp:not(.hs){width:min(100%,300px);animation:fl 6s ease-in-out infinite}
+.hpw .orb{position:absolute;inset:-6% -14% 0;width:128%;height:auto;margin:auto;z-index:0;opacity:.8;animation:spin 90s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ribbon{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0 4px}
+.ribbon>div{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 8px;border-radius:14px;border:1px solid var(--bd);background:linear-gradient(180deg,var(--hl),transparent 80%),var(--s1);animation:pgin .5s ease both}
+.ribbon i{color:var(--ac)}.ribbon i .ic{width:20px;height:20px}.ribbon b{font:700 26px var(--se)}.ribbon span{font:500 11px var(--mo);text-transform:uppercase;letter-spacing:.08em;color:var(--mu);text-align:center}
+.route{display:flex;align-items:center;gap:10px;margin:18px 4px 14px;color:var(--ac)}.route i{flex:1;height:0;border-top:2px dotted var(--ac);opacity:.45}
+@media(max-width:1100px){.hpw .hs{display:none}.hpw .orb{inset:0;width:100%}}
+@media(max-width:760px){.ribbon{grid-template-columns:repeat(2,1fr)}.ribbon>div:last-child{grid-column:span 2}.hpw{min-height:0}}
+@media(max-width:760px){.hero2{grid-template-columns:1fr;min-height:0}.hpw .hp:not(.hs){max-width:230px;margin:0 auto}.hpw .orb{inset:-4% 0 0;width:100%}}
