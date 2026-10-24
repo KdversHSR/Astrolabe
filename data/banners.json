@@ -1,0 +1,48 @@
+{
+ "_comment": "À mettre à jour à chaque phase (dates en UTC). end = null : pas de date de fin. Noms en anglais comme dans le jeu.",
+ "next": {
+  "version": "4.7",
+  "date": "2026-11-11T03:00:00Z",
+  "estimated": true,
+  "headliner": "Nihilux (Aeon ★ Aha), 5★ Quantique, voie Allégresse"
+ },
+ "rateup4": [
+  "Qingque",
+  "Xueyi",
+  "Misha"
+ ],
+ "list": [
+  {
+   "chars": [
+    "Pearl"
+   ],
+   "lcs": [
+    "Colors for Tomorrow"
+   ],
+   "kind": "Nouveau 5★",
+   "start": "2026-09-28T03:00:00Z",
+   "end": "2026-11-10T06:59:00Z"
+  },
+  {
+   "chars": [
+    "Mortenax Blade"
+   ],
+   "lcs": [
+    "Reforged in Hellfire"
+   ],
+   "kind": "Rerun",
+   "start": "2026-10-21T04:00:00Z",
+   "end": "2026-11-10T06:59:00Z"
+  },
+  {
+   "chars": [
+    "Rin Tohsaka",
+    "Gilgamesh"
+   ],
+   "lcs": [],
+   "kind": "Collaboration Fate",
+   "start": "2026-07-24T04:00:00Z",
+   "end": null
+  }
+ ]
+}

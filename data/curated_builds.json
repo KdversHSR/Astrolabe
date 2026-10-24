@@ -314,5 +314,77 @@
     "Lingsha"
    ]
   ]
+ },
+ "Jingliu": {
+  "rel": [
+   [
+    "Hunter of Glacial Forest",
+    "Hunter of Glacial Forest"
+   ]
+  ],
+  "orn": [
+   "Rutilant Arena"
+  ],
+  "teams": []
+ },
+ "Blade": {
+  "rel": [
+   [
+    "Longevous Disciple",
+    "Longevous Disciple"
+   ]
+  ],
+  "orn": [
+   "Inert Salsotto"
+  ],
+  "teams": []
+ },
+ "Gepard": {
+  "rel": [
+   [
+    "Knight of Purity Palace",
+    "Knight of Purity Palace"
+   ]
+  ],
+  "orn": [
+   "Belobog of the Architects"
+  ],
+  "teams": []
+ },
+ "Bailu": {
+  "rel": [
+   [
+    "Passerby of Wandering Cloud",
+    "Passerby of Wandering Cloud"
+   ]
+  ],
+  "orn": [
+   "Fleet of the Ageless"
+  ],
+  "teams": []
+ },
+ "Natasha": {
+  "rel": [
+   [
+    "Passerby of Wandering Cloud",
+    "Passerby of Wandering Cloud"
+   ]
+  ],
+  "orn": [
+   "Fleet of the Ageless"
+  ],
+  "teams": []
+ },
+ "Guinaifen": {
+  "rel": [
+   [
+    "Prisoner in Deep Confinement",
+    "Prisoner in Deep Confinement"
+   ]
+  ],
+  "orn": [
+   "Firmament Frontline: Glamoth"
+  ],
+  "teams": []
  }
 }

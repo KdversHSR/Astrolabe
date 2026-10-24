@@ -179,26 +179,29 @@ def names_in(cell):
 def scrape_game8():
     page = get(GAME8)
     ver = re.search(r'Version (\d\.\d+)', page)
-    res, eg = {}, {'moc': {}, 'pf': {}, 'as': {}}
-    for ti, tb in enumerate(re.findall(r'<table.*?</table>', page, re.S)):
+    res, gen, eg = {}, {}, {}
+    for tb in re.findall(r'<table.*?</table>', page, re.S):
+        rows = re.findall(r'<tr.*?</tr>', tb, re.S)
+        if len(rows) < 6:
+            continue
+        head = [re.sub(r'\s+', ' ', H.unescape(re.sub(r'<[^>]+>', ' ', c))).strip() for c in cells(rows[0])]
         got = {}
-        for tr in re.findall(r'<tr.*?</tr>', tb, re.S):
+        for tr in rows[1:]:
             cs = cells(tr)
-            if not cs:
-                continue
-            m = re.match(r'\s*(SS|S\+|S|A|B|C)\s*Tier', H.unescape(re.sub(r'<[^>]+>', ' ', cs[0])).strip())
+            m = cs and re.match(r'\s*(SS|S\+|S|A|B|C)\s*Tier', H.unescape(re.sub(r'<[^>]+>', ' ', cs[0])).strip())
             if m:
                 got[m[1]] = cs[1:]
-        if len(got) >= 5 and 'SS' in got:
-            if not res and len(got['SS']) == 1:
-                res = {t: names_in(c[0]) for t, c in got.items()}
-            elif res and len(got['SS']) == 3 and not eg['moc'] and ti >= 2:
-                for t, c in got.items():
-                    for k, cell in zip(('moc', 'pf', 'as'), c):
-                        eg[k][t] = names_in(cell)
-    if sum(len(v) for v in res.values()) < 60:
+        if 'SS' not in got or len(got) < 5:
+            continue
+        if 'DPS' in head and not gen:
+            gen = {k: {t: names_in(c[i]) for t, c in got.items() if len(c) > i} for i, k in enumerate(('dps', 'support', 'sustain'))}
+        elif 'Memory of Chaos' in head and not eg:
+            eg = {k: {t: names_in(c[i]) for t, c in got.items() if len(c) > i} for i, k in enumerate(('moc', 'pf', 'as'))}
+        elif len(head) <= 2 and not res:
+            res = {t: names_in(c[0]) for t, c in got.items()}
+    if sum(len(v) for v in res.values()) < 60 or not gen or not eg:
         raise RuntimeError('structure Game8 inattendue')
-    return res, eg, ver[1] if ver else None
+    return res, gen, eg, ver[1] if ver else None
 
 
 # ------------------------------------------------------------------ main
@@ -252,22 +255,26 @@ def main():
 
     print('3/5 tier list (Game8)…')
     seed = json.loads((DATA / 'seed_tiers.json').read_text('utf-8'))
-    tiers, eg, version = seed['overall'], seed['endgame'], manual.get('version')
+    tiers, gen, eg, version = seed['overall'], seed['general'], seed['endgame'], manual.get('version')
     if not a.no_scrape:
         try:
-            tiers, eg, v = scrape_game8()
+            tiers, gen, eg, v = scrape_game8()
             version = v or version
-            (DATA / 'seed_tiers.json').write_text(json.dumps({'overall': tiers, 'endgame': eg}, ensure_ascii=False, indent=1), 'utf-8')
+            (DATA / 'seed_tiers.json').write_text(json.dumps({'overall': tiers, 'general': gen, 'endgame': eg}, ensure_ascii=False, indent=1), 'utf-8')
             print('   tier list mise à jour depuis Game8')
         except Exception as e:
             print('   ATTENTION Game8 indisponible, anciennes données conservées :', e)
-    tier = {}
-    for t, ns in tiers.items():
-        for n in ns:
-            i = rid(n)
-            if i:
-                tier[i] = t
-    egid = {m: {t: [i for i in (rid(n) for n in ns) if i] for t, ns in d.items()} for m, d in eg.items()}
+    ids_of = lambda d: {t: [i for i in (rid(n) for n in ns) if i] for t, ns in d.items()}
+    tiers_out = {'ov': ids_of(tiers), **{k: ids_of(v) for k, v in gen.items()}, **{k: ids_of(v) for k, v in eg.items()}}
+    inv = {m: {i: t for t, l in d.items() for i in l} for m, d in tiers_out.items()}
+    tier = inv['ov']
+    events = json.loads((DATA / 'events.json').read_text('utf-8')) if (DATA / 'events.json').exists() else []
+    bj = json.loads((DATA / 'banners.json').read_text('utf-8'))
+    lcn = {nz(v['name']): k for k, v in LCe.items()}
+    for b in bj['list']:
+        b['chars'] = [i for i in (rid(n) for n in b.get('chars', [])) if i]
+        b['lcs'] = [lcn[nz(n)] for n in b.get('lcs', []) if nz(n) in lcn]
+    bj['rateup4'] = [i for i in (rid(n) for n in bj.get('rateup4', [])) if i]
 
     rsn = {nz(v['name']): k for k, v in RSe.items()}
     cj = json.loads((DATA / 'curated_builds.json').read_text('utf-8'))
@@ -289,7 +296,7 @@ def main():
         rk = [{'n': R[r]['name'], 'd': re.sub(r'<[^>]+>', '', R[r]['desc'])} for r in v['ranks'] if r in R]
         pv = P[k]['values'][6]
         f = lambda s: round(pv[s]['base'] + pv[s]['step'] * 79)
-        c = {'id': k, 'n': n, 'r': v['rarity'], 'e': EL[v['element']], 'p': PA[v['path']], 's': sk, 'x': rk, 't': tier.get(k, '?'),
+        c = {'id': k, 'n': n, 'r': v['rarity'], 'e': EL[v['element']], 'p': PA[v['path']], 's': sk, 'x': rk, 't': tier.get(k, '?'), 'tr': {m: inv[m][k] for m in inv if k in inv[m]},
              'st': {'hp': f('hp'), 'atk': f('atk'), 'def': f('def'), 'spd': round(pv['spd']['base']), 'cr': round(pv['crit_rate']['base'] * 100),
                     'cd': round(pv['crit_dmg']['base'] * 100), 'ta': round(pv['taunt']['base']), 'sp': v['max_sp']}}
         b = builds.get(k)
@@ -308,11 +315,35 @@ def main():
             c['b'] = b
         chars.append(c)
     chars.sort(key=lambda c: -int(c['id']))
+    # repli : sets fréquents de la même voie, et équipes où le personnage apparaît chez les autres
+    from collections import Counter
+    pop = {}
+    for c in chars:
+        if c.get('b') and c['b'].get('rel'):
+            cn = pop.setdefault(c['p'], [Counter(), Counter()])
+            cn[0].update(p[0] for p in c['b']['rel'] if p[0] == p[1])
+            cn[1].update(c['b'].get('orn', [])[:1])
+    for c in chars:
+        b = c.get('b')
+        if not b:
+            continue
+        if not b.get('rel') and c['p'] in pop:
+            b['rel'] = [[i, i] for i, _ in pop[c['p']][0].most_common(2)]
+            b['orn'] = [i for i, _ in pop[c['p']][1].most_common(2)]
+            b['fallback'] = True
+        if not b.get('teams'):
+            seen = []
+            for o in chars:
+                for team in (o.get('b') or {}).get('teams', []):
+                    if any(m['c'] == c['id'] for m in team) and o['id'] != c['id'] and len(seen) < 3:
+                        seen.append(team)
+            b['teams'] = seen
+            b['teams_from_others'] = bool(seen)
     lcs = [{'id': k, 'n': v['name'], 'r': v['rarity'], 'p': PA[v['path']], 'k': LR[k]['skill'], 'd': fmt(LR[k]['desc'], LR[k]['params'])} for k, v in LCf.items()]
     lcs.sort(key=lambda x: (-x['r'], x['n']))
     sets = [{'id': k, 'n': v['name'], 'd': v['desc'], 'pl': len(v['desc']) == 1} for k, v in RSf.items()]
     sets.sort(key=lambda x: (x['pl'], x['n']))
-    out = {'version': version, 'updated': datetime.date.today().isoformat(), 'chars': chars, 'lcs': lcs, 'sets': sets, 'eg': egid, 'manual': manual}
+    out = {'version': version, 'updated': datetime.date.today().isoformat(), 'chars': chars, 'lcs': lcs, 'sets': sets, 'tiers': tiers_out, 'events': events, 'banners': bj, 'manual': manual}
     (DATA / 'data.json').write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), 'utf-8')
     print(f'   {len(chars)} personnages, {len(lcs)} cônes, {len(sets)} sets, {sum(1 for c in chars if "b" in c)} builds')
 

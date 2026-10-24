@@ -6,6 +6,8 @@ Tier list, builds, cônes de lumière, reliques, end game, favoris et comptes. S
 - `scripts/update.py` récupère les données : personnages, cônes, reliques et images (StarRailRes), builds et équipes (HSR Optimizer, licence MIT), tier list et end game (Game8, classements seulement avec lien vers la source). Il écrit `data/data.json` et `img/`.
 - Si une source tombe en panne ou change de format, le script garde les anciennes données au lieu de casser le site.
 - `data/manual.json` : calendrier end game, descriptions des modes, liens de guides. **À modifier à la main à chaque version** (2 minutes, directement sur GitHub).
+- `data/banners.json` : bannières en cours (personnages, cônes, dates de début et de fin en UTC) et date de la prochaine version. **À mettre à jour à chaque phase** (début et milieu de version). Le site calcule tout seul les comptes à rebours.
+- `data/events.json` : guides d’événements et de modes end game. Copiez le bloc « exemple » (il est masqué par `"hidden": true`) pour ajouter un événement avec dates, étapes, conseils et récompenses.
 - `data/curated_builds.json` : sets et équipes vérifiés à la main, utilisés quand la source n’en fournit pas.
 
 ## Mise en ligne (gratuit, environ 20 minutes)
@@ -26,7 +28,7 @@ Tier list, builds, cônes de lumière, reliques, end game, favoris et comptes. S
 
 ### 2. Comptes et favoris (Supabase, gratuit)
 1. Créez un compte sur supabase.com, puis **New project** (choisissez une région européenne).
-2. **SQL Editor → New query** : collez le contenu de `supabase/schema.sql` → **Run**.
+2. **SQL Editor → New query** : collez le contenu de `supabase/schema.sql` → **Run**. Faites la même chose avec `supabase/schema_v2.sql` (profil et collection des joueurs), puis `supabase/schema_v3.sql` (profils publics, J'aime, signalements), chacun dans une nouvelle requête.
 3. **Project Settings → API** : copiez le *Project URL* et la clé *anon public*. Cette clé est faite pour être publique, la sécurité vient des règles du fichier SQL (chacun ne voit que ses favoris). Ne copiez jamais la clé *service_role*.
 4. Collez les deux valeurs dans `config.js`, enregistrez, puis `git add -A && git commit -m "Config comptes" && git push`.
 5. **Authentication → URL Configuration** : mettez l’adresse de votre site dans *Site URL* et dans *Redirect URLs*.
@@ -54,3 +56,9 @@ python -m http.server 8000     # puis ouvrez http://localhost:8000
 - Game8 : le site ne reprend que le classement (noms et tiers), avec lien. Ne copiez pas leurs textes. Si vous voulez rester 100 % à l’abri, vous pouvez désactiver le scraping avec l’option `--no-scrape` dans le workflow et tenir `data/seed_tiers.json` à jour.
 - Builds : ils viennent des préréglages communautaires de HSR Optimizer (MIT, auteur Fribbels). Gardez les crédits du pied de page.
 - Environ 25 personnages n’ont pas de sets de reliques dans la source ; le site l’indique. Complétez-les dans `data/curated_builds.json` (noms anglais) si vous le souhaitez.
+
+## Fonctions du site
+Menu à gauche, tier list (vue d’ensemble, par rôle DPS/Support/Sustain, Memory of Chaos, Pure Fiction, Apocalyptic Shadow), fiches personnage à onglets (kit, build et équipes, classements, éidolons), cônes, reliques, comparateur, événements, planificateur de tirages et profil joueur (collection avec éidolons, équipes réalisables, favoris, avatar).
+
+## Communauté et modération
+Les profils publics sont désactivés par défaut. Les signalements arrivent dans Supabase → Table Editor → `reports`. Pour masquer un profil abusif : Table Editor → `profiles`, décochez `is_public` sur sa ligne.

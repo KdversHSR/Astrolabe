@@ -1,0 +1,127 @@
+[
+ {
+  "id": "gift",
+  "title": "Gift of Odyssey",
+  "type": "Événement 4.6",
+  "start": "2026-09-28",
+  "end": "2026-11-11",
+  "summary": "Récompenses de connexion de la version 4.6.",
+  "rewards": [
+   "10 Passes spéciaux Star Rail en vous connectant 7 jours"
+  ]
+ },
+ {
+  "id": "imagea",
+  "title": "Astral Imagea",
+  "type": "Événement 4.6",
+  "start": "2026-09-28",
+  "end": "2026-11-11",
+  "summary": "Tirages de créatures Astral Imagea.",
+  "tips": [
+   "Les 6 Trendible Vouchers offerts en 4.6 servent à ces tirages."
+  ]
+ },
+ {
+  "id": "lgr",
+  "title": "Love, Ghosts & Robots",
+  "type": "Événement 4.6",
+  "start": "2026-09-28",
+  "end": "2026-11-11",
+  "summary": "Événement de la version 4.6."
+ },
+ {
+  "id": "wish",
+  "title": "Wishpower UP! Down with Voracity",
+  "type": "Événement 4.6",
+  "start": "2026-09-28",
+  "end": "2026-11-11",
+  "summary": "Événement de la version 4.6."
+ },
+ {
+  "id": "onetake",
+  "title": "Interastral Peace Gala: One Take",
+  "type": "Événement 4.6",
+  "start": "2026-10-21",
+  "end": "2026-11-11",
+  "summary": "Événement de la version 4.6."
+ },
+ {
+  "id": "planar",
+  "title": "Planar Fissure",
+  "type": "Événement 4.6",
+  "start": "2026-10-12",
+  "end": "2026-10-25",
+  "summary": "Événement de la version 4.6."
+ },
+ {
+  "id": "garden",
+  "title": "Garden of Plenty",
+  "type": "Événement 4.6",
+  "start": "2026-10-30",
+  "end": "2026-11-11",
+  "summary": "Événement de la version 4.6."
+ },
+ {
+  "id": "moc",
+  "title": "Memory of Chaos",
+  "type": "End game",
+  "summary": "Mode de combat en cycles avec plusieurs vagues. Il faut deux équipes complètes.",
+  "steps": [
+   "Préparez deux équipes qui ne partagent aucun personnage.",
+   "Repérez les faiblesses des ennemis de chaque moitié avant de composer vos équipes.",
+   "Gardez les ultimes pour les vagues difficiles et ne gaspillez pas les points de compétence."
+  ],
+  "tips": [
+   "Un soigneur ou un bouclier évite de perdre des cycles sur les dégâts subis.",
+   "Réessayez avec un autre ordre de personnages si un combat se complique."
+  ]
+ },
+ {
+  "id": "pf",
+  "title": "Pure Fiction",
+  "type": "End game",
+  "summary": "Mode à score : plus vous éliminez d’ennemis vite, plus vous marquez.",
+  "steps": [
+   "Privilégiez les dégâts de zone et les attaques de poursuite.",
+   "Choisissez les bonus de scène qui correspondent à votre élément principal.",
+   "Éliminez les ennemis les plus rapportant en premier."
+  ],
+  "tips": [
+   "Visez les 4 000 points des paliers de récompense avant de chercher le score maximum."
+  ]
+ },
+ {
+  "id": "as",
+  "title": "Apocalyptic Shadow",
+  "type": "End game",
+  "summary": "Combats de boss avec des mécaniques à gérer et des conditions de score.",
+  "steps": [
+   "Lisez les mécaniques du boss avant de lancer le combat.",
+   "Gérez le moment de l’ultime pour profiter des fenêtres de vulnérabilité."
+  ],
+  "tips": [
+   "Un personnage qui actionne tôt aide à tenir les conditions de score."
+  ]
+ },
+ {
+  "_exemple": "Copiez ce bloc pour ajouter un événement",
+  "id": "exemple",
+  "title": "Titre de l’événement",
+  "type": "Événement",
+  "start": "2026-11-02",
+  "end": "2026-11-16",
+  "summary": "Une phrase qui résume l’événement.",
+  "steps": [
+   "Première étape",
+   "Deuxième étape"
+  ],
+  "tips": [
+   "Un conseil utile"
+  ],
+  "rewards": [
+   "Jade stellaire x300"
+  ],
+  "link": "https://exemple.com",
+  "hidden": true
+ }
+]

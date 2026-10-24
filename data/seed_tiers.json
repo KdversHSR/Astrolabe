@@ -106,6 +106,148 @@
    "Arlan"
   ]
  },
+ "general": {
+  "dps": {
+   "SS": [
+    "Nova",
+    "Silver Wolf Lv.999",
+    "Evanescia",
+    "Castorice",
+    "Archer",
+    "Evernight",
+    "Rin Tohsaka",
+    "Waveflair",
+    "Ashveil"
+   ],
+   "S+": [
+    "Sparxie",
+    "Firefly",
+    "Phainon",
+    "Anaxa",
+    "The Herta",
+    "Acheron",
+    "Saber",
+    "Mydei",
+    "Gilgamesh",
+    "Hysilens",
+    "Kafka",
+    "Black Swan",
+    "Aglaea",
+    "Seele"
+   ],
+   "S": [
+    "Yunli",
+    "Jade",
+    "Jingliu",
+    "Blade",
+    "Boothill",
+    "Jing Yuan",
+    "Cipher",
+    "Topaz",
+    "Welt",
+    "Feixiao",
+    "Rappa"
+   ],
+   "A": [
+    "Dr. Ratio",
+    "Imbibitor Lunae",
+    "Himeko",
+    "Argenti",
+    "Clara",
+    "March 7th (Imaginary)",
+    "Moze",
+    "Herta",
+    "Guinaifen",
+    "Xueyi"
+   ],
+   "B": [
+    "Qingque",
+    "Serval",
+    "Hook",
+    "Yanqing",
+    "Misha",
+    "Luka",
+    "Sampo",
+    "Dan Heng",
+    "Sushang"
+   ],
+   "C": [
+    "Trailblazer",
+    "Arlan"
+   ]
+  },
+  "support": {
+   "SS": [
+    "Mortenax Blade",
+    "Summeretto",
+    "Sunday",
+    "Tribbie",
+    "Sparkle",
+    "Yao Guang"
+   ],
+   "S+": [
+    "Cyrene",
+    "Cerydra",
+    "Ruan Mei",
+    "Robin",
+    "Cipher",
+    "The Dahlia",
+    "Bronya",
+    "Trailblazer (Ice)",
+    "Fugue",
+    "Welt",
+    "Hyacine",
+    "Trailblazer (Lightning)"
+   ],
+   "S": [
+    "Silver Wolf",
+    "Tingyun",
+    "Permansor Terrae",
+    "Jiaoqiu",
+    "Pela",
+    "Trailblazer (Imaginary)",
+    "Topaz"
+   ],
+   "A": [
+    "March 7th (Imaginary)",
+    "Asta",
+    "Hanya"
+   ],
+   "B": [
+    "Yukong"
+   ],
+   "C": []
+  },
+  "sustain": {
+   "SS": [
+    "Hyacine",
+    "Permansor Terrae",
+    "Huohuo",
+    "Pearl"
+   ],
+   "S+": [
+    "Aventurine",
+    "Lingsha",
+    "Gallagher"
+   ],
+   "S": [
+    "Fu Xuan",
+    "Luocha"
+   ],
+   "A": [
+    "Gepard",
+    "Bailu",
+    "Lynx"
+   ],
+   "B": [
+    "Trailblazer",
+    "Natasha",
+    "March 7th",
+    "Trailblazer (Fire)"
+   ],
+   "C": []
+  }
+ },
  "endgame": {
   "moc": {
    "SS": [
@@ -134,6 +276,84 @@
     "Permansor Terrae",
     "Aventurine",
     "Huohuo"
+   ],
+   "S+": [
+    "Trailblazer (Lightning)",
+    "Cerydra",
+    "Kafka",
+    "Hysilens",
+    "Acheron",
+    "Archer",
+    "Saber",
+    "Phainon",
+    "Cipher",
+    "Rin Tohsaka",
+    "Gilgamesh",
+    "Boothill",
+    "Trailblazer (Ice)",
+    "Blade",
+    "Anaxa",
+    "Luocha",
+    "Mydei",
+    "Bronya",
+    "Ruan Mei",
+    "Jingliu",
+    "Aglaea",
+    "Gallagher",
+    "Trailblazer (Imaginary)",
+    "Tingyun",
+    "Silver Wolf"
+   ],
+   "S": [
+    "Jing Yuan",
+    "Black Swan",
+    "Himeko",
+    "Argenti",
+    "Welt",
+    "Fu Xuan",
+    "Dr. Ratio",
+    "Yunli",
+    "The Herta",
+    "Clara",
+    "Imbibitor Lunae",
+    "Topaz",
+    "Rappa",
+    "Jiaoqiu",
+    "Moze",
+    "March 7th (Imaginary)",
+    "Feixiao",
+    "Asta",
+    "Pela"
+   ],
+   "A": [
+    "Guinaifen",
+    "Qingque",
+    "Bailu",
+    "Gepard",
+    "Seele",
+    "Jade"
+   ],
+   "B": [
+    "Trailblazer (Fire)",
+    "Xueyi",
+    "Hook",
+    "Natasha",
+    "Hanya",
+    "Sampo",
+    "Herta",
+    "Dan Heng",
+    "Sushang",
+    "Luka",
+    "Yukong",
+    "Lynx",
+    "Yanqing"
+   ],
+   "C": [
+    "Serval",
+    "Trailblazer",
+    "Arlan",
+    "Misha",
+    "March 7th"
    ]
   },
   "pf": {
@@ -167,6 +387,80 @@
     "Fugue",
     "Huohuo",
     "Permansor Terrae"
+   ],
+   "S+": [
+    "Seele",
+    "Saber",
+    "Phainon",
+    "Anaxa",
+    "Cerydra",
+    "Hysilens",
+    "Mydei",
+    "Aglaea",
+    "Gilgamesh",
+    "Acheron",
+    "Argenti",
+    "Jing Yuan",
+    "Kafka",
+    "Black Swan",
+    "Aventurine",
+    "Sparkle",
+    "Jiaoqiu",
+    "Trailblazer (Imaginary)",
+    "Gallagher",
+    "Bronya",
+    "Trailblazer (Ice)"
+   ],
+   "S": [
+    "Trailblazer (Lightning)",
+    "Guinaifen",
+    "Jingliu",
+    "Yunli",
+    "Cipher",
+    "Rappa",
+    "Clara",
+    "Blade",
+    "Serval",
+    "Tingyun",
+    "Asta",
+    "Pela",
+    "Fu Xuan",
+    "Luocha",
+    "Lynx"
+   ],
+   "A": [
+    "Moze",
+    "Welt",
+    "Qingque",
+    "Feixiao",
+    "Topaz",
+    "March 7th (Imaginary)",
+    "Trailblazer (Fire)",
+    "Silver Wolf",
+    "Sampo",
+    "Hanya"
+   ],
+   "B": [
+    "Archer",
+    "Xueyi",
+    "Hook",
+    "Dr. Ratio",
+    "Imbibitor Lunae",
+    "Sushang",
+    "Gepard",
+    "March 7th"
+   ],
+   "C": [
+    "Misha",
+    "Dan Heng",
+    "Boothill",
+    "Luka",
+    "Yanqing",
+    "Trailblazer",
+    "Arlan",
+    "Bailu",
+    "Natasha",
+    "Yukong"
    ]
   },
   "as": {
@@ -200,6 +494,80 @@
     "Robin",
     "Ruan Mei",
     "Permansor Terrae"
+   ],
+   "S+": [
+    "Anaxa",
+    "Phainon",
+    "Welt",
+    "Trailblazer (Ice)",
+    "Gallagher",
+    "Acheron",
+    "Hysilens",
+    "Huohuo",
+    "Cipher",
+    "Aglaea",
+    "Black Swan",
+    "Jiaoqiu",
+    "Rappa",
+    "Jingliu",
+    "Bronya",
+    "Aventurine",
+    "Blade",
+    "Fu Xuan",
+    "Argenti",
+    "Fugue",
+    "Tingyun",
+    "Luocha",
+    "Trailblazer (Imaginary)",
+    "Silver Wolf",
+    "Topaz"
+   ],
+   "S": [
+    "Jing Yuan",
+    "Feixiao",
+    "Seele",
+    "Mydei",
+    "The Herta",
+    "Qingque",
+    "Jade",
+    "Cerydra",
+    "Boothill",
+    "Yunli",
+    "Himeko",
+    "Dr. Ratio",
+    "March 7th (Imaginary)",
+    "Moze",
+    "Asta",
+    "Pela"
+   ],
+   "A": [
+    "Xueyi",
+    "Dan Heng",
+    "Imbibitor Lunae",
+    "Luka",
+    "Guinaifen",
+    "Clara",
+    "Sushang",
+    "Gepard",
+    "Bailu",
+    "Lynx"
+   ],
+   "B": [
+    "Serval",
+    "Sampo",
+    "Trailblazer (Fire)",
+    "Hanya",
+    "Yukong",
+    "Natasha",
+    "Hook"
+   ],
+   "C": [
+    "Yanqing",
+    "Misha",
+    "Trailblazer",
+    "Arlan",
+    "March 7th",
+    "Herta"
    ]
   }
  }
