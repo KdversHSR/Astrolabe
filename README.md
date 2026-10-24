@@ -32,7 +32,7 @@ Tier list, builds, cônes de lumière, reliques, end game, favoris et comptes. S
 
 ### 2. Comptes et favoris (Supabase, gratuit)
 1. Créez un compte sur supabase.com, puis **New project** (choisissez une région européenne).
-2. **SQL Editor → New query** : collez le contenu de `supabase/schema.sql` → **Run**. Faites la même chose avec `supabase/schema_v2.sql` (profil et collection des joueurs), puis `supabase/schema_v3.sql` (profils publics, J'aime, signalements), puis `supabase/schema_v4.sql` (administration, retours des visiteurs, statistiques, équipes enregistrées), chacun dans une nouvelle requête et **dans cet ordre**.
+2. **SQL Editor → New query** : collez le contenu de `supabase/schema.sql` → **Run**. Faites la même chose avec `supabase/schema_v2.sql` (profil et collection des joueurs), puis `supabase/schema_v3.sql` (profils publics, J'aime, signalements), puis `supabase/schema_v4.sql` (administration, retours des visiteurs, statistiques, équipes enregistrées), puis `supabase/schema_v5.sql` (suppression de compte/profil, protection de l’admin par 2FA), chacun dans une nouvelle requête et **dans cet ordre**.
 3. **Project Settings → API** : copiez le *Project URL* et la clé *anon public*. Cette clé est faite pour être publique, la sécurité vient des règles du fichier SQL (chacun ne voit que ses favoris). Ne copiez jamais la clé *service_role*.
 4. Collez les deux valeurs dans `config.js`, enregistrez, puis `git add -A && git commit -m "Config comptes" && git push`.
 5. **Authentication → URL Configuration** : mettez l’adresse de votre site dans *Site URL* et dans *Redirect URLs*.
@@ -72,3 +72,15 @@ Menu à gauche et recherche rapide (Ctrl + K), version **français / anglais**, 
 
 ## Communauté et modération
 Les profils publics sont désactivés par défaut. Les signalements arrivent dans la page Administration du site (et dans Supabase → Table Editor → `reports`). Pour masquer un profil abusif, utilisez le bouton « Masquer ce profil » de la page Administration.
+
+## Connexion Discord et double authentification
+- **2FA** : Supabase → Authentication → Multi-Factor : vérifiez que « TOTP » est activé. Ensuite chaque joueur l’active dans Mon profil → Paramètres → Sécurité du compte (QR code à scanner avec Google Authenticator, Authy…). Si l’administrateur l’active, la base exige le code pour toute action d’administration.
+- **Discord** : https://discord.com/developers/applications → New Application → OAuth2 : copiez Client ID et Client Secret, et ajoutez dans *Redirects* l’adresse « Callback URL » indiquée par Supabase (Authentication → Providers → Discord). Collez Client ID/Secret dans Supabase, activez le fournisseur, puis ajoutez l’adresse de votre site dans Authentication → URL Configuration.
+
+## Suppression de comptes
+- Chaque joueur peut supprimer son profil public ou son compte entier (Mon profil → Paramètres → Zone sensible).
+- L’administrateur peut supprimer un profil ou un compte (page Administration → signalements, et sur la page d’un profil public). Un administrateur ne peut pas être supprimé par ce biais.
+
+## Équipes classées et fiches personnage
+- La **Tier list des équipes** est calculée par le site (tiers Game8 des membres + équipes conseillées par HSR Optimizer) : ce n’est pas un classement publié par un autre site.
+- Les onglets Stats, Dégâts et le curseur de niveau des compétences utilisent les chiffres du jeu (StarRailRes). Le simulateur de dégâts est une estimation d’un seul coup.

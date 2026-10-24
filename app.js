@@ -13,7 +13,7 @@ const LOC = () => (LANG === 'fr' ? 'fr-FR' : 'en-GB');
 const ELE = { Fire: ['Feu', 'Fire', '#ef5b3f'], Ice: ['Glace', 'Ice', '#58c4ee'], Thunder: ['Foudre', 'Lightning', '#b46cf5'], Wind: ['Vent', 'Wind', '#3ed3a8'], Physical: ['Physique', 'Physical', '#a7adbb'], Quantum: ['Quantique', 'Quantum', '#6f7cf5'], Imaginary: ['Imaginaire', 'Imaginary', '#f0c53a'] };
 const PTH = { Warrior: ['Destruction', 'Destruction'], Rogue: ['Chasse', 'The Hunt'], Mage: ['Érudition', 'Erudition'], Shaman: ['Harmonie', 'Harmony'], Warlock: ['Nihilité', 'Nihility'], Knight: ['Préservation', 'Preservation'], Priest: ['Abondance', 'Abundance'], Memory: ['Souvenir', 'Remembrance'], Elation: ['Allégresse', 'Elation'] };
 const eN = id => (ELE[id] ? L(ELE[id][0], ELE[id][1]) : id), pN = id => (PTH[id] ? L(PTH[id][0], PTH[id][1]) : id), eC = id => (ELE[id] || [])[2] || '#888';
-const SKT = { 'Attaque normale': 'Basic ATK', 'Compétence': 'Skill', 'Ultime': 'Ultimate', 'Talent': 'Talent', 'Technique': 'Technique' };
+const SKT = { 'ATQ normale': 'Basic ATK', 'Attaque normale': 'Basic ATK', 'Compétence du mnémesprit': 'Memosprite Skill', 'Talent du mnémesprit': 'Memosprite Talent', 'Comicompétence': 'Elation Skill', 'Compétence de soutien': 'Support Skill', 'Compétence': 'Skill', 'Ultime': 'Ultimate', 'Talent': 'Talent', 'Technique': 'Technique' };
 const STE = { 'ATQ': 'ATK', 'ATQ%': 'ATK%', 'PV': 'HP', 'PV%': 'HP%', 'DÉF': 'DEF', 'DÉF%': 'DEF%', 'VIT': 'SPD', 'Taux crit': 'CRIT Rate', 'DGT crit': 'CRIT DMG', 'Taux d’effet': 'Effect Hit Rate', 'Rés. d’effet': 'Effect RES', 'Effet de rupture': 'Break Effect', 'Recharge d’énergie': 'Energy Regen Rate', 'Soins': 'Outgoing Healing' };
 const stx = s => { if (LANG === 'fr') return s; if (STE[s]) return STE[s]; const m = /^DGT (.+)$/.exec(s); if (m) { const e = Object.values(ELE).find(x => x[0] === m[1]); return (e ? e[1] : m[1]) + ' DMG'; } return s; };
 
@@ -37,7 +37,7 @@ const evx = e => (LANG === 'en' && e.en ? { ...e, ...e.en } : e);
 // langue des données : superpose les textes anglais aux données françaises
 function applyData() {
   const en = LANG === 'en' && DE;
-  C = D.chars.map(c => { const x = en && DE.c[c.id]; return x ? { ...c, n: x.n, s: c.s.map((k, i) => ({ ...k, n: (x.s[i] || k).n, d: (x.s[i] || k).d })), x: c.x.map((k, i) => ({ n: (x.x[i] || k).n, d: (x.x[i] || k).d })) } : c; });
+  C = D.chars.map(c => { const x = en && DE.c[c.id]; return x ? { ...c, n: x.n, s: c.s.map((k, i) => ({ ...k, n: (x.s[i] || k).n, d: (x.s[i] || k).d, f: (x.s[i] || k).f })), x: c.x.map((k, i) => ({ n: (x.x[i] || k).n, d: (x.x[i] || k).d })) } : c; });
   LC = D.lcs.map(l => { const x = en && DE.l[l.id]; return x ? { ...l, ...x } : l; });
   RS = D.sets.map(s => { const x = en && DE.s[s.id]; return x ? { ...s, ...x } : s; });
   byId = Object.fromEntries(C.map(c => [c.id, c]));
@@ -96,14 +96,15 @@ function acct() {
 function initAuth() {
   if (!CFG.SUPABASE_URL || !window.supabase) return acct();
   sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
-  sb.auth.getSession().then(({ data }) => { user = data.session ? data.session.user : null; acct(); pullAll(); });
-  sb.auth.onAuthStateChange((_e, s) => { user = s ? s.user : null; if (!user) isAdmin = false; acct(); chrome(); pullAll(); });
+  sb.auth.getSession().then(async ({ data }) => { user = data.session ? data.session.user : null; acct(); if (user && await mfaGate()) return; pullAll(); });
+  sb.auth.onAuthStateChange(async (_e, s) => { user = s ? s.user : null; if (!user) isAdmin = false; acct(); chrome(); if (user && await mfaGate()) return; pullAll(); });
 }
 const authMsg = t => { const m = $('#msg'); if (m) m.textContent = t; };
 const cred = () => ({ email: $('#em').value.trim(), password: $('#pw').value });
 async function authClick(id) {
-  if (id === 'bin') { const { error } = await sb.auth.signInWithPassword(cred()); if (error) authMsg(error.message); else $('#dlg').close(); }
+  if (id === 'bin') { const { error } = await sb.auth.signInWithPassword(cred()); if (error) authMsg(error.message); else if (await mfaGate()) return; else $('#dlg').close(); }
   else if (id === 'bup') { const { data, error } = await sb.auth.signUp(cred()); if (error) authMsg(error.message); else if (!data.session) authMsg(L('Compte créé. Vérifiez votre e-mail pour confirmer.', 'Account created. Check your e-mail to confirm.')); else $('#dlg').close(); }
+  else if (id === 'bdc') { const { error } = await sb.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: location.href.split('#')[0] } }); if (error) authMsg(L('Discord n’est pas encore activé dans Supabase. ', 'Discord is not enabled in Supabase yet. ') + error.message); }
   else if (id === 'bfg') { const { error } = await sb.auth.resetPasswordForEmail($('#em').value.trim(), { redirectTo: location.href.split('#')[0] }); authMsg(error ? error.message : L('E-mail de réinitialisation envoyé.', 'Reset e-mail sent.')); }
 }
 
@@ -385,7 +386,7 @@ async function loadAdmin() {
   } else {
     const ids = [...new Set(data.map(r => r.profile_id))], { data: ps } = await sb.from('profiles').select('user_id,handle,display_name,is_public,bio').in('user_id', ids), pm = Object.fromEntries((ps || []).map(p => [p.user_id, p]));
     const cnt = {}; data.forEach(r => cnt[r.profile_id] = (cnt[r.profile_id] || 0) + 1);
-    el.innerHTML = data.map(r => { const p = pm[r.profile_id]; return `<div class="card fbk"><div class="fh"><b>${p ? esc(p.display_name || p.handle || '—') : L('Profil supprimé', 'Deleted profile')}</b>${p && p.handle ? `<a href="#/community/${esc(p.handle)}">@${esc(p.handle)}</a>` : ''}<span class="tag ${p && p.is_public ? 'tg' : ''}" style="--tc:var(--A)">${p && p.is_public ? L('public', 'public') : L('masqué', 'hidden')}</span><span class="tag">${cnt[r.profile_id]}× ${L('signalé', 'reported')}</span><span class="sub">${fmtD(r.created_at)}</span>${act(r.id, adm.f === 'closed')}</div><p class="fmsg">${esc(r.reason)}</p>${p ? `<small class="sub">${esc(p.bio || '')}</small><div style="margin-top:8px"><button class="btn" data-ahide="${r.profile_id}:${p.is_public ? 0 : 1}">${p.is_public ? L('Masquer ce profil', 'Hide this profile') : L('Rendre public à nouveau', 'Make public again')}</button></div>` : ''}</div>`; }).join('');
+    el.innerHTML = data.map(r => { const p = pm[r.profile_id]; return `<div class="card fbk"><div class="fh"><b>${p ? esc(p.display_name || p.handle || '—') : L('Profil supprimé', 'Deleted profile')}</b>${p && p.handle ? `<a href="#/community/${esc(p.handle)}">@${esc(p.handle)}</a>` : ''}<span class="tag ${p && p.is_public ? 'tg' : ''}" style="--tc:var(--A)">${p && p.is_public ? L('public', 'public') : L('masqué', 'hidden')}</span><span class="tag">${cnt[r.profile_id]}× ${L('signalé', 'reported')}</span><span class="sub">${fmtD(r.created_at)}</span>${act(r.id, adm.f === 'closed')}</div><p class="fmsg">${esc(r.reason)}</p>${p ? `<small class="sub">${esc(p.bio || '')}</small><div style="margin-top:8px"><button class="btn" data-ahide="${r.profile_id}:${p.is_public ? 0 : 1}">${p.is_public ? L('Masquer ce profil', 'Hide this profile') : L('Rendre public à nouveau', 'Make public again')}</button> <button class="btn" data-adelp="${r.profile_id}">${L('Supprimer le profil', 'Delete profile')}</button> <button class="btn danger" data-adelu="${r.profile_id}">${L('Supprimer le compte', 'Delete account')}</button></div>` : ''}</div>`; }).join('');
   }
 }
 
@@ -415,11 +416,13 @@ pages.profil = tab => {
     <p class="lab" style="margin-top:8px">${L('Vitrine : jusqu’à 6 personnages à mettre en avant', 'Showcase: up to 6 characters to highlight')}</p>${shw.map((s, k) => `<div class="slot"><select id="sc${k}"><option value="">— ${L('Emplacement', 'Slot')} ${k + 1} —</option>${sorted.map(c => `<option value="${c.id}" ${s.c === c.id ? 'selected' : ''}>${esc(c.n)}</option>`).join('')}</select><input type="text" id="st${k}" value="${esc(s.t)}" maxlength="80" placeholder="${L('Commentaire court (80 caractères)', 'Short comment (80 characters)')}"></div>`).join('')}
     <p class="sub" style="font-size:12.5px">${L('Seuls le pseudo, l’avatar, la présentation, les chiffres de collection et la vitrine sont publics. Jamais votre e-mail ni votre collection complète.', 'Only the name, avatar, bio, collection figures and showcase are public. Never your e-mail or your full collection.')}</p>`}
     <button class="btn pri" id="psave">${L('Enregistrer', 'Save')}</button> ${prof.pub && prof.handle ? `<a href="#/community/${esc(prof.handle)}" style="margin-left:10px">${L('Voir mon profil public', 'See my public profile')}</a>` : ''}<p class="sub">${esc(pmsg)}</p></div>
+    <div class="card"><h2>${L('Sécurité du compte', 'Account security')}</h2><div id="sec2fa"><p class="sub">…</p></div></div>
+    ${sb && user ? `<div class="card dz"><h2>${L('Zone sensible', 'Danger zone')}</h2><p class="sub">${L('Supprimer votre profil public (le compte reste), ou supprimer entièrement votre compte et toutes vos données.', 'Delete your public profile (the account stays), or delete your whole account and all your data.')}</p><button class="btn" id="delprof">${L('Supprimer mon profil public', 'Delete my public profile')}</button> <button class="btn danger" id="delacc">${L('Supprimer mon compte', 'Delete my account')}</button></div>` : ''}
     <div class="card"><h2>${L('Données', 'Data')}</h2><p class="sub">${L('Les données de ce navigateur ' + (sb ? 'sont synchronisées avec votre compte quand vous êtes connecté.' : 'restent dans ce navigateur.'), 'The data in this browser ' + (sb ? 'is synced with your account when you are logged in.' : 'stays in this browser.'))}</p><button class="btn" id="preset">${L('Vider la collection', 'Clear collection')}</button></div>`;
   }
   return [`<div class="ph">${prof.avatar && byId[prof.avatar] ? `<img class="av" src="${im('c', prof.avatar)}" alt="">` : `<div class="av">${esc(name[0].toUpperCase())}</div>`}<div><h1>${esc(name)}</h1><span class="sub">${since}</span></div></div>${banner}
   <div class="g3"><div class="stat"><span class="lab">${L('Personnages', 'Characters')}</span><b>${own.length} / ${C.length}</b></div><div class="stat"><span class="lab">${L('5★ possédés', '5★ owned')}</span><b>${n5}</b></div><div class="stat"><span class="lab">${L('Éidolons cumulés', 'Total eidolons')}</span><b>${eids}</b></div><div class="stat"><span class="lab">${L('Favoris', 'Favourites')}</span><b>${fav.char.length + fav.build.length}</b></div></div>
-  <div class="bigtabs">${tabs.map(t => `<a class="${tab === t[0] ? 'on' : ''}" href="#/profil/${t[0]}">${ico(t[2])}${t[1]}</a>`).join('')}</div>${body}`, res];
+  <div class="bigtabs">${tabs.map(t => `<a class="${tab === t[0] ? 'on' : ''}" href="#/profil/${t[0]}">${ico(t[2])}${t[1]}</a>`).join('')}</div>${body}`, res, () => { if (tab === 'set') mfaDraw(); }];
 };
 function verBanner() {
   const nx = D.banners && D.banners.next; if (!nx) return '';
@@ -476,7 +479,7 @@ async function loadProfile(h) {
   const liked = !!(mine.data && mine.data.length), st = p.stats || {};
   const sh = (Array.isArray(p.showcase) ? p.showcase : []).filter(s => byId[s.c]).slice(0, 6);
   el.innerHTML = `<a class="back" href="#/community" style="color:var(--ac)">← ${L('Communauté', 'Community')}</a><div class="pfx"><div class="pcov big" ${cover(p)}></div><div class="pfh">${avOf(p, 'lg')}<div class="pfn"><h1>${esc(p.display_name || p.handle)}</h1><span class="sub">@${esc(p.handle)}</span></div><div class="pfa">${user ? `<button class="btn ${liked ? 'on' : ''}" data-like="1">${liked ? '♥' : '♡'} ${L('J’aime', 'Like')}</button><button class="btn" data-report="1">${L('Signaler', 'Report')}</button>` : ''}</div></div>${p.bio ? `<p class="pfb">${esc(p.bio)}</p>` : ''}
-  <div class="pfs"><div><b>${st.n ?? '—'}</b><span>${L('Personnages', 'Characters')}</span></div><div><b>${st.n5 ?? '—'}</b><span>5★</span></div><div><b>${st.e ?? '—'}</b><span>${L('Éidolons', 'Eidolons')}</span></div><div><b>♥ ${count || 0}</b><span>${L('J’aime', 'Likes')}</span></div></div>${user ? '' : `<p class="sub" style="padding:0 18px 14px">${L('Connectez-vous pour aimer ou signaler ce profil.', 'Log in to like or report this profile.')}</p>`}</div>
+  <div class="pfs"><div><b>${st.n ?? '—'}</b><span>${L('Personnages', 'Characters')}</span></div><div><b>${st.n5 ?? '—'}</b><span>5★</span></div><div><b>${st.e ?? '—'}</b><span>${L('Éidolons', 'Eidolons')}</span></div><div><b>♥ ${count || 0}</b><span>${L('J’aime', 'Likes')}</span></div></div>${isAdmin ? `<div style="padding:0 18px 14px"><button class="btn" data-adelp="${p.user_id}">${L('Supprimer le profil (admin)', 'Delete profile (admin)')}</button> <button class="btn danger" data-adelu="${p.user_id}">${L('Supprimer le compte (admin)', 'Delete account (admin)')}</button></div>` : ''}${user ? '' : `<p class="sub" style="padding:0 18px 14px">${L('Connectez-vous pour aimer ou signaler ce profil.', 'Log in to like or report this profile.')}</p>`}</div>
   ${sec(L('Vitrine', 'Showcase'))}<div class="posts">${sh.length ? sh.map(s => { const c = byId[s.c]; return `<article class="post"><a class="pimg" href="#/perso/${c.id}"><img src="${im('p', c.id)}" alt="" loading="lazy"></a><div class="ptx"><b>${esc(c.n)}</b><span class="sub">${eN(c.ei)} · ${pN(c.pi)}</span><p>${esc(s.t || '')}</p><a href="#/perso/${c.id}/build">${L('Voir le build recommandé', 'See the recommended build')} →</a></div></article>`; }).join('') : `<p class="sub">${L('Vitrine vide.', 'Empty showcase.')}</p>`}</div>`;
 }
 
@@ -512,7 +515,7 @@ function buildView(c) {
   const p2 = L('2 pièces : ', '2-piece: '), p4 = L('4 pièces : ', '4-piece: ');
   const rel = (b.rel || []).map(p => p[0] === p[1] ? setRow(p[0], s => p4 + s.d[s.d.length - 1]) : setRow(p[0], s => p2 + s.d[0]) + setRow(p[1], s => p2 + s.d[0])).join('');
   const orn = (b.orn || []).map(i => setRow(i, s => p2 + s.d[0])).join('');
-  const teams = (b.teams || []).map(t => { const mem = [{ c: c.id, l: b.lc }, ...t.filter(m => m.c !== c.id)]; return `<div class="team">${mem.map(m => { const x = byId[m.c], l = m.l && lcOf(m.l); return x ? tile(x, { sub: l ? esc(l.n) : '' }) : ''; }).join('')}<a class="btn" style="margin-left:auto" href="#/team/${mem.map(m => m.c + '-' + (m.l || '')).join('_')}">${L('Ouvrir', 'Open')}</a></div>`; }).join('');
+  const teams = (b.teams || []).map(t => { const mem = [{ c: c.id, l: b.lc }, ...t.filter(m => m.c !== c.id)]; return `<div class="team">${mem.map(m => { const x = byId[m.c], l = m.l && lcOf(m.l); return x ? tile(x, { sub: l ? esc(l.n) : '' }) : ''; }).join('')}${(() => { const e = teamsAll().by.get(mem.map(m => m.c).sort().join('-')); return e ? `<span class="tag tg" style="--tc:var(${TV[tkey(e, 'ov')]})" title="${L('Rang dans la tier list des équipes', 'Rank in the team tier list')}">${TN[tkey(e, 'ov')]} · #${e.rk.ov}</span>` : ''; })()}<a class="btn" style="margin-left:auto" href="#/team/${mem.map(m => m.c + '-' + (m.l || '')).join('_')}">${L('Ouvrir', 'Open')}</a></div>`; }).join('');
   const src = b.curated ? L('Sets et équipes vérifiés à la main.', 'Sets and teams checked by hand.') : b.fallback ? L('Sets indicatifs : les plus utilisés par les personnages de la même voie.', 'Indicative sets: the most used by characters of the same path.') : L('Données communautaires HSR Optimizer.', 'Community data from HSR Optimizer.');
   return `<div class="g"><div class="card"><h2>${L('Cône de lumière', 'Light Cone')}</h2>${lc ? row(im('l', lc.id), lc.n, `${esc(lc.k)} — ${esc(lc.d)}`) : `<p class="sub">${L('Non renseigné.', 'Not provided.')}</p>`}<h2 style="margin-top:18px">${L('Reliques', 'Relics')}</h2>${rel || `<p class="sub">${L('Non renseigné.', 'Not provided.')}</p>`}<h2 style="margin-top:18px">${L('Ornements planaires', 'Planar ornaments')}</h2>${orn || `<p class="sub">${L('Non renseigné.', 'Not provided.')}</p>`}</div>
   <div class="card"><h2>${L('Stats à viser', 'Target stats')}</h2><div class="tw"><table><tr><th>${L('Pièce', 'Piece')}</th><th>${L('Stat principale', 'Main stat')}</th></tr>${Object.keys(slotName).map(k => `<tr><td>${slotName[k]}</td><td>${esc((b.parts[k] || []).map(stx).join(' / ') || '—')}</td></tr>`).join('')}</table></div><p class="lab" style="margin:14px 0 6px">${L('Sous-stats par priorité', 'Substats by priority')}</p>${(b.subs || []).map((s, i) => `<span class="pill">${i + 1}. ${esc(stx(s))}</span>`).join('')}</div></div>
@@ -521,24 +524,167 @@ function buildView(c) {
 function detail(id, tab) {
   const c = byId[id]; if (!c) return pages.notfound(); tab = tab || 'kit'; document.title = c.n + ' — Astrolabe';
   const f = (l, v) => `<div><dt>${l}</dt><dd>${v}</dd></div>`, s = c.st;
-  const tabs = [['kit', L('Kit', 'Kit'), 'info'], ['build', L('Build & équipes', 'Build & teams'), 'cone'], ['rank', L('Classements', 'Rankings'), 'end'], ['eid', L('Éidolons', 'Eidolons'), 'star']];
+  const tabs = [['kit', L('Kit', 'Kit'), 'info'], ['stats', L('Stats', 'Stats'), 'chart'], ['build', L('Build', 'Build'), 'cone'], ['teams', L('Équipes classées', 'Ranked teams'), 'team'], ['dmg', L('Dégâts', 'Damage'), 'calc'], ['rank', L('Classements', 'Rankings'), 'end'], ['eid', L('Éidolons', 'Eidolons'), 'star']];
   const R = { ov: L('Vue d’ensemble', 'Overview'), dps: L('Rôle DPS', 'DPS role'), support: L('Rôle Support', 'Support role'), sustain: L('Rôle Sustain', 'Sustain role'), moc: 'Memory of Chaos', pf: 'Pure Fiction', as: 'Apocalyptic Shadow' };
   let body = '';
-  if (tab === 'kit') body = `${sec(L('Caractéristiques (niveau 80)', 'Stats (level 80)'))}<div class="card"><dl>${f(L('PV', 'HP'), s.hp)}${f(L('ATQ', 'ATK'), s.atk)}${f(L('DÉF', 'DEF'), s.def)}${f(L('VIT', 'SPD'), s.spd)}${f(L('Taux crit', 'CRIT Rate'), s.cr + '%')}${f(L('DGT crit', 'CRIT DMG'), s.cd + '%')}${f('Aggro', s.ta)}${f(L('Énergie', 'Energy'), s.sp)}</dl></div>${sec(L('Compétences', 'Skills'))}<div class="card">${c.s.map(k => `<div class="sk"><small>${L(k.t, SKT[k.t] || k.t)}</small><b>${esc(k.n)}</b><p>${esc(k.d)}</p></div>`).join('')}</div>`;
+  if (tab === 'kit') body = `${sec(L('Compétences', 'Skills'))}<div class="card">${c.s.map((k, i) => { const n = (k.pa || []).length, dl = Math.min(n, k.t === 'ATQ normale' ? 6 : 10); return `<div class="sk"><small>${L(k.t, SKT[k.t] || k.t)}</small><b>${esc(k.n)}</b>${n > 1 ? `<div class="lvl"><label class="lab">${L('Niveau', 'Level')} <b id="sl${i}">${dl}</b></label><input type="range" data-skl="${i}" min="1" max="${n}" value="${dl}"></div>` : ''}<p id="st${i}">${skTxt(k, n > 1 ? dl : 1)}</p></div>`; }).join('')}</div>`;
+  else if (tab === 'stats') body = statsTab(c);
+  else if (tab === 'teams') body = charTeams(c);
+  else if (tab === 'dmg') body = dmgTab(c);
   else if (tab === 'build') body = buildView(c);
   else if (tab === 'rank') body = `${sec(L('Classements (Game8)', 'Rankings (Game8)'))}<div class="card tw"><table><tr><th>${L('Classement', 'Ranking')}</th><th>Tier</th></tr>${Object.keys(R).map(k => `<tr><td>${R[k]}</td><td>${c.tr[k] ? tchip(c.tr[k]) : '<span class="sub">—</span>'}${trendOf(k, c.id) ? ` <i class="tr ${trendOf(k, c.id)}">${{ up: '▲', down: '▼', new: 'NEW' }[trendOf(k, c.id)]}</i>` : ''}</td></tr>`).join('')}</table></div>`;
   else body = `${sec(L('Éidolons', 'Eidolons'))}<div class="card">${c.x.map((k, i) => `<div class="sk"><small>E${i + 1}</small><b>${esc(k.n)}</b><p>${esc(k.d)}</p></div>`).join('')}</div>`;
   return [`<div class="hero"><img src="${im('p', c.id)}" alt="${esc(c.n)}"><div><h1>${esc(c.n)}</h1><span class="tag">${'★'.repeat(c.r)}</span><span class="tag etag" style="color:${eC(c.ei)};border-color:${eC(c.ei)}">${eiImg(c.ei)} ${eN(c.ei)}</span><span class="tag etag">${piImg(c.pi)} ${pN(c.pi)}</span>${tchip(c.t)}
   <p class="sub" style="max-width:560px">${L('Tier ' + c.t + ' en vue d’ensemble. ', 'Tier ' + c.t + ' overall. ')}${c.tr.dps ? L('Rôle DPS : ', 'DPS role: ') + c.tr.dps + '. ' : ''}${c.tr.support ? L('Rôle Support : ', 'Support role: ') + c.tr.support + '. ' : ''}${c.tr.sustain ? L('Rôle Sustain : ', 'Sustain role: ') + c.tr.sustain + '.' : ''}</p>
   <div style="display:flex;gap:8px;flex-wrap:wrap">${star('char', c.id, L('Personnage favori', 'Favourite character'))}${star('build', c.id, L('Build favori', 'Favourite build'))}<a class="btn" href="#/compare/${c.id}">${L('Comparer', 'Compare')}</a><a class="btn" href="#/calc/${c.id}">${L('Calculer les matériaux', 'Materials')}</a></div></div></div>
-  <div class="bigtabs">${tabs.map(t => `<a class="${tab === t[0] ? 'on' : ''}" href="#/perso/${id}/${t[0]}">${ico(t[2])}${t[1]}</a>`).join('')}</div><div class="fade">${body}</div>`];
+  <div class="bigtabs c7">${tabs.map(t => `<a class="${tab === t[0] ? 'on' : ''}" href="#/perso/${id}/${t[0]}">${ico(t[2])}${t[1]}</a>`).join('')}</div><div class="fade">${body}</div>`, null, () => hookDetail(c, tab)];
+}
+
+// ------------------------------------------------------------ sécurité du compte : Discord, double authentification, suppression
+let M = { en: null, msg: '' };
+async function mfaNeeded() {
+  if (!sb || !user || !sb.auth.mfa) return false;
+  try { const { data } = await sb.auth.mfa.getAuthenticatorAssuranceLevel(); return !!(data && data.nextLevel === 'aal2' && data.currentLevel !== 'aal2'); } catch { return false; }
+}
+function showMfa() { const d = $('#dlg'); if (!d) return; d.classList.add('mfa'); $('#mfab').hidden = false; $('#msg').textContent = ''; if (!d.open) d.showModal(); setTimeout(() => $('#mfc') && $('#mfc').focus(), 50); }
+function endMfa() { const d = $('#dlg'); if (!d) return; d.classList.remove('mfa'); const b = $('#mfab'); if (b) b.hidden = true; }
+async function mfaGate() { if (await mfaNeeded()) { showMfa(); return true; } return false; }
+async function mfaVerify() {
+  const code = ($('#mfc').value || '').replace(/\s/g, ''); if (code.length < 6) { authMsg(L('Entrez le code à 6 chiffres.', 'Enter the 6-digit code.')); return; }
+  const f = await sb.auth.mfa.listFactors(), fac = f.data && f.data.totp && f.data.totp[0]; if (!fac) { authMsg(L('Aucun facteur trouvé.', 'No factor found.')); return; }
+  const { error } = await sb.auth.mfa.challengeAndVerify({ factorId: fac.id, code });
+  if (error) { authMsg(L('Code incorrect.', 'Wrong code.')); return; }
+  $('#mfc').value = ''; endMfa(); $('#dlg').close(); pullAll();
+}
+async function mfaDraw() {
+  const el = $('#sec2fa'); if (!el) return;
+  if (!(sb && user && sb.auth.mfa)) { el.innerHTML = `<p class="sub">${L('Connectez-vous pour activer la double authentification.', 'Log in to enable two-factor authentication.')}</p>`; return; }
+  const r = await sb.auth.mfa.listFactors(), all = (r.data && r.data.all) || [], on = all.filter(x => x.status === 'verified' && x.factor_type === 'totp');
+  el.innerHTML = on.length ? `<p>✅ ${L('Double authentification activée : un code vous sera demandé à chaque connexion.', 'Two-factor authentication is on: a code is asked at each login.')}</p><button class="btn" id="mfoff" data-f="${on[0].id}">${L('Désactiver', 'Turn off')}</button>`
+    : M.en ? `<p class="sub">${L('1. Scannez ce QR code avec une application (Google Authenticator, Authy, 2FAS…). 2. Entrez le code à 6 chiffres affiché.', '1. Scan this QR code with an app (Google Authenticator, Authy, 2FAS…). 2. Enter the 6-digit code shown.')}</p><img class="qr" src="${esc(M.en.qr)}" alt="QR" width="168" height="168"><p class="sub">${L('Ou saisissez cette clé : ', 'Or enter this key: ')}<code>${esc(M.en.secret)}</code></p><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="mfe" inputmode="numeric" maxlength="6" placeholder="123456" style="max-width:160px;margin:0"><button class="btn pri" id="mfok">${L('Confirmer', 'Confirm')}</button><button class="btn" id="mfno">${L('Annuler', 'Cancel')}</button></div>`
+      : `<p class="sub">${L('Ajoute une protection : en plus du mot de passe, un code à 6 chiffres temporaire est demandé.', 'Adds protection: on top of the password, a temporary 6-digit code is required.')}</p><button class="btn" id="mfon">${L('Activer la double authentification', 'Enable two-factor authentication')}</button>`;
+  el.innerHTML += `<p class="sub" id="mfmsg">${esc(M.msg)}</p>`;
+}
+async function mfaClick(id, b) {
+  M.msg = '';
+  if (id === 'mfon') {
+    const old = ((await sb.auth.mfa.listFactors()).data || {}).all || []; for (const x of old) if (x.status !== 'verified') await sb.auth.mfa.unenroll({ factorId: x.id });
+    const { data, error } = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'Astrolabe ' + Date.now() });
+    if (error) M.msg = L('Impossible : activez la double authentification dans Supabase (Authentication → Multi-Factor). ', 'Not possible: enable MFA in Supabase (Authentication → Multi-Factor). ') + error.message; else M.en = { id: data.id, qr: data.totp.qr_code, secret: data.totp.secret };
+  } else if (id === 'mfok') {
+    const code = ($('#mfe').value || '').replace(/\s/g, ''), { error } = await sb.auth.mfa.challengeAndVerify({ factorId: M.en.id, code });
+    if (error) M.msg = L('Code incorrect, réessayez.', 'Wrong code, try again.'); else { M.en = null; M.msg = L('Double authentification activée.', 'Two-factor authentication enabled.'); }
+  } else if (id === 'mfno') { if (M.en) await sb.auth.mfa.unenroll({ factorId: M.en.id }); M.en = null; }
+  else if (id === 'mfoff') { const { error } = await sb.auth.mfa.unenroll({ factorId: b.dataset.f }); M.msg = error ? error.message : L('Double authentification désactivée.', 'Two-factor authentication turned off.'); }
+  mfaDraw();
+}
+async function delProfile() {
+  if (!(sb && user) || !confirm(L('Supprimer votre profil public (pseudo, bio, vitrine, J’aime) ? Votre compte et votre collection restent.', 'Delete your public profile (name, bio, showcase, likes)? Your account and collection stay.'))) return;
+  const { error } = await sb.from('profiles').delete().eq('user_id', user.id);
+  if (error) { pmsg = L('Échec : exécutez supabase/schema_v5.sql. (', 'Failed: run supabase/schema_v5.sql. (') + error.message + ')'; render(); return; }
+  prof.handle = ''; prof.bio = ''; prof.pub = false; prof.show = []; prof.name = ''; prof.avatar = ''; store.set('astro_prof', prof); pmsg = L('Profil public supprimé.', 'Public profile deleted.'); render();
+}
+async function delAccount() {
+  if (!(sb && user)) return;
+  const w = L('SUPPRIMER', 'DELETE');
+  if ((prompt(L('Cette action est définitive : compte, profil, favoris, collection et équipes seront effacés. Tapez ' + w + ' pour confirmer.', 'This is permanent: account, profile, favourites, collection and teams will be erased. Type ' + w + ' to confirm.')) || '').trim() !== w) return;
+  const { error } = await sb.rpc('delete_my_account');
+  if (error) { pmsg = L('Échec : exécutez supabase/schema_v5.sql. (', 'Failed: run supabase/schema_v5.sql. (') + error.message + ')'; render(); return; }
+  ['astro_prof', 'astro_fav', 'astro_teams'].forEach(k => localStorage.removeItem(k)); prof = { name: '', avatar: '', col: {}, handle: '', bio: '', pub: false, show: [] }; fav = { char: [], build: [] }; myTeams = [];
+  await sb.auth.signOut(); location.hash = '#/home'; alert(L('Votre compte a été supprimé.', 'Your account has been deleted.'));
+}
+
+// ------------------------------------------------------------ tier list des équipes (calculée) + outils de fiche personnage
+let TT_C = null;
+const tval = (c, m) => { const t = (c.tr && (c.tr[m] || c.tr.ov)) || c.t, i = TIERS.indexOf(t); return i < 0 ? 1 : 5 - i; };
+const tkey = (e, m) => { const q = e.rk[m] / teamsAll().list.length; return q <= .1 ? 'SS' : q <= .3 ? 'S+' : q <= .6 ? 'S' : q <= .85 ? 'A' : 'B'; };
+function teamsAll() {
+  if (TT_C) return TT_C;
+  const map = new Map();
+  C.forEach(c => ((c.b || {}).teams || []).forEach(t => {
+    const mem = [{ c: c.id, l: c.b.lc }, ...t.filter(m => m.c !== c.id)]; if (mem.length < 3 || mem.length > 4 || mem.some(m => !byId[m.c])) return;
+    const key = mem.map(m => m.c).sort().join('-'); let e = map.get(key);
+    if (!e) { e = { key, ids: mem.map(m => m.c), lcs: {}, votes: new Set() }; map.set(key, e); }
+    e.votes.add(c.id); mem.forEach(m => { if (m.l && !e.lcs[m.c]) e.lcs[m.c] = m.l; }); if (c.b.lc) e.lcs[c.id] = c.b.lc;
+  }));
+  const list = [...map.values()].map(e => { e.v = e.votes.size; e.sc = {}; ['ov', 'moc', 'pf', 'as'].forEach(m => { const avg = e.ids.reduce((s, i) => s + tval(byId[i], m), 0) / e.ids.length; e.sc[m] = avg + 0.15 * (e.v - 1); }); return e; });
+  const ranks = {}; ['ov', 'moc', 'pf', 'as'].forEach(m => { const o = [...list].sort((a, b) => b.sc[m] - a.sc[m] || b.v - a.v || a.key.localeCompare(b.key)); o.forEach((e, i) => { (e.rk = e.rk || {})[m] = i + 1; }); ranks[m] = o; });
+  TT_C = { list, ranks, by: new Map(list.map(e => [e.key, e])) }; return TT_C;
+}
+const teamHref = e => '#/team/' + e.ids.map(i => i + '-' + (e.lcs[i] || '')).join('_');
+function teamRow(e, m) {
+  const k = tkey(e, m);
+  return `<div class="team trk"><span class="rkn">#${e.rk[m]}</span><span class="tag tg" style="--tc:var(${TV[k]})">${TN[k]}</span>${e.ids.map(i => tile(byId[i], { s: 1 })).join('')}<span class="trs"><b>${e.sc[m].toFixed(2)}</b><small>${L('Conseillée par ' + e.v + ' perso', 'Recommended by ' + e.v + ' char.')}</small></span><a class="btn" href="${teamHref(e)}">${L('Ouvrir', 'Open')}</a></div>`;
+}
+pages.teamtier = () => [`<section class="hlp"><span class="lab">${L('Classement calculé', 'Computed ranking')}</span><h1>${L('Tier list des équipes', 'Team tier list')}</h1><p class="lead">${L('Les équipes conseillées par HSR Optimizer, classées d’après la tier list Game8 de leurs membres dans le mode choisi, avec un petit bonus quand plusieurs personnages recommandent la même équipe.', 'Teams recommended by HSR Optimizer, ranked from their members’ Game8 tiers in the chosen mode, with a small bonus when several characters recommend the same team.')}</p></section>
+  <div class="card note2"><b>${L('À savoir', 'Good to know')}</b> ${L('Ce classement est calculé par le site : ce n’est pas le « Top équipes » de Prydwen ni de Game8 (je n’ai pas accès à leurs classements d’équipes). Il reflète la force des membres, pas la synergie réelle. Score = moyenne des tiers (T0 = 5 … T4 = 0) + 0,15 par recommandation supplémentaire. Le rang T est relatif : T0 = les 10 % meilleures équipes, T0.5 = les 20 % suivantes, T1 = 30 %, T2 = 25 %, T3 = le reste.', 'This ranking is computed by the site: it is not Prydwen’s or Game8’s “Top teams” (their team rankings are not accessible to me). It reflects member strength, not real synergy. Score = average tier (T0 = 5 … T4 = 0) + 0.15 per extra recommendation. The T rank is relative: T0 = top 10% of teams, T0.5 = next 20%, T1 = 30%, T2 = 25%, T3 = the rest.')}</div>
+  <div id="tt"></div>`, null, () => {
+  const el = $('#tt'); if (!el) return; const T = teamsAll(), st = { m: 'ov', c: '', n: 30 }, sorted = [...C].sort((a, b) => a.n.localeCompare(b.n));
+  const MD = [['ov', L('Vue d’ensemble', 'Overview')], ['moc', 'Memory of Chaos'], ['pf', 'Pure Fiction'], ['as', 'Apocalyptic Shadow']];
+  const draw = () => {
+    let rows = T.ranks[st.m].filter(e => !st.c || e.ids.includes(st.c)); const tot = rows.length; rows = rows.slice(0, st.n);
+    el.innerHTML = `<div class="vctl"><div class="chips">${MD.map(x => `<button class="chip ${st.m === x[0] ? 'on' : ''}" data-ttm="${x[0]}">${x[1]}</button>`).join('')}</div><select id="ttc"><option value="">${L('Tous les personnages', 'All characters')}</option>${sorted.map(c => `<option value="${c.id}" ${st.c === c.id ? 'selected' : ''}>${esc(c.n)}</option>`).join('')}</select></div>
+    <p class="sub">${tot} ${L('équipes', 'teams')}${st.c ? ' · ' + esc(byId[st.c].n) : ''}</p><div class="tlist">${rows.map(e => teamRow(e, st.m)).join('') || `<p class="sub">${L('Aucune équipe.', 'No team.')}</p>`}</div>${tot > st.n ? `<button class="btn" data-ttn="1">${L('Voir plus', 'Show more')}</button>` : ''}`;
+    el.querySelectorAll('[data-ttm]').forEach(b => b.onclick = () => { st.m = b.dataset.ttm; st.n = 30; draw(); });
+    const sc = $('#ttc'); sc.onchange = () => { st.c = sc.value; st.n = 30; draw(); };
+    const mo = el.querySelector('[data-ttn]'); if (mo) mo.onclick = () => { st.n += 30; draw(); };
+  };
+  draw();
+}];
+function charTeams(c) {
+  const T = teamsAll(), rows = T.list.filter(e => e.ids.includes(c.id)).sort((a, b) => a.rk.ov - b.rk.ov);
+  if (!rows.length) return `<p class="sub">${L('Aucune équipe renseignée pour ce personnage.', 'No team listed for this character.')}</p>`;
+  return `<p class="sub">${L('Équipes (conseillées par ce personnage ou par d’autres) où il apparaît, classées sur la vue d’ensemble. Le rang est sur ', 'Teams (recommended by this character or by others) where it appears, ranked on the overview. Rank is out of ')}${T.list.length}.</p><div class="tlist">${rows.map(e => `<div class="team trk"><span class="rkn">#${e.rk.ov}</span><span class="tag tg" style="--tc:var(${TV[tkey(e, 'ov')]})">${TN[tkey(e, 'ov')]}</span>${e.ids.map(i => tile(byId[i], { s: 1 })).join('')}<span class="trs"><b>${e.sc.ov.toFixed(2)}</b><small>MoC ${TN[tkey(e, 'moc')]} · PF ${TN[tkey(e, 'pf')]} · AS ${TN[tkey(e, 'as')]}</small></span><a class="btn" href="${teamHref(e)}">${L('Ouvrir', 'Open')}</a></div>`).join('')}</div><p class="sub"><a href="#/teamtier">${L('Voir toute la tier list des équipes', 'See the full team tier list')} →</a></p>`;
+}
+// valeurs de compétence par niveau (données StarRailRes)
+const pfmt = (v, pct) => pct ? '%g'.replace('%g', String(+(v * 100).toFixed(2))) + '%' : String(+v.toFixed(2));
+function skTxt(k, lv) {
+  const row = (k.pa || [])[Math.min(lv, (k.pa || []).length) - 1] || []; if (!k.f) return esc(k.d);
+  return esc(k.f).replace(/#(\d)\[(?:i|f\d)\](%?)/g, (_, n, p) => row[n - 1] != null ? `<b class="v">${pfmt(row[n - 1], p)}</b>` : '?');
+}
+const pcts = k => { const o = []; (k.f || '').replace(/#(\d)\[(?:i|f\d)\]%/g, (m, n, off) => { if (!o.some(x => x.n === +n)) o.push({ n: +n, ctx: (k.f.slice(Math.max(0, off - 48), off).replace(/#\d\[[^\]]+\]%?/g, '…')).trim() }); return m; }); return o; };
+const statAt = (c, L_, asc) => { const a = L_ <= 20 ? 0 : L_ <= 30 ? 1 : L_ <= 40 ? 2 : L_ <= 50 ? 3 : L_ <= 60 ? 4 : L_ <= 70 ? 5 : 6, b = Math.min(6, a + (asc && [20, 30, 40, 50, 60, 70].includes(L_) ? 1 : 0)), g = (j) => c.lv[b * 3 + j]; return [0, 1, 2].map(j => Math.round(g(j)[0] + g(j)[1] * (L_ - 1))); };
+function statsTab(c) {
+  const rk = (key, v) => { const arr = C.map(x => key === 'spd' ? x.st.spd : x.st[key]).sort((a, b) => b - a); return arr.indexOf(v) + 1; };
+  const [h, a, d] = statAt(c, 80, true);
+  return `${sec(L('Statistiques de base par niveau', 'Base stats by level'))}<div class="card"><div class="lvl"><label class="lab" for="slv">${L('Niveau', 'Level')} <b id="lvv">80</b></label><input type="range" id="slv" min="1" max="80" value="80"><label class="chk"><input type="checkbox" id="sasc" checked> ${L('Ascension faite (aux paliers 20, 30…)', 'Ascended (at 20, 30…)')}</label></div>
+  <dl id="stl" class="stl"><div><dt>${L('PV', 'HP')}</dt><dd id="s0">${h}</dd></div><div><dt>${L('ATQ', 'ATK')}</dt><dd id="s1">${a}</dd></div><div><dt>${L('DÉF', 'DEF')}</dt><dd id="s2">${d}</dd></div><div><dt>${L('VIT', 'SPD')}</dt><dd>${c.st.spd}</dd></div><div><dt>${L('Taux crit', 'CRIT Rate')}</dt><dd>${c.st.cr}%</dd></div><div><dt>${L('DGT crit', 'CRIT DMG')}</dt><dd>${c.st.cd}%</dd></div><div><dt>Aggro</dt><dd>${c.st.ta}</dd></div><div><dt>${L('Énergie', 'Energy')}</dt><dd>${c.st.sp}</dd></div></dl>
+  <p class="sub">${L('Valeurs de base du personnage seul : sans cône de lumière, reliques ni traces.', 'The character’s own base values: without light cone, relics or traces.')}</p></div>
+  ${sec(L('Comparaison avec les autres personnages (niveau 80)', 'Compared with other characters (level 80)'))}<div class="card tw"><table><tr><th>${L('Stat', 'Stat')}</th><th>${L('Valeur', 'Value')}</th><th>${L('Rang', 'Rank')}</th></tr>${[['hp', L('PV', 'HP')], ['atk', L('ATQ', 'ATK')], ['def', L('DÉF', 'DEF')], ['spd', L('VIT', 'SPD')]].map(([k, l]) => `<tr><td>${l}</td><td>${c.st[k]}</td><td>#${rk(k, c.st[k])} / ${C.length}</td></tr>`).join('')}</table></div>`;
+}
+function dmgTab(c) {
+  const sk = c.s.filter(k => (k.pa || []).length && pcts(k).length);
+  if (!sk.length) return `<p class="sub">${L('Pas de multiplicateur exploitable pour ce personnage.', 'No usable multiplier for this character.')}</p>`;
+  return `${sec(L('Simulateur de dégâts d’un coup', 'Single-hit damage calculator'))}<div class="card"><p class="sub" style="margin-top:0">${L('Choisissez une compétence, son niveau et la valeur à tester (multiplicateur de la description). Les chiffres viennent du jeu ; le reste, c’est vous qui le fixez. Estimation d’un coup, pas une simulation de combat complète.', 'Pick a skill, its level and the value to test (a multiplier from the description). Figures come from the game; the rest is up to you. A single-hit estimate, not a full combat simulation.')}</p>
+  <div class="dgrid"><div><label class="lab">${L('Compétence', 'Skill')}</label><select id="dsk">${sk.map((k, i) => `<option value="${i}">${esc(k.n)} (${L(k.t, SKT[k.t] || k.t)})</option>`).join('')}</select></div><div><label class="lab">${L('Niveau', 'Level')} <b id="dlv">6</b></label><input type="range" id="dlr" min="1" max="10" value="6"></div><div class="dwide"><label class="lab">${L('Valeur à utiliser', 'Value to use')}</label><select id="dpm"></select></div>
+  <div><label class="lab">${L('Multiplicateur (% de l’ATQ)', 'Multiplier (% of ATK)')}</label><input type="number" id="dmu" step="0.1"></div><div><label class="lab">${L('ATQ totale', 'Total ATK')}</label><input type="number" id="dat" value="${statAt(c, 80, true)[1] + 700}"></div><div><label class="lab">${L('Bonus de DGT %', 'DMG boost %')}</label><input type="number" id="dbo" value="40"></div><div><label class="lab">${L('Taux crit %', 'CRIT Rate %')}</label><input type="number" id="dcr" value="70"></div><div><label class="lab">${L('DGT crit %', 'CRIT DMG %')}</label><input type="number" id="dcd" value="150"></div><div><label class="lab">${L('Niveau ennemi', 'Enemy level')}</label><input type="number" id="del" value="95"></div><div><label class="lab">${L('Réduction DÉF %', 'DEF reduction %')}</label><input type="number" id="dde" value="0"></div><div><label class="lab">${L('RÉS ennemie %', 'Enemy RES %')}</label><input type="number" id="dre" value="20"></div><div><label class="lab">${L('Vulnérabilité %', 'Vulnerability %')}</label><input type="number" id="dvu" value="0"></div></div>
+  <label class="chk"><input type="checkbox" id="dbr"> ${L('Ennemi en état de rupture (pas de réduction de 10 %)', 'Enemy broken (no 10% reduction)')}</label>
+  <div class="dres"><div><span class="lab">${L('Coup sans crit', 'Non-crit hit')}</span><b id="r0">—</b></div><div><span class="lab">${L('Coup critique', 'Crit hit')}</span><b id="r1">—</b></div><div><span class="lab">${L('Moyenne', 'Average')}</span><b id="r2">—</b></div></div>
+  <p class="sub">${L('Formule : ATQ × multiplicateur × (1 + bonus DGT) × (1 + vulnérabilité) × facteur DÉF × (1 − RÉS) × 0,9 si non brisé × (1 + DGT crit) en cas de crit. Facteur DÉF = (niveau perso + 20) / [(niveau ennemi + 20) × (1 − réduction) + niveau perso + 20], niveau perso = 80.', 'Formula: ATK × multiplier × (1 + DMG boost) × (1 + vulnerability) × DEF factor × (1 − RES) × 0.9 if not broken × (1 + CRIT DMG) on crit. DEF factor = (char level + 20) / [(enemy level + 20) × (1 − reduction) + char level + 20], char level = 80.')}</p></div>`;
+}
+function hookDetail(c, tab) {
+  if (tab === 'kit') document.querySelectorAll('[data-skl]').forEach(r => r.oninput = () => { const k = c.s[+r.dataset.skl], lv = +r.value; $('#sl' + r.dataset.skl).textContent = lv; $('#st' + r.dataset.skl).innerHTML = skTxt(k, lv); });
+  if (tab === 'stats') { const f = () => { const lv = +$('#slv').value, s = statAt(c, lv, $('#sasc').checked); $('#lvv').textContent = lv; [0, 1, 2].forEach(i => $('#s' + i).textContent = s[i]); }; $('#slv').oninput = f; $('#sasc').onchange = f; }
+  if (tab === 'dmg') {
+    const sk = c.s.filter(k => (k.pa || []).length && pcts(k).length); if (!sk.length) return;
+    const g = i => +$('#' + i).value || 0, cur = () => sk[+$('#dsk').value];
+    const calc = () => { const mu = g('dmu') / 100, base = g('dat') * mu * (1 + g('dbo') / 100) * (1 + g('dvu') / 100), df = 100 / ((g('del') + 20) * (1 - g('dde') / 100) + 100), rs = 1 - g('dre') / 100, br = $('#dbr').checked ? 1 : 0.9, nc = base * df * rs * br, cr = nc * (1 + g('dcd') / 100), av = nc * (1 + Math.min(1, g('dcr') / 100) * g('dcd') / 100), f = v => Math.round(v).toLocaleString(LOC()); $('#r0').textContent = f(nc); $('#r1').textContent = f(cr); $('#r2').textContent = f(av); };
+    const setVal = () => { const k = cur(), p = pcts(k)[+$('#dpm').value || 0], row = k.pa[Math.min(+$('#dlr').value, k.pa.length) - 1]; $('#dmu').value = +(row[p.n - 1] * 100).toFixed(2); calc(); };
+    const setSkill = () => { const k = cur(), mx = k.pa.length; const r = $('#dlr'); r.max = mx; r.value = Math.min(+r.value, mx); $('#dlv').textContent = r.value; $('#dpm').innerHTML = pcts(k).map((p, i) => `<option value="${i}">${esc(p.ctx.slice(-44))} #${p.n}</option>`).join(''); setVal(); };
+    $('#dsk').onchange = () => { $('#dlr').value = cur().t === 'ATQ normale' ? 6 : 10; setSkill(); }; $('#dlr').oninput = () => { $('#dlv').textContent = $('#dlr').value; setVal(); }; $('#dpm').onchange = setVal;
+    document.querySelectorAll('#app input[type=number],#dbr').forEach(i => i.oninput = calc); $('#dbr').onchange = calc; $('#dlr').value = cur().t === 'ATQ normale' ? 6 : 10; setSkill();
+  }
 }
 
 // ------------------------------------------------------------ cadre du site : menu, en-tête, fenêtres
 function dialogs() {
   return `<dialog id="dlg"><h2 class="dt">${L('Compte', 'Account')}</h2><p class="sub" style="margin:0 0 12px;font-size:13px">${L('Pour retrouver vos favoris et votre collection sur tous vos appareils.', 'To keep your favourites and collection on all your devices.')}</p>
-  <input type="text" id="em" placeholder="E-mail" autocomplete="email"><input type="password" id="pw" placeholder="${L('Mot de passe (8 caractères min.)', 'Password (8 characters min.)')}" autocomplete="current-password">
-  <div class="msg" id="msg"></div><div class="dact"><button class="btn pri" id="bin">${L('Se connecter', 'Log in')}</button><button class="btn" id="bup">${L('Créer un compte', 'Create account')}</button><button class="btn" id="bfg">${L('Mot de passe oublié', 'Forgot password')}</button><button class="btn" data-close="dlg">${L('Fermer', 'Close')}</button></div></dialog>
+  <div class="cred"><input type="text" id="em" placeholder="E-mail" autocomplete="email"><input type="password" id="pw" placeholder="${L('Mot de passe (8 caractères min.)', 'Password (8 characters min.)')}" autocomplete="current-password"></div>
+  <div id="mfab" hidden><p class="sub">${L('Double authentification : entrez le code à 6 chiffres de votre application.', 'Two-factor authentication: enter the 6-digit code from your app.')}</p><input type="text" id="mfc" inputmode="numeric" maxlength="6" placeholder="123456" autocomplete="one-time-code"><div class="dact"><button class="btn pri" id="mfv">${L('Valider', 'Verify')}</button></div></div>
+  <div class="msg" id="msg"></div><div class="dact cred"><button class="btn pri" id="bin">${L('Se connecter', 'Log in')}</button><button class="btn" id="bup">${L('Créer un compte', 'Create account')}</button><button class="btn" id="bfg">${L('Mot de passe oublié', 'Forgot password')}</button></div>
+  <div class="cred oauth"><span>${L('ou', 'or')}</span><button class="btn dsc" id="bdc"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 5h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-6l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><circle cx="9" cy="11.5" r="1" fill="currentColor"/><circle cx="15" cy="11.5" r="1" fill="currentColor"/></svg> ${L('Continuer avec Discord', 'Continue with Discord')}</button></div>
+  <div class="dact"><button class="btn" data-close="dlg">${L('Fermer', 'Close')}</button></div>
+  </dialog>
   <dialog id="sdlg" class="wide"><input type="search" id="sq" placeholder="${L('Rechercher un personnage, un cône, un set, une page…', 'Search a character, cone, set or page…')}" autocomplete="off"><div id="sr" class="sres"></div><div class="dact"><span class="sub" style="font-size:12px">${L('Échap pour fermer', 'Esc to close')}</span><button class="btn" data-close="sdlg">${L('Fermer', 'Close')}</button></div></dialog>
   <dialog id="fdlg"><h2 class="dt">${L('Signaler un problème', 'Report a problem')}</h2><p class="sub" style="margin:0 0 12px;font-size:13px">${L('Un bug, une donnée fausse, une idée ? Votre message arrive directement à l’administrateur.', 'A bug, wrong data, an idea? Your message goes straight to the administrator.')}</p>
   <select id="fk"><option value="bug">${L('Un bug', 'A bug')}</option><option value="data">${L('Une donnée fausse', 'Wrong data')}</option><option value="idea">${L('Une idée', 'An idea')}</option><option value="other">${L('Autre', 'Other')}</option></select>
@@ -546,7 +692,7 @@ function dialogs() {
   <dialog id="pdlg" class="wide"><input type="search" id="pq" placeholder="${L('Choisir un personnage…', 'Pick a character…')}" autocomplete="off"><div id="pg" class="grid pgrid"></div><div class="dact"><button class="btn" data-close="pdlg">${L('Fermer', 'Close')}</button></div></dialog>`;
 }
 function chrome() {
-  const NAV = [['', [['#/home', 'home', L('Accueil', 'Home')]]], [L('Base de données', 'Database'), [['#/perso', 'users', L('Personnages', 'Characters')], ['#/lc', 'cone', L('Cônes de lumière', 'Light Cones')], ['#/rel', 'box', L('Reliques', 'Relics')]]], [L('Classements', 'Rankings'), [['#/tier', 'tier', 'Tier list'], ['#/banners', 'star', L('Bannières', 'Banners')]]],
+  const NAV = [['', [['#/home', 'home', L('Accueil', 'Home')]]], [L('Base de données', 'Database'), [['#/perso', 'users', L('Personnages', 'Characters')], ['#/lc', 'cone', L('Cônes de lumière', 'Light Cones')], ['#/rel', 'box', L('Reliques', 'Relics')]]], [L('Classements', 'Rankings'), [['#/tier', 'tier', 'Tier list'], ['#/teamtier', 'team', L('Tier list équipes', 'Team tier list')], ['#/banners', 'star', L('Bannières', 'Banners')]]],
     [L('End game', 'End game'), [['#/end/moc', 'end', 'Memory of Chaos'], ['#/end/pf', 'end', 'Pure Fiction'], ['#/end/as', 'end', 'Apocalyptic Shadow'], ['#/end/aa', 'end', 'Anomaly Arbitration']]],
     [L('Outils', 'Tools'), [['#/compare', 'cmp', L('Comparateur', 'Compare')], ['#/calc', 'calc', L('Calculateur', 'Calculator')], ['#/plan', 'dice', L('Tirages', 'Pull planner')], ['#/teams', 'team', L('Équipes', 'Teams')]]], [L('Guides', 'Guides'), [['#/versions', 'book', L('Résumé de version', 'Version recap')], ['#/events', 'cal', L('Événements', 'Events')], ['#/aide', 'book', L('Aides', 'Help')]]],
     [L('Communauté', 'Community'), [['#/community', 'users', L('Joueurs', 'Players')], ['#/stats', 'chart', L('Statistiques', 'Statistics')]]], [L('Compte', 'Account'), [['#/profil', 'user', L('Mon profil', 'My profile')], ['#/profil/fav', 'star', L('Favoris', 'Favourites')]]], ...(isAdmin ? [[L('Administration', 'Admin'), [['#/admin', 'shield', L('Retours & signalements', 'Feedback & reports')]]]] : [])];
@@ -558,7 +704,7 @@ function chrome() {
 }
 function runSearch(q) {
   q = q.trim().toLowerCase(); const out = $('#sr'); if (!out) return;
-  const PG = [['#/home', L('Accueil', 'Home')], ['#/tier', 'Tier list'], ['#/banners', L('Bannières', 'Banners')], ['#/compare', L('Comparateur', 'Compare')], ['#/calc', L('Calculateur', 'Calculator')], ['#/plan', L('Planificateur de tirages', 'Pull planner')], ['#/teams', L('Équipes', 'Teams')], ['#/versions', L('Résumé de version', 'Version recap')], ['#/events', L('Événements', 'Events')], ['#/stats', L('Statistiques', 'Statistics')], ['#/community', L('Communauté', 'Community')], ['#/profil', L('Mon profil', 'My profile')], ['#/end/moc', 'Memory of Chaos'], ['#/end/pf', 'Pure Fiction'], ['#/end/as', 'Apocalyptic Shadow']];
+  const PG = [['#/home', L('Accueil', 'Home')], ['#/tier', 'Tier list'], ['#/teamtier', L('Tier list des équipes', 'Team tier list')], ['#/banners', L('Bannières', 'Banners')], ['#/compare', L('Comparateur', 'Compare')], ['#/calc', L('Calculateur', 'Calculator')], ['#/plan', L('Planificateur de tirages', 'Pull planner')], ['#/teams', L('Équipes', 'Teams')], ['#/versions', L('Résumé de version', 'Version recap')], ['#/events', L('Événements', 'Events')], ['#/stats', L('Statistiques', 'Statistics')], ['#/community', L('Communauté', 'Community')], ['#/profil', L('Mon profil', 'My profile')], ['#/end/moc', 'Memory of Chaos'], ['#/end/pf', 'Pure Fiction'], ['#/end/as', 'Apocalyptic Shadow']];
   const m = (n) => n.toLowerCase().includes(q);
   const ch = q ? C.filter(c => m(c.n)).slice(0, 8) : C.slice(0, 6), lc = q ? LC.filter(l => m(l.n)).slice(0, 5) : [], rs = q ? RS.filter(r => m(r.n)).slice(0, 5) : [], pg = q ? PG.filter(p => m(p[1])).slice(0, 5) : PG.slice(0, 6);
   const it = (h, img, t, s) => `<a class="sit" href="${h}">${img ? `<img src="${img}" alt="">` : '<span class="pgi">→</span>'}<b>${esc(t)}</b><em>${esc(s || '')}</em></a>`;
@@ -615,6 +761,8 @@ document.addEventListener('click', e => {
   else if (ds.af) { adm.f = ds.af; render(); }
   else if (ds.aset) { const [tb, id, st] = ds.aset.split(':'); sb.from(tb).update({ status: st }).eq('id', id).then(loadAdmin); }
   else if (ds.adel) { const [tb, id] = ds.adel.split(':'); if (confirm(L('Supprimer définitivement ?', 'Delete permanently?'))) sb.from(tb).delete().eq('id', id).then(loadAdmin); }
+  else if (ds.adelu) { if (confirm(L('Supprimer ce compte ET toutes ses données ? Action définitive.', 'Delete this account AND all its data? This is permanent.'))) sb.rpc('admin_delete_user', { target: ds.adelu }).then(r => { if (r.error) alert(r.error.message); else { alert(L('Compte supprimé.', 'Account deleted.')); if (location.hash.startsWith('#/admin')) loadAdmin(); else location.hash = '#/community'; } }); }
+  else if (ds.adelp) { if (confirm(L('Supprimer ce profil public ?', 'Delete this public profile?'))) sb.from('profiles').delete().eq('user_id', ds.adelp).then(r => { if (r.error) alert(r.error.message); else loadAdmin(); }); }
   else if (ds.ahide) { const [u, v] = ds.ahide.split(':'); sb.from('profiles').update({ is_public: v === '1' }).eq('user_id', u).then(loadAdmin); }
   else if (b.id === 'psave') { prof.name = $('#pn').value.trim(); if ($('#phd')) { prof.pub = $('#ppub').checked; prof.handle = $('#phd').value.trim().toLowerCase(); prof.bio = $('#pbio').value.trim(); prof.show = [0, 1, 2, 3, 4, 5].map(k => ({ c: $('#sc' + k).value, t: $('#st' + k).value.trim() })).filter(s => s.c); if (prof.pub && !/^[a-z0-9_-]{3,20}$/.test(prof.handle)) { pmsg = L('Nom d’utilisateur invalide : 3 à 20 caractères (a-z, 0-9, - et _).', 'Invalid username: 3–20 characters (a-z, 0-9, - and _).'); render(); return; } } saveProf().then(render); }
   else if (ds.like) { const p = viewed; sb.from('profile_likes').select('profile_id').eq('profile_id', p.user_id).eq('user_id', user.id).then(async r => { if (r.data && r.data.length) await sb.from('profile_likes').delete().match({ profile_id: p.user_id, user_id: user.id }); else await sb.from('profile_likes').insert({ profile_id: p.user_id, user_id: user.id }); loadProfile(p.handle); }); }
@@ -624,7 +772,11 @@ document.addEventListener('click', e => {
   else if (b.id === 'theme') { const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = t; store.set('astro_theme', t); }
   else if (b.id === 'login') { authMsg(''); $('#dlg').showModal(); }
   else if (b.id === 'out') sb.auth.signOut();
-  else if (['bin', 'bup', 'bfg'].includes(b.id)) authClick(b.id);
+  else if (['bin', 'bup', 'bfg', 'bdc'].includes(b.id)) authClick(b.id);
+  else if (b.id === 'mfv') mfaVerify();
+  else if (['mfon', 'mfok', 'mfno', 'mfoff'].includes(b.id)) mfaClick(b.id, b);
+  else if (b.id === 'delprof') delProfile();
+  else if (b.id === 'delacc') delAccount();
   else if (b.id === 'fbk') { $('#fm').textContent = ''; $('#fdlg').showModal(); }
   else if (b.id === 'fsend') { const t = $('#ft').value.trim(); if (t.length < 3) { $('#fm').textContent = L('Écrivez au moins quelques mots.', 'Please write a few words.'); return; } sendFeedback($('#fk').value, t).then(ok => { $('#fm').textContent = ok ? L('Merci ! Votre message a été envoyé.', 'Thank you! Your message was sent.') : L('Envoi impossible pour le moment.', 'Could not send right now.'); if (ok) $('#ft').value = ''; }); }
 });
@@ -644,6 +796,7 @@ document.addEventListener('input', e => {
   else if (t.id === 'pq') fillPick(t.value);
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { const d = document.querySelector('dialog[open]'); if (d) { e.preventDefault(); d.close(); } return; } if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch(); } else if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '') && !document.querySelector('dialog[open]')) { e.preventDefault(); openSearch(); } });
+document.addEventListener('close', e => { if (e.target.id === 'dlg' && e.target.classList.contains('mfa')) { endMfa(); sb && sb.auth.signOut(); } }, true);
 window.addEventListener('hashchange', () => { $('#side').classList.remove('open'); render(); scrollTo(0, 0); });
 
 // ------------------------------------------------------------ démarrage

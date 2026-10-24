@@ -265,7 +265,7 @@ def build_en(S, fr, chars, lcs, sets, LCe_, RSe_):
     for c in chars:
         k, v = c['id'], en[c['id']]
         n = v['name'] if '{NICKNAME}' not in v['name'] else 'Trailblazer · ' + PAE[v['path']]
-        sk = [{'n': Se[s]['name'], 'd': Se[s]['simple_desc'] or ''} for s in fr[k]['skills'] if s in Se and (s in S and S[s]['type_text'] in ('Attaque normale', 'Compétence', 'Ultime', 'Talent', 'Technique'))]
+        sk = [{'n': Se[s]['name'], 'd': Se[s]['simple_desc'] or '', 'f': clean_desc(Se[s].get('desc'))} for s in fr[k]['skills'] if s in Se and (s in S and S[s]['type_text'] in SK_OK)]
         out['c'][k] = {'n': n, 's': sk, 'x': [{'n': Re[r]['name'], 'd': clean(Re[r]['desc'])} for r in fr[k]['ranks'] if r in Re]}
     for l in lcs:
         k = l['id']
@@ -276,6 +276,18 @@ def build_en(S, fr, chars, lcs, sets, LCe_, RSe_):
             out['s'][x['id']] = {'n': RSe_[x['id']]['name'], 'd': RSe_[x['id']]['desc']}
     (DATA / 'data_en.json').write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), 'utf-8')
     print('   data_en.json écrit')
+
+
+SK_OK = ('ATQ normale', 'Compétence', 'Ultime', 'Talent', 'Technique', 'Compétence du mnémesprit', 'Talent du mnémesprit', 'Comicompétence', 'Compétence de soutien')
+
+
+def clean_desc(d):
+    return re.sub(r'<[^>]+>', '', d or '').replace('\\n', '\n')
+
+
+def skill_params(sk):
+    # une ligne par niveau, valeurs arrondies (les % sont stockés en fraction : 0.5 = 50 %)
+    return [[round(x, 4) for x in row] for row in (sk.get('params') or [])]
 
 
 def fmt_g(d, pa):
@@ -379,12 +391,13 @@ def main():
     for k in ids:
         v = fr[k]
         n = v['name'] if '{NICKNAME}' not in v['name'] else 'Pionnier · ' + PA[v['path']]
-        sk = [{'n': S[s]['name'], 't': S[s]['type_text'], 'd': S[s]['simple_desc'] or ''} for s in v['skills']
-              if s in S and S[s]['type_text'] in ('Attaque normale', 'Compétence', 'Ultime', 'Talent', 'Technique')]
+        sk = [{'n': S[s]['name'], 't': S[s]['type_text'], 'd': S[s]['simple_desc'] or '', 'f': clean_desc(S[s].get('desc')), 'pa': skill_params(S[s])} for s in v['skills']
+              if s in S and S[s]['type_text'] in SK_OK]
         rk = [{'n': R[r]['name'], 'd': re.sub(r'<[^>]+>', '', R[r]['desc'])} for r in v['ranks'] if r in R]
         pv = P[k]['values'][6]
         f = lambda s: round(pv[s]['base'] + pv[s]['step'] * 79)
         c = {'id': k, 'n': n, 'r': v['rarity'], 'e': EL[v['element']], 'p': PA[v['path']], 'ei': v['element'], 'pi': v['path'], 's': sk, 'x': rk, 't': tier.get(k, '?'), 'tr': {m: inv[m][k] for m in inv if k in inv[m]},
+             'lv': [[round(p[a]['base'], 2), round(p[a]['step'], 3)] for p in P[k]['values'] for a in ('hp', 'atk', 'def')],
              'st': {'hp': f('hp'), 'atk': f('atk'), 'def': f('def'), 'spd': round(pv['spd']['base']), 'cr': round(pv['crit_rate']['base'] * 100),
                     'cd': round(pv['crit_dmg']['base'] * 100), 'ta': round(pv['taunt']['base']), 'sp': v['max_sp']}}
         b = builds.get(k)
