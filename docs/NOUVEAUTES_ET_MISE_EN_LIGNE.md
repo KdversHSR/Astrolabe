@@ -1,7 +1,7 @@
 # Hoyo Cards : récapitulatif et mise en ligne
 
 ## Mise en ligne (à chaque nouvelle version)
-1. Dézippez `astrolabe-site-v13.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
+1. Dézippez `astrolabe-site-v16.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
 2. Ouvrez GitHub Desktop : les fichiers modifiés apparaissent à gauche. Écrivez un titre (ex. « v13 ») puis **Commit to main**, puis **Push origin**.
 3. Sur github.com, dépôt du site → onglet **Actions** → « Mise à jour » → **Run workflow** (met à jour cartes, raretés et données).
 4. Supabase (une seule fois par nouveauté) → **SQL Editor** → collez le contenu de `supabase/schema_v6.sql` puis **Run** ; faites pareil avec `supabase/schema_v7.sql` (photos de profil).
@@ -13,3 +13,8 @@
 - v11 : images Genshin, habillage spectaculaire.
 - v12 : raretés selon les tier lists actuelles, animation d'ouverture par univers, carte de la semaine, puce de réserve et compte à rebours, visuel de secours.
 - v13 : tutoriel d'installation en application (iPhone, Android, ordinateur), nouveaux cadres de carte colorés par rareté avec pastille du jeu, finition en pastille, résumé du personnage, onglet Portfolio (couverture personnalisable, pages à tourner), photo de profil importée.
+- v16 : Hoyo Cards, profil, paramètres et favoris exigent maintenant d'être connecté (sinon page « Connectez-vous »). Déconnecté, l'en-tête n'affiche plus que « Se connecter ».
+- v15 : combats limités à 3 par semaine, économie d'éclats ralentie (boosters plus chers, récompenses réduites, quotidiennes qui reviennent chaque jour avec bonus de série), **Marché des joueurs** (échange/vente de doublons, commission 10 %), profil refait (onglets Aperçu / Vitrine / Star Rail / Cartes / Portfolio / Objectifs), **vitrine de cartes** choisie directement dans le site, page publique de profil refaite, probabilités des cartes dans « Statistiques », images Honkai Impact 3rd depuis le wiki Fandom (via GitHub Actions, voir ci-dessous).
+  - **SQL à exécuter une fois** dans Supabase > SQL Editor : `supabase/schema_v8.sql` (marché). Sans cela, l'onglet Marché affiche « indisponible ».
+  - Images Honkai Impact 3rd : lancez le workflow « Actions » (Run workflow). Images © Fandom/HoYoverse, non testé depuis mon environnement ; si Fandom bloque, les cartes restent dessinées.
+- v14 : dos de carte aux couleurs du site, ouverture carte par carte façon Pokémon (booster qui se déchire), cartes d'ouverture agrandies, descriptif « Pokédex » des personnages (`data/card_desc.json`, 276 sur 362 pour l'instant), ajout automatique au portfolio avec filtres (jeu, rareté, finition), grand bandeau Hoyo Cards sur l'accueil, entrée « NEW » dans le menu et bouton flottant.

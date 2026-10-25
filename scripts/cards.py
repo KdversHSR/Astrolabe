@@ -17,6 +17,16 @@ EL_GI = {'Ice': 'ice', 'Wind': 'wind', 'Electric': 'elec', 'Fire': 'fire', 'Wate
 EL_HSR = {'Fire': 'fire', 'Ice': 'ice', 'Thunder': 'elec', 'Wind': 'wind', 'Physical': 'phys', 'Quantum': 'quantum', 'Imaginary': 'imag'}
 EL_ZZZ = {'Elec': 'elec', 'Fire': 'fire', 'Ice': 'ice', 'Physics': 'phys', 'Ether': 'ether', 'Wind': 'wind', 'Lumen': 'lumen'}
 
+
+FANDOM = 'https://honkaiimpact3.fandom.com/api.php?action=query&redirects=1&prop=pageimages&piprop=original&format=json&titles='
+def fandom_img(title):
+    """Image principale de la page Fandom d'un personnage Honkai Impact 3rd (None si introuvable)."""
+    d = get(FANDOM + urllib.parse.quote(title))
+    for p in d.get('query', {}).get('pages', {}).values():
+        o = p.get('original')
+        if o and o.get('source'): return o['source']
+    return None
+
 def portrait(im):
     # recadre un grand visuel (souvent sur fond transparent) en portrait 5:7 centré sur le personnage
     bb = im.getchannel('A').point(lambda a: 255 if a > 40 else 0).getbbox() or (0, 0, im.width, im.height)
@@ -84,6 +94,16 @@ def build(art=False):
                 c['img'] = f"img/cards/{c['id']}.webp"
             except Exception: pass
         with ThreadPoolExecutor(8) as ex: list(ex.map(one, out))
+        # Honkai Impact 3rd : illustrations depuis le wiki Fandom (page de la Valkyrie). Échec = carte dessinée.
+        import time
+        for c in out:
+            if c['g'] != 'hi3' or c.get('img') or (ROOT / 'img/cards' / (c['id'] + '.webp')).exists(): continue
+            try:
+                title = c['ne'].split(' · ')[0].strip(); u = fandom_img(title)
+                if u:
+                    im = portrait(Image.open(io.BytesIO(get(u, True))).convert('RGBA')); im.save(ROOT / 'img/cards' / (c['id'] + '.webp'), 'WEBP', quality=80); c['img'] = f"img/cards/{c['id']}.webp"
+            except Exception as ex_: print('fandom', c['id'], ex_)
+            time.sleep(0.5)
     for c in out: c.pop('art', None)
     # on garde 'img' seulement si le fichier existe
     for c in out:
@@ -110,6 +130,17 @@ def build(art=False):
                 c['tl'] = t
         print('tiers appliquées :', sum(1 for c in out if 'q' in c), '/', len(out))
     except Exception as e: print('tiers ignorées :', e)
+    # descriptifs façon Pokédex (data/card_desc.json) -> d (FR) / de (EN)
+    try:
+        DS = json.load(open(ROOT / 'data/card_desc.json', encoding='utf-8'))
+        for c in out:
+            v = DS.get(c['ne'])
+            if c['g'] == 'hi3':
+                a, _, b = c['ne'].partition(' · '); bio = DS.get('__B__' + a)
+                if bio: v = [bio[0] + (' Forme de Herrscher : une puissance qui dépasse celle des valkyries.' if 'Herrscher' in b else f' Tenue « {b} ».'), bio[1] + (' Herrscher form: a power beyond that of ordinary Valkyries.' if 'Herrscher' in b else f' Battlesuit “{b}”.')]
+            if v and c['g'] in ('hsr', 'gi', 'zzz', 'hi3'): c['d'], c['de'] = v
+        print('descriptifs :', sum(1 for c in out if c.get('d')), '/', len(out))
+    except Exception as e: print('descriptifs ignorés :', e)
     json.dump({'v': 1, 'cards': out}, open(ROOT / 'data/cards.json', 'w'), ensure_ascii=False, separators=(',', ':'))
     from collections import Counter
     print(len(out), 'cartes', dict(Counter(c['g'] for c in out)), 'avec image :', sum(1 for c in out if c.get('img')))
