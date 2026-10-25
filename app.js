@@ -1689,8 +1689,8 @@ const HC = (() => {
   document.addEventListener('input', e => { if (e.target.id === 'pft') { pfd().t = e.target.value.slice(0, 28); save(); } });
   const TABS = () => [['open', L('Boosters', 'Boosters')], ['shop', L('Boutique', 'Shop')], ['mine', L('Ma collection', 'My collection')], ['pf', L('Portfolio', 'Portfolio')], ['all', L('Catalogue', 'Catalogue')], ['ach', L('Succès', 'Achievements')], ['fight', L('Combat', 'Battle')], ['market', L('Marché', 'Market')], ['rank', L('Classement', 'Ranking')]];
   function page(t) { document.body.classList.add('hcsite'); if (t === 'market') MK.rows = null; tab = TABS().some(x => x[0] === t) ? t : 'open'; load();
-    return [`<div class="hcs"><header class="hcs-h"><a class="hcs-back" href="#/home">← Astrolabe</a><div class="hcs-brand"><b>HOYO CARDS</b><small>${L('Cartes à collectionner · tous les jeux HoYoverse', 'Trading cards · every HoYoverse game')}</small></div><div class="hcs-r"><span class="hcs-lv" id="hclv"></span><span class="hcs-co hcs-st" id="hcst" title="${L('Boosters gratuits en réserve et prochain dans…', 'Free boosters in stock and next one in…')}"></span><span class="hcs-co" id="hcco" title="${L('Éclats', 'Shards')}"></span><button class="btn io" data-hc="snd" id="hcsnd" aria-label="${L('Son', 'Sound')}"></button></div></header>
-      <nav class="hcs-t">${TABS().map(x => `<a class="${tab === x[0] ? 'on' : ''}" href="#/cartes/${x[0] === 'open' ? '' : x[0]}">${x[1]}</a>`).join('')}</nav><div id="hcr"><p class="sub">${L('Chargement des cartes…', 'Loading cards…')}</p></div></div>`, null, async () => { try { await data(); } catch { const r = $('#hcr'); if (r) r.innerHTML = `<p class="sub">${L('Cartes indisponibles : data/cards.json est introuvable.', 'Cards unavailable: data/cards.json is missing.')}</p>`; return; } try { await sync(); } catch { } mount(); }]; }
+    return [`<div class="hcs"><header class="hcs-h"><a class="hcs-back" href="#/home">← Astrolabe</a><div class="hcs-brand"><b>HOYO CARDS</b><small>${L('Cartes à collectionner · tous les jeux HoYoverse', 'Trading cards · every HoYoverse game')}</small></div><div class="hcs-r"><span class="hcs-lv" id="hclv"></span><span class="hcs-co hcs-st" id="hcst" title="${L('Boosters gratuits en réserve et prochain dans…', 'Free boosters in stock and next one in…')}"></span><span class="hcs-co" id="hcco" title="${L('Éclats', 'Shards')}"></span><button class="btn io hc-sy" data-hc="sync" id="hcsy">☁</button><button class="btn io" data-hc="snd" id="hcsnd" aria-label="${L('Son', 'Sound')}"></button></div></header>
+      <nav class="hcs-t">${TABS().map(x => `<a class="${tab === x[0] ? 'on' : ''}" href="#/cartes/${x[0] === 'open' ? '' : x[0]}">${x[1]}</a>`).join('')}</nav><div id="hcr"><p class="sub">${L('Chargement des cartes…', 'Loading cards…')}</p></div></div>`, null, async () => { try { await data(); } catch { const r = $('#hcr'); if (r) r.innerHTML = `<p class="sub">${L('Cartes indisponibles : data/cards.json est introuvable.', 'Cards unavailable: data/cards.json is missing.')}</p>`; return; } try { await sync(); } catch { } mount(); syShow(); }]; }
   const chip = () => { const e = $('#hcst'); if (!e || !G) return; e.innerHTML = `🎴 <b>${G.st}/${MAXB}</b>${G.st >= MAXB ? '' : ' · <small>' + mmss(REGEN - (Date.now() - G.t)) + '</small>'}`; };
   const week = () => Math.floor(Date.now() / 604800000);
   const feat = () => { if (!CD) return null; const l = CD.filter(c => c.R === 4); return l.length ? l.slice().sort((a, b) => hs(a.id + 'w' + week()) - hs(b.id + 'w' + week()))[0] : null; };
@@ -1826,13 +1826,14 @@ const HC = (() => {
 
   // ----- sauvegarde dans le compte (v18) : même collection sur tous les appareils
   const scoreOf = x => (x.es || 0) + (x.open || 0) * 10 + Object.keys(x.col || {}).length * 5;
-  let syncing = false;
-  async function upsertSave(x) { const { error } = await sb.from('card_saves').upsert({ user_id: user.id, data: x, score: scoreOf(x), updated_at: new Date().toISOString() }); if (error && !upsertSave.w) { upsertSave.w = 1; console.warn('card_saves:', error.message); } return !error; }
-  async function sync() { if (!(sb && user) || syncing) return; syncing = true;
+  let syncing = false; const SY = { s: 'off', m: '' };
+  const syShow = () => { const e = $('#hcsy'); if (!e) return; e.className = 'btn io hc-sy ' + SY.s; e.title = SY.s === 'ok' ? L('Cartes sauvegardées dans votre compte', 'Cards saved to your account') : SY.s === 'err' ? L('Sauvegarde impossible : ', 'Save failed: ') + SY.m : L('Cliquez pour synchroniser', 'Click to sync'); e.textContent = SY.s === 'ok' ? '☁✓' : SY.s === 'err' ? '☁!' : '☁'; };
+  async function upsertSave(x) { const { error } = await sb.from('card_saves').upsert({ user_id: user.id, data: x, score: scoreOf(x), updated_at: new Date().toISOString() }); SY.s = error ? 'err' : 'ok'; SY.m = error ? (error.message || '') : ''; syShow(); return !error; }
+  async function sync(manual) { if (!(sb && user) || syncing) return; syncing = true;
     try { const raw = store.get(KEY, null), own_ = store.get(KEY + '_u', null), mineLocal = raw && (!own_ || own_ === user.id) ? raw : null;
-      const { data, error } = await sb.from('card_saves').select('data,score').eq('user_id', user.id).maybeSingle(); if (error) return;
+      const { data, error } = await sb.from('card_saves').select('data,score').eq('user_id', user.id).maybeSingle(); if (error) { SY.s = 'err'; SY.m = error.message || ''; syShow(); return; }
       const ls = mineLocal ? scoreOf(mineLocal) : 0;
-      if (data && data.data && (data.score > ls || !mineLocal)) { store.set(KEY, data.data); store.set(KEY + '_u', user.id); if (CD && $('#hcr')) { load(); mount(); } }
+      if (data && data.data && (data.score > ls || !mineLocal)) { SY.s = 'ok'; syShow(); store.set(KEY, data.data); store.set(KEY + '_u', user.id); if (CD && $('#hcr')) { load(); mount(); } }
       else if (mineLocal && (!data || ls > data.score)) { if (await upsertSave(mineLocal)) store.set(KEY + '_u', user.id); }
       else if (!data && !mineLocal) { store.set(KEY + '_u', user.id); } }
     finally { syncing = false; } }
@@ -1929,6 +1930,7 @@ const HC = (() => {
       if (k === 'open' || k === 'again') { await data().catch(() => { }); if (!CD) return; const pk = k === 'again' ? cur.pk : b.dataset.pk; if (k === 'again') closeOv(); if (pk === 'gen' || G.inv[pk] > 0 || true) openPack(pk); }
       else if (k === 'close') closeOv(); else if (k === 'all') skipAll();
       else if (k === 'more') { AF.n += 90; mount(); } else if (k === 'auto') { FS.team = own().sort((a, c) => power(c) - power(a)).slice(0, 3); mount(); } else if (k === 'fight') fight();
+      else if (k === 'sync') { const r = await sync(true); syShow(); toast(SY.s === 'ok' ? L('Cartes synchronisées ✓', 'Cards synced ✓') : L('Synchronisation impossible : ', 'Sync failed: ') + (SY.m || L('SQL v10 installé ?', 'is the v10 SQL installed?'))); }
       else if (k === 'snd') { G.snd = !G.snd; save(); head(); if (G.snd) SFX.click(); }
       else if (k === 'login') { if (!G.lg.c) { G.lg.c = true; credit(lgReward(G.lg.n)); SFX.coin(); checkAch(); save(); mount(); } }
       else if (k === 'selldup') { let tot = 0; cur.res.forEach(x => { if (x.dup) tot += sellDup(x.id, x.f); }); if (tot) { SFX.coin(); toast('+' + tot + ' ✦'); } checkAch(); save(); head(); b.remove(); }
@@ -2111,10 +2113,12 @@ pages.cartes = HC.page;
     if (a === 'conv') { SO.conv = x ? convFriends().find(z => z.id === x) || null : null; return chatInit(); }
     if (a === 'send') { const i = $('#somi'), v = i && i.value.trim(); if (!v) return; const { error } = await d.rpc('send_message', { p_to: SO.conv ? SO.conv.id : null, p_body: v }); if (error) return note(ERR(error)); i.value = ''; SO.sig = ''; SO.first = true; return fetchMsgs(); } }
   // ---------- joueurs en ligne (Realtime Presence : aucune table, aucun SQL)
-  let ch = null;
+  let ch = null, chKey = null;
   const onl = n => { let e = $('#onl'); if (!e) { const a = $('#acct'); if (!a || !a.parentNode) return; e = document.createElement('span'); e.id = 'onl'; e.className = 'onl'; a.parentNode.insertBefore(e, a); } e.innerHTML = `<i></i><b>${n}</b> <span>${L('en ligne', 'online')}</span>`; e.title = L('Personnes actuellement sur le site', 'People currently on the site'); };
-  const tryOnline = () => { const d = window.__ASTRO_MOCK_RT || sb; if (!d || ch || !d.channel) return; try { const key = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random())).slice(0, 12); ch = d.channel('astro-online', { config: { presence: { key } } }); ch.on('presence', { event: 'sync' }, () => onl(Object.keys(ch.presenceState()).length)); ch.subscribe(async s => { if (s === 'SUBSCRIBED') await ch.track({ t: Date.now() }); }); } catch { ch = null; } };
-  let tries = 0; const iv = setInterval(() => { tryOnline(); if (ch || ++tries > 40) clearInterval(iv); }, 500);
+  const rnd = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random())).slice(0, 12);
+  const tryOnline = () => { const d = window.__ASTRO_MOCK_RT || sb; if (!d || !d.channel || !authOk) return; const key = (user && user.id) || rnd; if (ch && chKey === key) return;
+    try { if (ch) { try { d.removeChannel(ch); } catch { } ch = null; } chKey = key; const c = ch = d.channel('astro-online', { config: { presence: { key } } }); c.on('presence', { event: 'sync' }, () => onl(Object.keys(c.presenceState()).length)); c.subscribe(async s => { if (s === 'SUBSCRIBED') await c.track({ t: Date.now() }); }); } catch { ch = null; } };
+  setInterval(tryOnline, 2000);
 }
 
 // ------------------------------------------------------------ cadre du site : menu, en-tête, fenêtres
