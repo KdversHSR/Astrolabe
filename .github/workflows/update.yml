@@ -28,6 +28,9 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Mettre à jour les données
         run: python scripts/update.py
+      - name: Mettre à jour les cartes Hoyo Cards
+        continue-on-error: true
+        run: python scripts/cards.py --art
       - name: Prévenir en cas d'échec
         if: failure()
         env:

@@ -135,3 +135,23 @@ Pages `#/legal` (mentions légales + confidentialité) et `#/credits`, liées en
 - **Rappels** : bannières, événements (page Événements) et phases End game (`manual.json › endgame › modes › X › until_iso`, à mettre à jour avec la phase).
 - **Évaluateur de reliques** (`#/relic`), **image de build** (bouton dans l'onglet Build), **compte à rebours** (`#/calendar`) : calculés par le site, sans source externe. La liste « absents depuis le plus longtemps » vient de `data/versions.json` et n'est pas une annonce de rediffusion.
 - **Mobile** : barre de navigation en bas de l'écran sous 760 px.
+
+## Hoyo Cards (cartes à collectionner)
+- Les personnages viennent de `data/cards.json`, reconstruit chaque semaine par `scripts/cards.py` (HSR : données du site ; Genshin et ZZZ : liste publique EnkaNetwork ; Honkai Impact 3rd et Tears of Themis : `data/cards_extra.json`, à compléter à la main).
+- Pour ajouter un personnage : ajoutez une ligne dans `data/cards_extra.json` (id unique, jeu `g`, noms `n`/`ne`, rareté `r` = 4 ou 5, élément `e`).
+- Images : HSR a ses portraits. Pour les autres jeux, le script tente de télécharger des illustrations dans `img/cards/` ; sinon la carte est dessinée (initiale + motif). Vous pouvez déposer vous-même `img/cards/<id>.webp` (même id que dans cards.json).
+- Vitrine publique dans la Communauté : exécutez une fois `supabase/schema_v6.sql` dans Supabase (SQL Editor → Run). Sans cela, tout fonctionne, mais la vitrine reste visible uniquement par vous.
+- Les cartes sont enregistrées dans le navigateur du joueur (export/import dans l'onglet Boosters). Rien n'est vérifié côté serveur : c'est un jeu pour le plaisir.
+
+### Hoyo Cards v2 (boutique, succès, classement)
+- Monnaie : les « éclats » ✦, 100 % gratuits (connexion quotidienne, 3 défis par jour, combats, vente des doublons, succès). Aucune vraie monnaie.
+- Boosters : 1 général gratuit toutes les 10 min (10 max), et en boutique : général 100 ✦, par jeu 150 ✦, Prestige 350 ✦. Les prix sont dans la constante PRICE de app.js (p14.js).
+- Classement : lit les profils publics Supabase (colonne `cards`, voir schema_v6.sql). Sans Supabase, seul le rang personnel s'affiche.
+- Sons : générés par le navigateur (aucun fichier), bouton 🔊 dans l'en-tête de Hoyo Cards.
+- Images des cartes : `python scripts/cards.py --art` télécharge les portraits Genshin (dépôt GitHub public miao-plugin) et tente ceux de Zenless Zone Zero (EnkaNetwork) ; Honkai Impact 3rd n'a pas de source libre trouvée : ses cartes restent dessinées. Vous pouvez déposer `img/cards/<id>.webp` à la main.
+
+## Hoyo Cards : raretés selon les tier lists
+- `data/card_tiers.json` contient les tier lists (HSR : calculées depuis `data/data.json` ; Genshin et ZZZ : genshin.gg ; Honkai 3rd : game.guide, 22 oct. 2026).
+- `python scripts/cards.py` (aussi lancé par la mise à jour hebdomadaire) écrit pour chaque carte un champ `q` : 4 = Légendaire … 0 = Commune. Tier la plus haute = Légendaire, la plus basse = Commune.
+- Pour mettre à jour une tier list : modifier les noms dans `card_tiers.json`, relancer le workflow. Les personnages absents des listes (très récents) gardent une rareté tirée au hasard (stable) selon leurs étoiles.
+- Les cartes déjà obtenues par les joueurs gardent leur identifiant : seule leur rareté affichée change.
