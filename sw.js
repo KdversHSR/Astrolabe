@@ -1,5 +1,5 @@
 // Astrolabe : service worker. Réseau d'abord (toujours à jour quand on est en ligne), cache en secours (hors-ligne).
-const V = 'astro-v10';
+const V = 'astro-v13';
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(V).then(c => c.addAll(['./', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest']).catch(() => {}))); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

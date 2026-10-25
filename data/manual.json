@@ -166,7 +166,8 @@
      "Check enemy weaknesses before picking: a team that exploits them breaks shields twice as fast.",
      "Against many waves, AoE and bounce damage save cycles.",
      "Keep the DPS ultimate for the boss wave, not the small enemies."
-    ]
+    ],
+    "until_iso": "2026-11-01T20:00:00Z"
    },
    "pf": {
     "phase": "Imagined Words",
@@ -196,7 +197,8 @@
      "Score comes from kills: aim for AoE and follow-up attacks.",
      "Enemies come in waves: cast team buffs before the dense wave.",
      "Save skill points for the end, when enemies are grouped."
-    ]
+    ],
+    "until_iso": "2026-11-29T20:00:00Z"
    },
    "as": {
     "phase": "Dominance of Oblivion",
@@ -226,7 +228,8 @@
      "Each boss has a shield that reduces damage: break its weakness to multiply damage.",
      "Time (action value) counts in the score: a fast DPS beats a slow tank.",
      "Learn each boss mechanic by reading its effects before firing the ultimate."
-    ]
+    ],
+    "until_iso": "2026-11-15T20:00:00Z"
    },
    "aa": {
     "phase": "King in Check",
@@ -268,7 +271,8 @@
      "Beat the three knights first: each weakens the final king.",
      "Each fight needs a different team: don't reuse your best characters.",
      "Knights can be done in any order: start with the easiest."
-    ]
+    ],
+    "until_iso": "2026-11-11T03:00:00Z"
    }
   }
  }

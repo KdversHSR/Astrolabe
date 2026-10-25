@@ -130,3 +130,8 @@ Pages `#/legal` (mentions légales + confidentialité) et `#/credits`, liées en
 - **Actualités du bandeau** : `data/manual.json › news`.
 - **End game** : `data/manual.json › endgame › modes › moc|pf|as|aa` (phase, date de fin, boss, astuces). À mettre à jour à chaque changement de phase (~6 semaines). Pour afficher une image de boss, déposez-la dans `img/boss/` et ajoutez `"img": "img/boss/nom.webp"` au boss concerné.
 - **Tier list équipement** (`#/gear/lc`) : calculée par le site à partir des builds, sans source externe.
+
+## Nouveautés v9
+- **Rappels** : bannières, événements (page Événements) et phases End game (`manual.json › endgame › modes › X › until_iso`, à mettre à jour avec la phase).
+- **Évaluateur de reliques** (`#/relic`), **image de build** (bouton dans l'onglet Build), **compte à rebours** (`#/calendar`) : calculés par le site, sans source externe. La liste « absents depuis le plus longtemps » vient de `data/versions.json` et n'est pas une annonce de rediffusion.
+- **Mobile** : barre de navigation en bas de l'écran sous 760 px.
