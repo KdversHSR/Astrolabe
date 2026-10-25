@@ -1,123 +1,107 @@
-# Astrolabe — site Honkai: Star Rail
+<div align="center">
 
-Tier list, builds, cônes de lumière, reliques, end game, favoris et comptes. Site statique (aucun serveur à gérer), mis à jour automatiquement chaque lundi.
+<img src="img/icon-192.png" width="110" alt="Logo Astrolabe">
 
-## Comment ça marche
-- `scripts/update.py` récupère les données : personnages, cônes, reliques et images (StarRailRes), builds et équipes (HSR Optimizer, licence MIT), tier list et end game (Game8, classements seulement avec lien vers la source). Il écrit `data/data.json` et `img/`.
-- Si une source tombe en panne ou change de format, le script garde les anciennes données au lieu de casser le site.
-- `data/manual.json` : calendrier end game, descriptions des modes, liens de guides. **À modifier à la main à chaque version** (2 minutes, directement sur GitHub).
-- `data/banners.json` : bannières en cours (personnages, cônes, dates de début et de fin en UTC) et date de la prochaine version. **Les bannières sont maintenant récupérées automatiquement chaque lundi** (API communautaire Ennead). Ce fichier sert de secours si l’API ne répond pas, et contient les collaborations, la date de la prochaine version et son personnage (à mettre à jour à la main). Le site calcule tout seul les comptes à rebours.
-- `data/events.json` : guides d’événements et de modes end game. Copiez le bloc « exemple » (il est masqué par `"hidden": true`) pour ajouter un événement avec dates, étapes, conseils et récompenses.
-- `data/tier_notes.json` (facultatif) : pour afficher un badge d’éidolon particulier sur un personnage dans la tier list (par défaut **E0**, base du classement Game8). Exemple : `"Firefly": "E6"`.
-- `data/tier_history.json` : géré automatiquement. Il garde les deux derniers classements pour afficher les flèches vertes (▲ monte), rouges (▼ baisse) et NEW. **Ne le modifiez pas.**
-- `data/data_en.json` et `data/calc.json` : générés automatiquement (traduction anglaise, matériaux du calculateur).
-- `data/versions.json` : résumés d’histoire par version (FR/EN). **À compléter à la main** à chaque nouvelle version : copiez un bloc, changez `v`, `t` (titre officiel), `d` (année-mois), `arc`, `fr`, `en`. `ok` : 0 à 3 (3 = vérifié).
-- `data/curated_builds.json` : sets et équipes vérifiés à la main, utilisés quand la source n’en fournit pas.
+# ASTROLABE
+### Le guide Honkai: Star Rail, gratuit et mis à jour automatiquement
 
-## Mise en ligne (gratuit, environ 20 minutes)
+**[👉 Ouvrir le site](https://kdvershsr.github.io/Astrolabe/)**
 
-### 1. Publier le site sur GitHub Pages
-1. Créez un compte sur github.com, puis un dépôt **public** nommé `astrolabe`.
-2. Envoyez-y tout le contenu de ce dossier (le dossier caché `.github` doit y être). Le plus simple, dans un terminal ouvert dans ce dossier :
-   ```
-   git init -b main
-   git add -A
-   git commit -m "Premier envoi"
-   git remote add origin https://github.com/VOTRE-PSEUDO/astrolabe.git
-   git push -u origin main
-   ```
-3. Sur GitHub : **Settings → Pages → Source : GitHub Actions**.
-4. Onglet **Actions → Mise à jour hebdomadaire → Run workflow**. Attendez le rond vert (5 à 10 minutes).
-5. Votre site est en ligne et public : `https://VOTRE-PSEUDO.github.io/astrolabe/`
+*Tier list · Builds · Équipes · Bannières · Outils · Communauté*
 
-### 2. Comptes et favoris (Supabase, gratuit)
-1. Créez un compte sur supabase.com, puis **New project** (choisissez une région européenne).
-2. **SQL Editor → New query** : collez le contenu de `supabase/schema.sql` → **Run**. Faites la même chose avec `supabase/schema_v2.sql` (profil et collection des joueurs), puis `supabase/schema_v3.sql` (profils publics, J'aime, signalements), puis `supabase/schema_v4.sql` (administration, retours des visiteurs, statistiques, équipes enregistrées), puis `supabase/schema_v5.sql` (suppression de compte/profil, protection de l’admin par 2FA), chacun dans une nouvelle requête et **dans cet ordre**.
-3. **Project Settings → API** : copiez le *Project URL* et la clé *anon public*. Cette clé est faite pour être publique, la sécurité vient des règles du fichier SQL (chacun ne voit que ses favoris). Ne copiez jamais la clé *service_role*.
-4. Collez les deux valeurs dans `config.js`, enregistrez, puis `git add -A && git commit -m "Config comptes" && git push`.
-5. **Authentication → URL Configuration** : mettez l’adresse de votre site dans *Site URL* et dans *Redirect URLs*.
-6. **Authentication → Providers → Email** : laissez la confirmation d’e-mail activée. Pour plus d’envois d’e-mails au-delà du quota gratuit, configurez un SMTP (Resend, Brevo…).
-Les visiteurs sans compte gardent leurs favoris dans leur navigateur ; à la connexion, ils sont fusionnés avec le compte.
+</div>
 
-### 3. Mises à jour automatiques
-- Le fichier `.github/workflows/update.yml` relance tout **chaque lundi à 05:00 UTC** : récupération des données, enregistrement dans le dépôt, redéploiement du site. Rien à faire.
-- Pour forcer une mise à jour (nouvelle version du jeu) : **Actions → Run workflow**.
-- Si une exécution échoue, GitHub vous envoie un e-mail ; le site reste en ligne avec les dernières données.
-- À chaque nouvelle version : mettez à jour `data/manual.json` (version, calendrier) sur github.com (icône crayon).
+<p align="center"><img src="docs/screens/home.jpg" alt="Page d'accueil d'Astrolabe" width="860"></p>
 
-### 4. Nom de domaine (facultatif)
-Achetez un domaine, puis **Settings → Pages → Custom domain** et suivez les consignes DNS (enregistrement CNAME vers `VOTRE-PSEUDO.github.io`). Cochez *Enforce HTTPS*.
+> **Site de fans non officiel**, gratuit, sans publicité et sans but lucratif. Honkai: Star Rail et tout son contenu (personnages, noms, images, textes) appartiennent à HoYoverse. Aucun lien avec HoYoverse.
 
-## Tester chez vous
-```
-pip install -r requirements.txt
-python scripts/update.py
-python -m http.server 8000     # puis ouvrez http://localhost:8000
-```
+## Pourquoi Astrolabe ?
+Faire gagner du temps aux joueurs : tout ce qu'il faut pour préparer ses tirages, ses équipes et son end game réuni au même endroit, en **français et en anglais**, et qui **se met à jour tout seul** chaque lundi.
 
-## Points d’attention
-- Les images et textes du jeu appartiennent à HoYoverse. Pour un site de fans non commercial c’est généralement toléré ; ajoutez des publicités ou une vente de services seulement après avoir vérifié leur politique.
-- Game8 : le site ne reprend que le classement (noms et tiers), avec lien. Ne copiez pas leurs textes. Si vous voulez rester 100 % à l’abri, vous pouvez désactiver le scraping avec l’option `--no-scrape` dans le workflow et tenir `data/seed_tiers.json` à jour.
-- Builds : ils viennent des préréglages communautaires de HSR Optimizer (MIT, auteur Fribbels). Gardez les crédits du pied de page.
-- Environ 25 personnages n’ont pas de sets de reliques dans la source ; le site l’indique. Complétez-les dans `data/curated_builds.json` (noms anglais) si vous le souhaitez.
+## Ce que vous trouverez sur le site
 
-## Fonctions du site
-Menu à gauche et recherche rapide (Ctrl + K), version **français / anglais**, tier list sur l’échelle **T0 → T4** (équivalences Game8 : SS = T0, S+ = T0.5, S = T1, A = T2, B = T3, C = T4), résumé de version, centre d’aide, tier list (vue d’ensemble, par rôle, Memory of Chaos, Pure Fiction, Apocalyptic Shadow) avec badges d’éidolon, éléments, voies et flèches de tendance, fiches personnage à onglets, cônes, reliques, comparateur, **calculateur de ressources**, **planificateur de tirages** (probabilités avec pity et 50/50), **équipes** enregistrables et partageables par lien, **statistiques** anonymes de la communauté, bannières avec comptes à rebours, événements, profil joueur et profils publics.
+### 📚 Base de données
+- **93 personnages** : kit complet (niveau réglable), stats par niveau, build recommandé (reliques, ornements, cônes, statistiques secondaires), équipes conseillées, classements, éidolons et estimation des dégâts.
+- **170 cônes de lumière** et **62 sets de reliques et d'ornements planaires**, avec leurs effets.
 
-## Administration
-1. Créez votre compte sur le site, puis dans Supabase → SQL Editor, lancez (en remplaçant l’adresse par la vôtre) :
-   `insert into public.admins (user_id) select id from auth.users where email = 'VOTRE-ADRESSE' on conflict do nothing;`
-2. Reconnectez-vous : une entrée **Administration** apparaît dans le menu (`#/admin`). Elle liste les retours des visiteurs (bouton « Signaler » en haut du site), les erreurs détectées automatiquement et les signalements de profils, avec les actions *marquer traité*, *supprimer* et *masquer le profil*.
-3. Personne d’autre ne peut lire ces données : c’est la base de données qui l’impose, pas le site.
+### 🏆 Classements
+- **Tier list** par vue d'ensemble, par rôle (DPS, Support, Sustain) et par mode end game (Memory of Chaos, Pure Fiction, Apocalyptic Shadow), sur l'échelle T0 → T4, avec flèches de tendance et filtres (élément, voie, rareté, éidolon).
+- **Tier list des équipes** : classement calculé par le site à partir du niveau des membres et de leur synergie. Les équipes de moins de 4 personnages sont complétées par une suggestion.
+- **Équipes calculées** pour chaque personnage, d'après la synergie des kits (éléments, voies, mots-clés comme Allégresse, dégâts sur la durée, Rupture, mémosprites).
+- **Bannières** en cours et à venir, avec comptes à rebours et rappel 24 h avant la fin (fichier calendrier + notification).
+- **Calendrier end game** automatique pour les quatre modes, dont Anomaly Arbitration.
 
-## Communauté et modération
-Les profils publics sont désactivés par défaut. Les signalements arrivent dans la page Administration du site (et dans Supabase → Table Editor → `reports`). Pour masquer un profil abusif, utilisez le bouton « Masquer ce profil » de la page Administration.
+### 🛠️ Outils
+- **Comparateur** de personnages.
+- **Calculateur de matériaux** d'ascension et de compétences.
+- **Planificateur de tirages** : chance d'obtenir un personnage ou un cône selon vos jades, passes, pity et 50/50, avec courbe de probabilité.
+- **Simulateur de tirages** pour s'amuser (pity, 50/50, animation).
+- **Constructeur d'équipes** enregistrables et partageables par lien, avec un **score de synergie** et des alternatives.
+- **Mes équipes possibles** : d'après votre collection, les équipes que vous pouvez jouer, celles à un personnage près et les personnages à tirer en priorité.
 
-## Connexion Discord et double authentification
-- **2FA** : Supabase → Authentication → Multi-Factor : vérifiez que « TOTP » est activé. Ensuite chaque joueur l’active dans Mon profil → Paramètres → Sécurité du compte (QR code à scanner avec Google Authenticator, Authy…). Si l’administrateur l’active, la base exige le code pour toute action d’administration.
-- **Discord** : https://discord.com/developers/applications → New Application → OAuth2 : copiez Client ID et Client Secret, et ajoutez dans *Redirects* l’adresse « Callback URL » indiquée par Supabase (Authentication → Providers → Discord). Collez Client ID/Secret dans Supabase, activez le fournisseur, puis ajoutez l’adresse de votre site dans Authentication → URL Configuration.
+### 📖 Guides
+- **Résumé de chaque version**, de la 1.0 à la 4.7, avec une image marquante, l'arc narratif, les nouveautés et un mode « sans spoiler ».
+- **Prochaine version** : teaser du prochain personnage, ce qui est confirmé ou non, compte à rebours.
+- **Centre d'aide** et événements.
 
-## Suppression de comptes
-- Chaque joueur peut supprimer son profil public ou son compte entier (Mon profil → Paramètres → Zone sensible).
-- L’administrateur peut supprimer un profil ou un compte (page Administration → signalements, et sur la page d’un profil public). Un administrateur ne peut pas être supprimé par ce biais.
+### 👥 Communauté
+- **Profils** (collection, favoris, équipes) et **profils publics** avec vitrine, statistiques et « j'aime ».
+- **Succès** (28 badges à débloquer).
+- **Statistiques** anonymes de ce que jouent les joueurs du site.
+- Connexion par **e-mail**, **double authentification** (application d'authentification), suppression du profil et du compte en un clic.
 
-## Équipes classées et fiches personnage
-- La **Tier list des équipes** est calculée par le site (tiers Game8 des membres + équipes conseillées par HSR Optimizer) : ce n’est pas un classement publié par un autre site.
-- Les onglets Stats, Dégâts et le curseur de niveau des compétences utilisent les chiffres du jeu (StarRailRes). Le simulateur de dégâts est une estimation d’un seul coup.
+### ⚙️ Confort
+- **Paramètres** : thème sombre, clair ou auto, 5 couleurs d'accent, taille du texte, densité, animations réduites, langue, fuseau horaire des dates, échelle de la tier list, page d'ouverture, export et import de vos données.
+- **Installable** sur téléphone et ordinateur (PWA), avec consultation hors-ligne.
+- **Routine du jour** à cocher sur l'accueil.
+- Recherche rapide (`Ctrl + K`), adapté au mobile.
 
+## Captures d'écran
+| Tier list | Fiche personnage |
+|---|---|
+| <img src="docs/screens/tier.jpg" width="420"> | <img src="docs/screens/perso.jpg" width="420"> |
+| **Tier list des équipes** | **Planificateur de tirages** |
+| <img src="docs/screens/teamtier.jpg" width="420"> | <img src="docs/screens/plan.jpg" width="420"> |
+| **Prochaine version** | **Paramètres** |
+| <img src="docs/screens/next.jpg" width="420"> | <img src="docs/screens/settings.jpg" width="420"> |
 
-## Nouveautés v7
-- **Paramètres** dans le menu de gauche : thème, couleur d’accent, taille du texte, densité, animations, langue, fuseau des dates, échelle de la tier list, éidolon par défaut, spoilers, page d’ouverture, compte (profil, sécurité, suppression) et export/import de vos données.
-- **Équipes à 4** : si HSR Optimizer en liste moins de 4, le site complète avec une suggestion (case en pointillés).
-- **Accueil** retravaillé (routine du jour enregistrée sur l’appareil) et menu coloré.
-- **Résumé de version** illustré : `data/versions.json` (champs `hero`, `chars`, `cn`, `nf`, `ne`).
+## 🔄 Mise à jour automatique
+Chaque **lundi à 05:00 UTC**, un robot GitHub (GitHub Actions) met le site à jour sans intervention :
 
-## Ce qui est automatique chaque lundi
-Personnages, cônes, reliques, builds, équipes, tier list (Game8), images, flèches de tendance et **bannières**. Reste manuel : résumés d’histoire (`versions.json`), guides (`manual.json`), prochaine version (`banners.json › next`).
+| Automatique chaque lundi | À la main, à chaque version |
+|---|---|
+| Personnages, cônes, reliques, compétences, images | Résumé de l'histoire de la version |
+| Builds et équipes conseillées | Tier list (Game8 bloque les robots : mise à jour à chaque version) |
+| Bannières et calendrier end game | Collaborations et guides |
+| Équipes calculées et tier list des équipes | |
+| Date de la prochaine version, fiche du nouveau personnage dès qu'il existe | |
 
-## Nouveautés v7.1
-- **Statut des données** (page Aides et page Admin) : lit `data/status.json`, écrit à chaque mise à jour. Alerte si la tier list ou les bannières n’ont pas pu être rafraîchies, ou si les données ont plus de 9 jours. En cas d’échec du workflow, une *issue* « La mise à jour automatique a échoué » est créée sur GitHub (et GitHub vous écrit par e-mail).
-- **Rappels de bannières** : bouton « Me rappeler 24 h avant la fin » (fichier calendrier .ics + notification si le site est ouvert).
-- **Simulateur de tirages** sous le planificateur.
-- **Mes équipes possibles** : équipes complètes, « presque prêtes » et personnages à tirer en priorité, d’après votre collection.
-- **Synergie d’équipe** (score indicatif, rôles, alternatives) sur la page d’une équipe.
-- **Application installable** (PWA : `manifest.webmanifest`, `sw.js`, icônes dans `img/`) avec mode hors-ligne.
-- **Succès** sur le profil (et sur les profils publics, d’après les statistiques publiées).
+Une page **« Statut des données »** (page Aides) indique l'état de chaque source, et une alerte GitHub est créée si la mise à jour échoue.
 
-## Équipes calculées (v7.2)
-Le site calcule lui-même des équipes à partir de la synergie des kits (éléments, voies, mots-clés des compétences : Allégresse, DoT, Rupture, mémosprites…), du niveau de tier et des équipes de HSR Optimizer. Elles s’affichent sur la fiche de chaque personnage (« Équipes calculées par le site »), avec l’étiquette « calculée », et complètent la tier list des équipes. Ce n’est pas une IA en ligne ni une simulation de combat.
+## 📦 D'où viennent les données ?
+| Source | Utilisation |
+|---|---|
+| [StarRailRes](https://github.com/Mar-7th/StarRailRes) | Données du jeu et images |
+| [HSR Optimizer](https://github.com/fribbels/hsr-optimizer) | Builds et équipes conseillées |
+| [Game8](https://game8.co/games/Honkai-Star-Rail/archives/409604) | Tier list (convertie en T0 → T4) |
+| [Ennead API](https://api.ennead.cc) | Bannières et calendrier end game |
+| [Supabase](https://supabase.com) | Comptes et profils |
 
-## Calendrier end game
-Le calendrier (Memory of Chaos, Pure Fiction, Apocalyptic Shadow, Anomaly Arbitration) est maintenant récupéré chaque lundi via l’API ; `manual.json › schedule` ne sert plus que de secours.
+Les équipes « calculées », les scores de synergie et les estimations de tirages sont produits par le site : **ils sont indicatifs** et peuvent contenir des erreurs.
 
-## Prochaine version : teaser (v7.3)
-La carte « Prochaine version » de l’accueil affiche le personnage à venir ; un clic ouvre la page `#/next` (ce qui est confirmé ou non, contexte, compte à rebours, sources). Les infos viennent de `data/banners.json › next` (champs `name`, `path`, `element`, `rarity`, `confirmed`, `story_fr/en`, `sources`). Chaque lundi, le workflow : (1) prend la vraie date dès que l’API des bannières annonce la bannière ; (2) relie le personnage à la base dès qu’il y est ajouté, ce qui affiche son art et son kit. L’histoire de la version, elle, reste à écrire à la main quand elle est annoncée.
+## 🧱 Technique
+Site statique en JavaScript pur (aucun framework), hébergé sur **GitHub Pages**. Mise à jour par un script Python (`scripts/update.py`) exécuté par **GitHub Actions**. Comptes, profils et sécurité (RLS, double authentification) via **Supabase**. Pour installer ou maintenir le projet : [docs/MAINTENANCE.md](docs/MAINTENANCE.md).
 
-## Aperçu de partage (v7.4)
-Quand on colle le lien du site sur Discord, X ou WhatsApp, une carte avec le logo s’affiche (`img/og.jpg`). L’adresse complète du site est insérée automatiquement par le workflow (remplace `__SITE_URL__` dans `index.html`).
+## 🙏 Remerciements et mentions
+Merci aux auteurs des projets ci-dessus. Mentions légales, confidentialité et crédits complets : voir les pages **Mentions légales** et **Crédits** du site. Pour signaler une erreur ou demander un retrait, utilisez le bouton « Signaler » du site ou ouvrez une *issue*.
 
-## Connexion Discord : activer ou désactiver
-Elle est **désactivée** par défaut (inscription par e-mail uniquement). Pour la réactiver : dans `app.js`, remplacez `const USE_DISCORD = false;` par `true`, après avoir configuré Discord dans Supabase.
+---
 
-## Mentions légales et crédits (v7.6)
-Pages `#/legal` (mentions légales + confidentialité) et `#/credits`, liées en bas du menu et dans la fenêtre de création de compte. Pour afficher votre pseudo et un contact public, remplissez `legal.editor` et `legal.contact` dans `data/manual.json` (facultatif). Game8 bloque les robots de GitHub : la tier list se met à jour à la demande (écrire à Claude « mets à jour la tier list »), la date de dernière vérification est dans `seed_tiers.json` et dans « Statut des données ».
+<details>
+<summary><b>🇬🇧 English summary</b></summary>
+
+**Astrolabe** is a free, ad-free, unofficial fan guide for *Honkai: Star Rail*, in French and English, updated automatically every Monday.
+It includes 93 character pages (kit, build, teams, eidolons, damage), 170 light cones, 62 relic sets, a tier list (T0 → T4) and a computed team tier list, banners with countdowns and reminders, an end game schedule, a materials calculator, a pull planner and simulator, a team builder with synergy score, version recaps from 1.0 to 4.7, a next-version teaser, player profiles with achievements, two-factor authentication, settings (themes, accent colours, text size…), and an installable offline-capable app (PWA).
+Honkai: Star Rail and its content belong to HoYoverse. This project is not affiliated with HoYoverse.
+
+</details>
