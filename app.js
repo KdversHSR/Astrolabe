@@ -116,7 +116,7 @@ function acct() {
 function initAuth() {
   if (!CFG.SUPABASE_URL || !window.supabase) { authOk = true; return acct(); }
   sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
-  sb.auth.getSession().then(async ({ data }) => { user = data.session ? data.session.user : null; authOk = true; acct(); if (GATED.includes((location.hash.split('/')[1] || 'home'))) render(); if (user && await mfaGate()) return; pullAll(); });
+  sb.auth.getSession().then(async ({ data }) => { user = data.session ? data.session.user : null; authOk = true; acct(); try { HC.sync(); } catch { } if (GATED.includes((location.hash.split('/')[1] || 'home'))) render(); if (user && await mfaGate()) return; pullAll(); });
   sb.auth.onAuthStateChange((_e, s) => { const was = !!user; user = s ? s.user : null; authOk = true; if (!user) isAdmin = false; acct(); chrome(); if (was !== !!user && GATED.includes((location.hash.split('/')[1] || 'home'))) render(); setTimeout(async () => { if (user && await mfaGate()) return; pullAll(); }, 0); }); // setTimeout : ne jamais attendre Supabase directement dans ce rappel (sinon la déconnexion se bloque)
 }
 const authMsg = t => { const m = $('#msg'); if (m) m.textContent = t; };
@@ -1690,7 +1690,7 @@ const HC = (() => {
   const TABS = () => [['open', L('Boosters', 'Boosters')], ['shop', L('Boutique', 'Shop')], ['mine', L('Ma collection', 'My collection')], ['pf', L('Portfolio', 'Portfolio')], ['all', L('Catalogue', 'Catalogue')], ['ach', L('Succès', 'Achievements')], ['fight', L('Combat', 'Battle')], ['market', L('Marché', 'Market')], ['rank', L('Classement', 'Ranking')]];
   function page(t) { document.body.classList.add('hcsite'); if (t === 'market') MK.rows = null; tab = TABS().some(x => x[0] === t) ? t : 'open'; load();
     return [`<div class="hcs"><header class="hcs-h"><a class="hcs-back" href="#/home">← Astrolabe</a><div class="hcs-brand"><b>HOYO CARDS</b><small>${L('Cartes à collectionner · tous les jeux HoYoverse', 'Trading cards · every HoYoverse game')}</small></div><div class="hcs-r"><span class="hcs-lv" id="hclv"></span><span class="hcs-co hcs-st" id="hcst" title="${L('Boosters gratuits en réserve et prochain dans…', 'Free boosters in stock and next one in…')}"></span><span class="hcs-co" id="hcco" title="${L('Éclats', 'Shards')}"></span><button class="btn io" data-hc="snd" id="hcsnd" aria-label="${L('Son', 'Sound')}"></button></div></header>
-      <nav class="hcs-t">${TABS().map(x => `<a class="${tab === x[0] ? 'on' : ''}" href="#/cartes/${x[0] === 'open' ? '' : x[0]}">${x[1]}</a>`).join('')}</nav><div id="hcr"><p class="sub">${L('Chargement des cartes…', 'Loading cards…')}</p></div></div>`, null, async () => { try { await data(); } catch { const r = $('#hcr'); if (r) r.innerHTML = `<p class="sub">${L('Cartes indisponibles : data/cards.json est introuvable.', 'Cards unavailable: data/cards.json is missing.')}</p>`; return; } mount(); }]; }
+      <nav class="hcs-t">${TABS().map(x => `<a class="${tab === x[0] ? 'on' : ''}" href="#/cartes/${x[0] === 'open' ? '' : x[0]}">${x[1]}</a>`).join('')}</nav><div id="hcr"><p class="sub">${L('Chargement des cartes…', 'Loading cards…')}</p></div></div>`, null, async () => { try { await data(); } catch { const r = $('#hcr'); if (r) r.innerHTML = `<p class="sub">${L('Cartes indisponibles : data/cards.json est introuvable.', 'Cards unavailable: data/cards.json is missing.')}</p>`; return; } try { await sync(); } catch { } mount(); }]; }
   const chip = () => { const e = $('#hcst'); if (!e || !G) return; e.innerHTML = `🎴 <b>${G.st}/${MAXB}</b>${G.st >= MAXB ? '' : ' · <small>' + mmss(REGEN - (Date.now() - G.t)) + '</small>'}`; };
   const week = () => Math.floor(Date.now() / 604800000);
   const feat = () => { if (!CD) return null; const l = CD.filter(c => c.R === 4); return l.length ? l.slice().sort((a, b) => hs(a.id + 'w' + week()) - hs(b.id + 'w' + week()))[0] : null; };
@@ -1800,7 +1800,7 @@ const HC = (() => {
     checkAch(); save(); mount(); }
   // ----- classement
   const sc = () => pts();
-  async function push() { if (!(sb && user) || !CD || !G) return; const s = summary(); try { const { error } = await sb.from('profiles').update({ cards: { u: s.u, t: s.t, l: s.l, g: s.g, o: G.open, w: G.w, p: s.p, a: Object.keys(G.ach).length, pr: G.pr || [0, 0, 0, 0, 0], pn: G.pn || [0, 0, 0, 0], s: G.show.slice(0, 6) } }).eq('user_id', user.id); if (error && !push.w) { push.w = 1; console.warn('cards:', error.message); } } catch { } }
+  async function push() { if (!(sb && user) || !CD || !G) return; const s = summary(); if (store.get(KEY + '_u', user.id) === user.id) { store.set(KEY + '_u', user.id); upsertSave(G); } try { const { error } = await sb.from('profiles').update({ cards: { u: s.u, t: s.t, l: s.l, g: s.g, o: G.open, w: G.w, p: s.p, a: Object.keys(G.ach).length, pr: G.pr || [0, 0, 0, 0, 0], pn: G.pn || [0, 0, 0, 0], s: G.show.slice(0, 6) } }).eq('user_id', user.id); if (error && !push.w) { push.w = 1; console.warn('cards:', error.message); } } catch { } }
   function rankView() { const s = summary(), lv = LV[s.lv], nx = LV[s.lv + 1];
     return `<div class="card hc-me"><span class="lab">${L('Votre rang de collectionneur', 'Your collector rank')}</span><h2>${L(lv[1], lv[2])} · ${s.p} pts</h2><div class="pbar"><div><i style="width:${nx ? Math.round((s.p - lv[0]) / (nx[0] - lv[0]) * 100) : 100}%"></i></div><em>${nx ? nx[0] - s.p + ' pts → ' + L(nx[1], nx[2]) : 'MAX'}</em></div><p class="sub">${L('Les points viennent de la rareté de chaque carte et de ses finitions (Holo ×2, Shiny ×3, Dorée ×6, Éclipse +3).', 'Points come from each card’s rarity and finishes (Holo ×2, Shiny ×3, Gold ×6, Eclipse +3).')}</p></div>
     <div class="evs hc-sum">${LV.map((x, i) => `<div style="${i === s.lv ? 'outline:2px solid var(--ac);' : i < s.lv ? '' : 'opacity:.5'}"><b style="font-size:16px">${L(x[1], x[2])}</b><span>${x[0]} pts</span></div>`).join('')}</div>
@@ -1823,6 +1823,20 @@ const HC = (() => {
     g.fillStyle = '#7f89b0'; g.font = '500 20px sans-serif'; g.fillText(L('Site de fans non officiel · images et noms © HoYoverse', 'Unofficial fan site · images and names © HoYoverse'), 48, H - 28);
     const blob = await new Promise(r => cv.toBlob(r, 'image/png')), f = new File([blob], 'hoyo-cards.png', { type: 'image/png' }); if (navigator.canShare && navigator.canShare({ files: [f] }) && matchMedia('(hover:none)').matches) await navigator.share({ files: [f] }).catch(() => { }); else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = f.name; a.click(); toast(L('Image téléchargée', 'Image downloaded')); } }
 
+
+  // ----- sauvegarde dans le compte (v18) : même collection sur tous les appareils
+  const scoreOf = x => (x.es || 0) + (x.open || 0) * 10 + Object.keys(x.col || {}).length * 5;
+  let syncing = false;
+  async function upsertSave(x) { const { error } = await sb.from('card_saves').upsert({ user_id: user.id, data: x, score: scoreOf(x), updated_at: new Date().toISOString() }); if (error && !upsertSave.w) { upsertSave.w = 1; console.warn('card_saves:', error.message); } return !error; }
+  async function sync() { if (!(sb && user) || syncing) return; syncing = true;
+    try { const raw = store.get(KEY, null), own_ = store.get(KEY + '_u', null), mineLocal = raw && (!own_ || own_ === user.id) ? raw : null;
+      const { data, error } = await sb.from('card_saves').select('data,score').eq('user_id', user.id).maybeSingle(); if (error) return;
+      const ls = mineLocal ? scoreOf(mineLocal) : 0;
+      if (data && data.data && (data.score > ls || !mineLocal)) { store.set(KEY, data.data); store.set(KEY + '_u', user.id); if (CD && $('#hcr')) { load(); mount(); } }
+      else if (mineLocal && (!data || ls > data.score)) { if (await upsertSave(mineLocal)) store.set(KEY + '_u', user.id); }
+      else if (!data && !mineLocal) { store.set(KEY + '_u', user.id); } }
+    finally { syncing = false; } }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && $('#hcr') && !$('#hcov')) sync(); });
   // ----- vitrine (v15) : choix des cartes directement dans le site
   const VT = { q: '', g: 'all' };
   const bestF = id => { const f = G.col[id].f; for (let k = 3; k >= 0; k--) if (f[k] > 0) return k; return 0; };
@@ -1947,7 +1961,7 @@ const HC = (() => {
   document.addEventListener('pointerout', e => { const c = e.target.closest && e.target.closest('.hc.tilt'); if (c && !c.contains(e.relatedTarget)) { ['--rx', '--ry'].forEach(p => c.style.setProperty(p, '0deg')); } });
   const publicCards = c => { if (!c || typeof c !== 'object') return ''; const sh = (Array.isArray(c.s) ? c.s : []).map(s => { const [id, f, a] = String(s).split(':'); return { id, f: +f || 0, a: +a || 0 }; }).filter(x => byC[x.id]), lv = LV[lvOf(+c.p || 0)];
     return `<section class="pp-hc">${sec(L('Hoyo Cards', 'Hoyo Cards'), `<span class="rkc">✦ ${L(lv[1], lv[2])}</span>`)}<div class="pp-st"><div><b>${+c.p || 0}</b><span>${L('points', 'points')}</span></div><div><b>${+c.u || 0}<small>/${+c.t || '?'}</small></b><span>${L('cartes', 'cards')}</span></div><div><b>${+c.l || 0}</b><span>${L('légendaires', 'legendaries')}</span></div><div><b>${+c.a || 0}</b><span>${L('succès', 'achievements')}</span></div></div>${sh.length ? `<div class="hc-row pp-sh">${sh.map(x => cardHtml(byC[x.id], { fin: x.f, alt: !!x.a, cls: 'tilt', d: 'data-hcz="1"' })).join('')}</div>` : `<p class="sub">${L('Vitrine vide.', 'Empty showcase.')}</p>`}</section>`; };
-  return { page, section, showCards: () => { load(); return showList().map(x => cardHtml(byC[x.id], { fin: x.f, alt: !!x.a, cls: 'tilt', d: 'data-hcz="1"' })).join(''); }, mini: async () => { await data(); load(); const s = summary(), lv = LV[s.lv]; return { s, lv: L(lv[1], lv[2]), coins: G.coins, st: G.st, sh: showList().length }; }, oddsHtml, vitrine, vitrineInner, data2: 0, heroFan: () => { load(); return heroFan(); }, count: () => CD ? CD.length : 0, portfolio: pfView, inst: instStrip, data, load, packHtml, publicCards, MAXB, byC: () => byC, home: () => { load(); const n = G.st + Object.values(G.inv).reduce((s, x) => s + x, 0); return [n, G.coins]; } };
+  return { page, section, sync, showCards: () => { load(); return showList().map(x => cardHtml(byC[x.id], { fin: x.f, alt: !!x.a, cls: 'tilt', d: 'data-hcz="1"' })).join(''); }, mini: async () => { await data(); load(); const s = summary(), lv = LV[s.lv]; return { s, lv: L(lv[1], lv[2]), coins: G.coins, st: G.st, sh: showList().length }; }, oddsHtml, vitrine, vitrineInner, data2: 0, heroFan: () => { load(); return heroFan(); }, count: () => CD ? CD.length : 0, portfolio: pfView, inst: instStrip, data, load, packHtml, publicCards, MAXB, byC: () => byC, home: () => { load(); const n = G.st + Object.values(G.inv).reduce((s, x) => s + x, 0); return [n, G.coins]; } };
 })();
 pages.cartes = HC.page;
 // accueil : grande bannière

@@ -1,7 +1,7 @@
 # Hoyo Cards : récapitulatif et mise en ligne
 
 ## Mise en ligne (à chaque nouvelle version)
-1. Dézippez `astrolabe-site-v17.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
+1. Dézippez `astrolabe-site-v18.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
 2. Ouvrez GitHub Desktop : les fichiers modifiés apparaissent à gauche. Écrivez un titre (ex. « v13 ») puis **Commit to main**, puis **Push origin**.
 3. Sur github.com, dépôt du site → onglet **Actions** → « Mise à jour » → **Run workflow** (met à jour cartes, raretés et données).
 4. Supabase (une seule fois par nouveauté) → **SQL Editor** → collez le contenu de `supabase/schema_v6.sql` puis **Run** ; faites pareil avec `supabase/schema_v7.sql` (photos de profil).
@@ -13,6 +13,7 @@
 - v11 : images Genshin, habillage spectaculaire.
 - v12 : raretés selon les tier lists actuelles, animation d'ouverture par univers, carte de la semaine, puce de réserve et compte à rebours, visuel de secours.
 - v13 : tutoriel d'installation en application (iPhone, Android, ordinateur), nouveaux cadres de carte colorés par rareté avec pastille du jeu, finition en pastille, résumé du personnage, onglet Portfolio (couverture personnalisable, pages à tourner), photo de profil importée.
+- v18 : **les cartes sont sauvegardées dans le compte** : même collection sur téléphone et PC. SQL à exécuter une fois : `supabase/schema_v10.sql`. Ouvrez Hoyo Cards d'abord sur l'appareil qui a vos cartes.
 - v17 : **Réseau social** (menu « Réseau social ») : publications avec image (build, guide, bug, question…), j'aime, commentaires, signalements ; **amis** (demande par nom d'utilisateur, bouton « + Ami » sur les profils publics) ; **chat** (salon général + messages privés entre amis) ; **joueurs en ligne** affichés en haut du site.
   - **SQL à exécuter une fois** : `supabase/schema_v9.sql` (Supabase > SQL Editor > Run). Le compteur « en ligne » n'a besoin d'aucun SQL.
   - Modération : les signalements arrivent dans la table `content_reports` (Table Editor) ; l'administrateur peut supprimer publications, commentaires et messages.
