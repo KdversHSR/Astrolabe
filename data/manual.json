@@ -114,5 +114,162 @@
   "editor": "",
   "contact": "",
   "_aide": "Facultatif : editor = votre pseudo ou nom affiché dans les mentions légales ; contact = une adresse e-mail publique si vous le souhaitez. Laissez vide pour ne rien afficher."
+ },
+ "news": [
+  {
+   "fr": "Nouveau : tier lists des cônes de lumière et des reliques",
+   "en": "New: light cone and relic tier lists",
+   "h": "#/lctier"
+  },
+  {
+   "fr": "Nouveau : calendrier end game illustré, avec les boss de la phase",
+   "en": "New: illustrated end game schedule with the phase bosses",
+   "h": "#/end/moc"
+  },
+  {
+   "fr": "Bouton Partager et routine du jour améliorée",
+   "en": "Share button and improved daily routine",
+   "h": "#/home"
+  }
+ ],
+ "endgame": {
+  "note_fr": "Les boss et astuces ci-dessous sont saisis à la main à chaque changement de phase (toutes les ~6 semaines). Les noms de boss de la 4.6 viennent de fuites : vérifiez en jeu. Les faiblesses changent d’une phase à l’autre.",
+  "note_en": "Bosses and tips below are entered by hand at each phase change (about every 6 weeks). 4.6 boss names come from leaks: check in game. Weaknesses change between phases.",
+  "modes": {
+   "moc": {
+    "phase": "Crossing the Afterlife",
+    "until": "2 novembre",
+    "until_en": "2 November",
+    "el": "Quantum",
+    "bosses": [
+     {
+      "n": "Hoolay (Borisin Warhead)",
+      "f": "Salle 1",
+      "e": "Hoolay (Borisin Warhead)",
+      "ef": "Room 1"
+     },
+     {
+      "n": "Moonlit Pegasus · Noontide Gryphon · boss inconnu",
+      "f": "Salle 2",
+      "e": "Moonlit Pegasus · Noontide Gryphon · unknown boss",
+      "ef": "Room 2"
+     }
+    ],
+    "tips_fr": [
+     "Préparez deux équipes qui ne partagent aucun personnage : une pour chaque moitié.",
+     "Regardez les faiblesses des ennemis avant de choisir : une équipe qui les exploite casse les boucliers deux fois plus vite.",
+     "Contre plusieurs vagues, les dégâts de zone et de rebond font gagner des cycles.",
+     "Gardez l’ultime du DPS pour la vague du boss, pas pour les petits ennemis."
+    ],
+    "tips_en": [
+     "Prepare two teams that share no character: one per half.",
+     "Check enemy weaknesses before picking: a team that exploits them breaks shields twice as fast.",
+     "Against many waves, AoE and bounce damage save cycles.",
+     "Keep the DPS ultimate for the boss wave, not the small enemies."
+    ]
+   },
+   "pf": {
+    "phase": "Imagined Words",
+    "until": "30 novembre",
+    "until_en": "30 November",
+    "el": "Imaginary",
+    "bosses": [
+     {
+      "n": "Alloy Mechatron : King Pom-Pom",
+      "f": "Étape 4, nœud 2",
+      "e": "Alloy Mechatron: King Pom-Pom",
+      "ef": "Stage 4, node 2"
+     },
+     {
+      "n": "Argenti (fin)",
+      "f": "Étape 4, nœud 3",
+      "e": "Argenti (end)",
+      "ef": "Stage 4, node 3"
+     }
+    ],
+    "tips_fr": [
+     "Le score vient des éliminations : visez les dégâts de zone et les attaques de poursuite.",
+     "Les ennemis arrivent par vagues : lancez les buffs de l’équipe avant la vague dense.",
+     "Gardez des points de compétence pour la fin, quand les ennemis sont regroupés."
+    ],
+    "tips_en": [
+     "Score comes from kills: aim for AoE and follow-up attacks.",
+     "Enemies come in waves: cast team buffs before the dense wave.",
+     "Save skill points for the end, when enemies are grouped."
+    ]
+   },
+   "as": {
+    "phase": "Dominance of Oblivion",
+    "until": "16 novembre",
+    "until_en": "16 November",
+    "el": "Fire",
+    "bosses": [
+     {
+      "n": "Soulhook Sovereign (Kafka)",
+      "f": "Boss 1",
+      "e": "Soulhook Sovereign (Kafka)",
+      "ef": "Boss 1"
+     },
+     {
+      "n": "Arbiter of the Lost Abyss",
+      "f": "Boss 2",
+      "e": "Arbiter of the Lost Abyss",
+      "ef": "Boss 2"
+     }
+    ],
+    "tips_fr": [
+     "Chaque boss a un bouclier qui réduit les dégâts : brisez la faiblesse pour les multiplier.",
+     "Le temps (valeur d’action) compte dans le score : mieux vaut un DPS rapide qu’un tank lent.",
+     "Apprenez la mécanique de chaque boss en regardant ses effets avant de lancer l’ultime."
+    ],
+    "tips_en": [
+     "Each boss has a shield that reduces damage: break its weakness to multiply damage.",
+     "Time (action value) counts in the score: a fast DPS beats a slow tank.",
+     "Learn each boss mechanic by reading its effects before firing the ultimate."
+    ]
+   },
+   "aa": {
+    "phase": "King in Check",
+    "until": "11 novembre",
+    "until_en": "11 November",
+    "el": "",
+    "bosses": [
+     {
+      "n": "Joy Ascendant · King Pom-Pom",
+      "f": "Chevalier 1",
+      "e": "Joy Ascendant · King Pom-Pom",
+      "ef": "Knight 1"
+     },
+     {
+      "n": "Illwish Archlotus",
+      "f": "Chevalier 2",
+      "e": "Illwish Archlotus",
+      "ef": "Knight 2"
+     },
+     {
+      "n": "Swarm Nightmare",
+      "f": "Chevalier 3",
+      "e": "Swarm Nightmare",
+      "ef": "Knight 3"
+     },
+     {
+      "n": "Moonlit Pegasus · Lighthouse",
+      "f": "Roi",
+      "e": "Moonlit Pegasus · Lighthouse",
+      "ef": "King"
+     }
+    ],
+    "tips_fr": [
+     "Battez les trois chevaliers d’abord : chacun affaiblit le roi final.",
+     "Chaque combat demande une équipe différente : ne réutilisez pas vos meilleurs personnages.",
+     "Les chevaliers peuvent se faire dans n’importe quel ordre : commencez par le plus facile."
+    ],
+    "tips_en": [
+     "Beat the three knights first: each weakens the final king.",
+     "Each fight needs a different team: don't reuse your best characters.",
+     "Knights can be done in any order: start with the easiest."
+    ]
+   }
+  }
  }
 }

@@ -124,3 +124,9 @@ Elle est **désactivée** par défaut (inscription par e-mail uniquement). Pour 
 
 ## Mentions légales et crédits (v7.6)
 Pages `#/legal` (mentions légales + confidentialité) et `#/credits`, liées en bas du menu et dans la fenêtre de création de compte. Pour afficher votre pseudo et un contact public, remplissez `legal.editor` et `legal.contact` dans `data/manual.json` (facultatif). Game8 bloque les robots de GitHub : la tier list se met à jour à la demande (écrire à Claude « mets à jour la tier list »), la date de dernière vérification est dans `seed_tiers.json` et dans « Statut des données ».
+
+## Nouveautés v8
+- **Polices** : Cinzel / Jost / Rajdhani, hébergées dans `fonts/` (copiées par le workflow). Ce sont les alternatives libres les plus proches du style du jeu ; la police officielle n'est pas disponible.
+- **Actualités du bandeau** : `data/manual.json › news`.
+- **End game** : `data/manual.json › endgame › modes › moc|pf|as|aa` (phase, date de fin, boss, astuces). À mettre à jour à chaque changement de phase (~6 semaines). Pour afficher une image de boss, déposez-la dans `img/boss/` et ajoutez `"img": "img/boss/nom.webp"` au boss concerné.
+- **Tier list équipement** (`#/gear/lc`) : calculée par le site à partir des builds, sans source externe.

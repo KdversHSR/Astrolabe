@@ -42,7 +42,7 @@ jobs:
       - name: Préparer le site
         run: |
           mkdir _site
-          cp -r index.html style.css app.js config.js manifest.webmanifest sw.js favicon.svg favicon.ico data img _site/
+          cp -r index.html style.css app.js config.js manifest.webmanifest sw.js favicon.svg favicon.ico fonts data img _site/
       - uses: actions/configure-pages@v5
         id: pages
       - name: Adresse du site pour les aperçus de partage
