@@ -1,7 +1,7 @@
 # Hoyo Cards : récapitulatif et mise en ligne
 
 ## Mise en ligne (à chaque nouvelle version)
-1. Dézippez `astrolabe-site-v21c.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
+1. Dézippez `astrolabe-site-v23.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
 2. Ouvrez GitHub Desktop : les fichiers modifiés apparaissent à gauche. Écrivez un titre (ex. « v13 ») puis **Commit to main**, puis **Push origin**.
 3. Sur github.com, dépôt du site → onglet **Actions** → « Mise à jour » → **Run workflow** (met à jour cartes, raretés et données).
 4. Supabase (une seule fois par nouveauté) → **SQL Editor** → collez le contenu de `supabase/schema_v6.sql` puis **Run** ; faites pareil avec `supabase/schema_v7.sql` (photos de profil).
@@ -13,6 +13,8 @@
 - v11 : images Genshin, habillage spectaculaire.
 - v12 : raretés selon les tier lists actuelles, animation d'ouverture par univers, carte de la semaine, puce de réserve et compte à rebours, visuel de secours.
 - v13 : tutoriel d'installation en application (iPhone, Android, ordinateur), nouveaux cadres de carte colorés par rareté avec pastille du jeu, finition en pastille, résumé du personnage, onglet Portfolio (couverture personnalisable, pages à tourner), photo de profil importée.
+- v23 : ouverture des boosters repassée en 2D (rapide, ≈ 3 s), avec des effets selon la rareté : Rare (lueur + étincelles), Épique (rayons, onde, bandeau, tremblement), Légendaire / Dorée / Éclipse (flash, double onde, pluie d’étincelles, grand bandeau)
+- v22 : boosters redessinés par jeu, nouvelles cartes (pleine image, secrètes dorées, Éclipse), 7 nouveaux jeux (Bleach BS, Dokkan, Endfield, FGO, Nikke, NTE, One Piece BR), bannière d’accueil animée, combats animés (≈7 s), vente de doublons filtrée avec confirmation, tri/filtres de collection, succès par catégorie, boutique groupée (×10), catalogue avec progression par jeu
 - v21c : ouverture des boosters en vraie 3D (booster avec épaisseur qui suit la souris/le doigt, déchirure en volume, cartes avec tranche, retournement en arc, onde de choc pour les cartes rares).
 - v21 : Hoyo Cards accueille **Wuthering Waves** (60 persos), **Reverse: 1999** (121) et **Umamusume** (61) : boosters dédiés, scènes d’ouverture, rareté d’après les tier lists d’octobre 2026, descriptifs façon Pokédex, finitions Holo/Shiny/Dorée/Éclipse. Cartes plus belles (cadres, reflets, rayons à l’ouverture des belles cartes). **Correctif important** : la synchronisation cloud ne peut plus écraser vos cartes par une sauvegarde vide (cause des « 0 carte sur téléphone »). Les images des nouveaux jeux sont téléchargées par l’Action « cartes » (lancez-la une fois) ; sans image, la carte est dessinée.
 - v20 : intro de bienvenue plus courte (2,5 s, passe toute seule, une fois toutes les 6 h), bandeau « Aujourd’hui » sur l’accueil (boosters prêts, récompense du jour, défis), filtres repliables sur mobile, accueil mobile compacté, onglet admin « Contenu signalé », images chargées à la demande, finitions visuelles.
