@@ -19,9 +19,11 @@ EL_ZZZ = {'Elec': 'elec', 'Fire': 'fire', 'Ice': 'ice', 'Physics': 'phys', 'Ethe
 
 
 # wikis (MediaWiki) essayés dans l'ordre pour chaque jeu : un nom sans point = sous-domaine fandom.com ; sinon nom d'hôte complet
-WIKI = {'hi3': ['honkaiimpact3'], 'ww': ['wutheringwaves'], 'r99': ['reverse1999'], 'uma': ['umamusume'], 'bb': ['bleach-brave-souls'],
-        'dk': ['dbz-dokkanbattle'], 'ef': ['arknights-endfield', 'endfield.wiki.gg'], 'nk': ['nikke-goddess-of-victory-international'],
-        'fgo': ['fategrandorder'], 'nte': ['neverness-to-everness', 'nte'], 'op': ['onepiecebountyrush']}
+WIKI = {'hi3': ['honkaiimpact3'], 'ww': ['wutheringwaves'], 'r99': ['reverse1999'], 'uma': ['umamusume'], 'bb': ['bleach-bravesouls', 'bleach-brave-souls'],
+        'dk': ['dbz-dokkanbattle'], 'ef': ['endfield.wiki.gg', 'arknightsendfield', 'arknights-endfield'], 'nk': ['nikke-goddess-of-victory-international'],
+        'fgo': ['fategrandorder'], 'nte': ['neverness-to-everness', 'nte'], 'op': ['opbr', 'onepiecebountyrush'], 'tot': ['tearsofthemis', 'tot.wiki']}
+# recherche automatique de wikis Fandom si les noms ci-dessus échouent (API publique Fandom)
+DISCO = {'bb': 'Bleach Brave Souls', 'dk': 'Dokkan Battle', 'ef': 'Arknights Endfield', 'op': 'One Piece Bounty Rush', 'tot': 'Tears of Themis', 'nte': 'Neverness to Everness', 'nk': 'Nikke Goddess of Victory'}
 DEAD = set()
 def _api(host, q):
     h = host if '.' in host else host + '.fandom.com'
@@ -30,20 +32,52 @@ def _pimg(d):
     for p in d.get('query', {}).get('pages', {}).values():
         o = p.get('original')
         if o and o.get('source'): return o['source']
-def fandom_img(title, g='hi3'):
-    """Image principale de la page du personnage sur le wiki du jeu (recherche si le titre exact n'existe pas). None si introuvable."""
-    for host in WIKI[g]:
-        if (g, host) in DEAD: continue
-        try:
-            u = _pimg(_api(host, 'action=query&prop=pageimages&piprop=original&titles=' + urllib.parse.quote(title)))
-            if u: return u
-            r = _api(host, 'action=query&list=search&srlimit=1&srsearch=' + urllib.parse.quote(title)).get('query', {}).get('search', [])
-            if r:
-                u = _pimg(_api(host, 'action=query&prop=pageimages&piprop=original&titles=' + urllib.parse.quote(r[0]['title'])))
-                if u: return u
-        except Exception as ex:
-            if 'timed out' not in str(ex): DEAD.add((g, host)); print('wiki indisponible :', g, host, ex)
+import threading
+USED = {}; _LK = threading.Lock()
+def _pages(d):
+    ps = [p for p in d.get('query', {}).get('pages', {}).values() if (p.get('original') or {}).get('source')]
+    ps.sort(key=lambda p: p.get('index', 0)); return [p['original']['source'] for p in ps]
+def wiki_urls(host, q, exact=False):
+    """URLs d'images candidates (page exacte, sinon 5 meilleurs résultats de recherche) sur un wiki MediaWiki."""
+    if exact: return _pages(_api(host, 'action=query&prop=pageimages&piprop=original&titles=' + urllib.parse.quote(q)))
+    return _pages(_api(host, 'action=query&generator=search&gsrlimit=5&gsrnamespace=0&prop=pageimages&piprop=original&gsrsearch=' + urllib.parse.quote(q)))
+def fandom_img(queries, g='hi3'):
+    """Meilleure image (jamais déjà utilisée par une autre carte du même jeu) pour une liste de requêtes ; None si introuvable."""
+    seen = []
+    for q in queries:
+        for host in WIKI.get(g, []):
+            if (g, host) in DEAD: continue
+            try:
+                for ex in (True, False):
+                    for u in wiki_urls(host, q, ex):
+                        if u not in seen: seen.append(u)
+                    free = [u for u in seen if u not in USED.setdefault(g, set())]
+                    if free:
+                        with _LK:
+                            if free[0] not in USED[g]: USED[g].add(free[0]); return free[0]
+            except Exception as ex_:
+                if 'timed out' not in str(ex_) and '404' not in str(ex_): DEAD.add((g, host)); print('wiki indisponible :', g, host, ex_)
     return None
+def discover(g):
+    try:
+        r = get('https://www.fandom.com/api/v1/Wikis/ByString?includeDomain=true&limit=3&string=' + urllib.parse.quote(DISCO[g]), timeout=15)
+        for it in r.get('items', []):
+            h = (it.get('domain') or '').replace('https://', '').replace('http://', '').strip('/')
+            if h and h not in WIKI[g]: WIKI[g].append(h); print('wiki découvert :', g, h)
+    except Exception as ex: print('découverte impossible', g, ex)
+def anilist_img(name):
+    """Illustration du personnage via AniList (API publique GraphQL) : bon repli pour Bleach, One Piece, Dragon Ball, Fate, Uma Musume."""
+    try:
+        q = json.dumps({'query': 'query($s:String){Character(search:$s){image{large}}}', 'variables': {'s': name}}).encode()
+        r = json.loads(urllib.request.urlopen(urllib.request.Request('https://graphql.anilist.co', q, {'Content-Type': 'application/json', 'User-Agent': 'astrolabe-cards'}), timeout=15).read())
+        u = (((r.get('data') or {}).get('Character') or {}).get('image') or {}).get('large')
+        return u if u and 'default' not in u else None
+    except Exception: return None
+def wikipedia_img(name):
+    try:
+        r = get('https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=pageimages&piprop=original&generator=search&gsrlimit=1&gsrsearch=' + urllib.parse.quote(name), timeout=15)
+        u = _pages(r); return u[0] if u else None
+    except Exception: return None
 
 _ATLAS = None
 def atlas_img(name):
@@ -63,13 +97,27 @@ def atlas_img(name):
     return _ATLAS[m[0]] if m else None
 
 def portrait(im):
-    # recadre un grand visuel (souvent sur fond transparent) en portrait 5:7 centré sur le personnage
-    bb = im.getchannel('A').point(lambda a: 255 if a > 40 else 0).getbbox() or (0, 0, im.width, im.height)
+    """Cadre 5:7 (300x420) sans zoom excessif : visuel opaque -> entier sur fond flouté ; détourage transparent -> personnage complet en largeur, haut du corps si très haut."""
+    from PIL import Image, ImageFilter
+    R = 5 / 7; W, H = im.size; TW, TH = 300, 420
+    if im.getchannel('A').getextrema()[0] > 200:
+        im = im.convert('RGB')
+        if W / H < 0.85:                       # déjà portrait : recadrage haut
+            ch = min(H, W / R); out = im.crop((0, 0, W, int(ch)))
+            if out.height < W / R - 2: out = out.crop((int((W - out.height * R) / 2), 0, int((W + out.height * R) / 2), out.height))
+            return out.resize((TW, TH), Image.LANCZOS).convert('RGBA')
+        bg = im.resize((TW, TH), Image.BILINEAR).filter(ImageFilter.GaussianBlur(14)); bg = Image.blend(bg, Image.new('RGB', (TW, TH), (10, 12, 28)), .35)
+        fw = TW; fh = int(H * TW / W)
+        if fh > TH * 0.8: fh = int(TH * 0.8); fw = int(W * fh / H)
+        bg.paste(im.resize((fw, fh), Image.LANCZOS), ((TW - fw) // 2, int((TH - fh) * 0.42))); return bg.convert('RGBA')
+    bb = im.getchannel('A').point(lambda a: 255 if a > 40 else 0).getbbox() or (0, 0, W, H)
     x0, y0, x1, y1 = bb; bw, bh = x1 - x0, y1 - y0
-    h = min(bh * 0.82, bw * 1.4 if bw * 1.4 > bh * 0.5 else bh); h = max(h, bh * 0.5); w = h * 5 / 7
-    cx = (x0 + x1) / 2; left = max(0, min(im.width - w, cx - w / 2)); top = max(0, y0)
-    c = im.crop((int(left), int(top), int(left + w), int(min(im.height, top + h)))); c = c.resize((300, 420)) if c.width and c.height else im.resize((300, 420))
-    return c
+    w = max(bw * 1.08, 1); h = w / R
+    if bh > h * 1.12: pass                      # très haut : on garde le haut du corps (h déjà < bh)
+    elif h > bh * 1.25: h = bh * 1.25; w = h * R if h * R > bw else bw * 1.08
+    cx = (x0 + x1) / 2; left = cx - w / 2; top = y0 - h * 0.04
+    canvas = Image.new('RGBA', (int(w), int(h)), (0, 0, 0, 0)); canvas.paste(im, (int(-left), int(-top)))
+    return canvas.resize((TW, TH), Image.LANCZOS)
 
 def build(art=False):
     cards = []
@@ -87,7 +135,7 @@ def build(art=False):
             if 'ORANGE' not in q and 'PURPLE' not in q: continue
             side = (v.get('SideIconName') or '').replace('UI_AvatarIcon_Side_', '')
             zh = loc.get('zh-cn', {}).get(str(v['NameTextMapHash']), '')
-            cards.append({'id': 'gi-' + k, 'g': 'gi', 'n': loc.get('fr', {}).get(str(v['NameTextMapHash']), nm), 'ne': nm, 'r': 5 if 'ORANGE' in q else 4, 'e': EL_GI.get(v.get('Element'), 'wind'), 'art': MIAO + zh + '/imgs/splash.webp' if zh else ''})
+            cards.append({'id': 'gi-' + k, 'g': 'gi', 'n': loc.get('fr', {}).get(str(v['NameTextMapHash']), nm), 'ne': nm, 'r': 5 if 'ORANGE' in q else 4, 'e': EL_GI.get(v.get('Element'), 'wind'), 'art': MIAO + zh + '/imgs/splash.webp' if zh else '', 'art2': f'https://enka.network/ui/UI_Gacha_AvatarImg_{side}.png' if side else ''})
     except Exception as ex: print('Genshin ignoré :', ex)
     # --- Zenless Zone Zero
     try:
@@ -119,32 +167,44 @@ def build(art=False):
     if art:
         from PIL import Image
         (ROOT / 'img/cards').mkdir(exist_ok=True)
+        VF = ROOT / 'img/cards/_v24.json'; DONE = set(json.load(open(VF)) if VF.exists() else [])   # images déjà refaites avec le nouveau cadrage (v24)
         from concurrent.futures import ThreadPoolExecutor
         def one(c):
-            u = c.get('art')
-            if not u: return
             dest = ROOT / 'img/cards' / (c['id'] + '.webp')
-            if dest.exists(): c['img'] = f"img/cards/{c['id']}.webp"; return
-            try:
-                im = portrait(Image.open(io.BytesIO(get(u, True))).convert('RGBA')); im.save(dest, 'WEBP', quality=80)
-                c['img'] = f"img/cards/{c['id']}.webp"
-            except Exception: pass
+            if dest.exists() and c['id'] in DONE: c['img'] = f"img/cards/{c['id']}.webp"; return
+            for u in (c.get('art'), c.get('art2')):
+                if not u: continue
+                try:
+                    im = portrait(Image.open(io.BytesIO(get(u, True))).convert('RGBA')); im.save(dest, 'WEBP', quality=80)
+                    c['img'] = f"img/cards/{c['id']}.webp"; DONE.add(c['id']); return
+                except Exception: pass
         with ThreadPoolExecutor(8) as ex: list(ex.map(one, out))
         # Honkai Impact 3rd : illustrations depuis le wiki Fandom (page de la Valkyrie). Échec = carte dessinée.
         import time
         t0 = time.time()   # garde-fou : on abandonne les images des wikis après 20 min (les cartes restantes restent dessinées)
+        for g_ in list(DISCO):
+            if any(c['g'] == g_ for c in out) and not any(c.get('img') for c in out if c['g'] == g_): discover(g_)
         def wiki_one(c):
-            if time.time() - t0 > 1200 or c['g'] not in WIKI or c.get('img') or (ROOT / 'img/cards' / (c['id'] + '.webp')).exists(): return
+            dest = ROOT / 'img/cards' / (c['id'] + '.webp')
+            if time.time() - t0 > 1800 or c['g'] not in WIKI or (c.get('img') and c['id'] in DONE): return
+            if c['g'] == 'hsr': return
+            if dest.exists() and c['id'] in DONE: c['img'] = f"img/cards/{c['id']}.webp"; return
             try:
-                title = (c.get('wk') or c['ne']).split(' · ')[0].strip(); u = (atlas_img(title) if c['g'] == 'fgo' else None) or fandom_img(title, c['g'])
+                ne = c['ne']; base = (c.get('wk') or ne).split(' · ')[0].strip(); suit = ne.split(' · ')[-1].strip() if ' · ' in ne else ''
+                qs = [suit + ' ' + base.split()[0], suit, ne.replace(' · ', ' ')] if c['g'] == 'hi3' and suit else [re.sub(r'[()]', ' ', ne), base]
+                u = atlas_img(base) if c['g'] == 'fgo' else None
+                u = u or fandom_img(qs, c['g'])
+                if not u and c['g'] != 'hi3': u = anilist_img(base) or wikipedia_img(base)
                 if u:
-                    im = portrait(Image.open(io.BytesIO(get(u, True, 30))).convert('RGBA')); im.save(ROOT / 'img/cards' / (c['id'] + '.webp'), 'WEBP', quality=80); c['img'] = f"img/cards/{c['id']}.webp"
+                    im = portrait(Image.open(io.BytesIO(get(u, True, 30))).convert('RGBA')); im.save(dest, 'WEBP', quality=80); c['img'] = f"img/cards/{c['id']}.webp"; DONE.add(c['id'])
+                    if len(DONE) % 25 == 0: json.dump(sorted(DONE), open(VF, 'w'))
             except Exception as ex_: print('image', c['id'], ex_)
-            time.sleep(0.2)
+            time.sleep(0.15)
         if any(c['g'] == 'fgo' for c in out): atlas_img('x')   # charge l'index Atlas une seule fois avant les threads
         with ThreadPoolExecutor(6) as ex: list(ex.map(wiki_one, out))
-        if time.time() - t0 > 1200: print('images : arrêt anticipé après 20 min')
-    for c in out: c.pop('art', None)
+        json.dump(sorted(DONE), open(VF, 'w'))
+        if time.time() - t0 > 1800: print('images : arrêt anticipé après 30 min')
+    for c in out: c.pop('art', None); c.pop('art2', None)
     # on garde 'img' seulement si le fichier existe
     for c in out:
         if not c.get('img') and (ROOT / f"img/cards/{c['id']}.webp").exists(): c['img'] = f"img/cards/{c['id']}.webp"
@@ -183,6 +243,9 @@ def build(art=False):
     except Exception as e: print('descriptifs ignorés :', e)
     json.dump({'v': 1, 'cards': out}, open(ROOT / 'data/cards.json', 'w'), ensure_ascii=False, separators=(',', ':'))
     from collections import Counter
+    rep_ = {g: [c['ne'] for c in out if c['g'] == g and not c.get('img')] for g in sorted({c['g'] for c in out})}
+    json.dump({g: {'total': sum(1 for c in out if c['g'] == g), 'sans_image': v} for g, v in rep_.items()}, open(ROOT / 'data/img_report.json', 'w'), ensure_ascii=False, indent=1)
+    print('cartes sans image :', {g: len(v) for g, v in rep_.items() if v})
     print(len(out), 'cartes', dict(Counter(c['g'] for c in out)), 'avec image :', sum(1 for c in out if c.get('img')))
 
 if __name__ == '__main__': build('--art' in sys.argv)

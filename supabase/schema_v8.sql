@@ -1,4 +1,4 @@
--- Astrolabe v15 : marché et échanges de cartes Hoyo Cards
+-- Astrolabe v15 : marché et échanges de cartes Gachadex
 -- À coller UNE FOIS dans Supabase > SQL Editor > New query > Run.
 -- Principe : le joueur qui met une carte en vente la "met de côté" (retirée de son jeu côté navigateur).
 -- Le serveur garantit seulement qu'une offre ne peut être prise qu'UNE fois et récupérée qu'UNE fois.

@@ -1,4 +1,4 @@
--- Astrolabe v18 : sauvegarde des cartes Hoyo Cards dans le compte (même collection sur téléphone et PC).
+-- Astrolabe v18 : sauvegarde des cartes Gachadex dans le compte (même collection sur téléphone et PC).
 -- À coller UNE FOIS dans Supabase > SQL Editor > Run.
 create table if not exists public.card_saves (
   user_id uuid primary key references auth.users(id) on delete cascade,
