@@ -18,14 +18,49 @@ EL_HSR = {'Fire': 'fire', 'Ice': 'ice', 'Thunder': 'elec', 'Wind': 'wind', 'Phys
 EL_ZZZ = {'Elec': 'elec', 'Fire': 'fire', 'Ice': 'ice', 'Physics': 'phys', 'Ether': 'ether', 'Wind': 'wind', 'Lumen': 'lumen'}
 
 
-WIKI = {'hi3': 'honkaiimpact3', 'ww': 'wutheringwaves', 'r99': 'reverse1999', 'uma': 'umamusume'}
-def fandom_img(title, g='hi3'):
-    """Image principale de la page Fandom d'un personnage Honkai Impact 3rd (None si introuvable)."""
-    d = get(f'https://{WIKI[g]}.fandom.com/api.php?action=query&redirects=1&prop=pageimages&piprop=original&format=json&titles=' + urllib.parse.quote(title), timeout=12)
+# wikis (MediaWiki) essayés dans l'ordre pour chaque jeu : un nom sans point = sous-domaine fandom.com ; sinon nom d'hôte complet
+WIKI = {'hi3': ['honkaiimpact3'], 'ww': ['wutheringwaves'], 'r99': ['reverse1999'], 'uma': ['umamusume'], 'bb': ['bleach-brave-souls'],
+        'dk': ['dbz-dokkanbattle'], 'ef': ['arknights-endfield', 'endfield.wiki.gg'], 'nk': ['nikke-goddess-of-victory-international'],
+        'fgo': ['fategrandorder'], 'nte': ['neverness-to-everness', 'nte'], 'op': ['onepiecebountyrush']}
+DEAD = set()
+def _api(host, q):
+    h = host if '.' in host else host + '.fandom.com'
+    return get(f'https://{h}/api.php?format=json&redirects=1&' + q, timeout=12)
+def _pimg(d):
     for p in d.get('query', {}).get('pages', {}).values():
         o = p.get('original')
         if o and o.get('source'): return o['source']
+def fandom_img(title, g='hi3'):
+    """Image principale de la page du personnage sur le wiki du jeu (recherche si le titre exact n'existe pas). None si introuvable."""
+    for host in WIKI[g]:
+        if (g, host) in DEAD: continue
+        try:
+            u = _pimg(_api(host, 'action=query&prop=pageimages&piprop=original&titles=' + urllib.parse.quote(title)))
+            if u: return u
+            r = _api(host, 'action=query&list=search&srlimit=1&srsearch=' + urllib.parse.quote(title)).get('query', {}).get('search', [])
+            if r:
+                u = _pimg(_api(host, 'action=query&prop=pageimages&piprop=original&titles=' + urllib.parse.quote(r[0]['title'])))
+                if u: return u
+        except Exception as ex:
+            if 'timed out' not in str(ex): DEAD.add((g, host)); print('wiki indisponible :', g, host, ex)
     return None
+
+_ATLAS = None
+def atlas_img(name):
+    """Fate/Grand Order : illustration d'ascension finale depuis l'API publique Atlas Academy (correspondance floue sur le nom)."""
+    global _ATLAS
+    import difflib
+    if _ATLAS is None:
+        _ATLAS = {}
+        try:
+            for sv in get('https://api.atlasacademy.io/export/JP/nice_servant_lang_en.json', timeout=240):
+                asc = ((sv.get('extraAssets') or {}).get('charaGraph') or {}).get('ascension') or {}
+                if asc: _ATLAS[re.sub(r'[^a-z0-9]', '', sv['name'].lower())] = asc[sorted(asc)[-1]]
+        except Exception as ex: print('Atlas Academy indisponible :', ex)
+    k = re.sub(r'[^a-z0-9]', '', name.lower())
+    if k in _ATLAS: return _ATLAS[k]
+    m = difflib.get_close_matches(k, list(_ATLAS), 1, 0.8)
+    return _ATLAS[m[0]] if m else None
 
 def portrait(im):
     # recadre un grand visuel (souvent sur fond transparent) en portrait 5:7 centré sur le personnage
@@ -64,7 +99,7 @@ def build(art=False):
             cards.append({'id': 'zzz-' + k, 'g': 'zzz', 'n': zl.get('fr', {}).get(v['Name'], nm), 'ne': nm, 'r': 5 if v.get('Rarity') == 4 else 4, 'e': EL_ZZZ.get(ets[-1], 'phys'), 'art': 'https://enka.network' + v['Image'] if v.get('Image') else ''})
     except Exception as ex: print('ZZZ ignoré :', ex)
     # --- ajouts manuels
-    for fn in ('cards_extra', 'cards_games'):   # cards_games = Wuthering Waves / Reverse: 1999 / Umamusume (scripts/extra_games.py)
+    for fn in ('cards_extra', 'cards_games', 'cards_games2'):   # cards_games = Wuthering Waves / Reverse: 1999 / Umamusume (scripts/extra_games.py)
         try:
             for c in json.load(open(ROOT / f'data/{fn}.json', encoding='utf-8'))['cards']: cards.append(c)
         except Exception as ex: print(fn, 'ignoré :', ex)
@@ -97,17 +132,18 @@ def build(art=False):
         with ThreadPoolExecutor(8) as ex: list(ex.map(one, out))
         # Honkai Impact 3rd : illustrations depuis le wiki Fandom (page de la Valkyrie). Échec = carte dessinée.
         import time
-        t0, fails = time.time(), 0   # garde-fou : on abandonne les images Fandom après 8 min ou 8 échecs d'affilée
-        for c in out:
-            if time.time() - t0 > 480 or fails >= 8: print('images Fandom : arrêt anticipé (wiki lent ou bloqué), cartes restantes dessinées'); break
-            if c['g'] not in WIKI or c.get('img') or (ROOT / 'img/cards' / (c['id'] + '.webp')).exists(): continue
+        t0 = time.time()   # garde-fou : on abandonne les images des wikis après 20 min (les cartes restantes restent dessinées)
+        def wiki_one(c):
+            if time.time() - t0 > 1200 or c['g'] not in WIKI or c.get('img') or (ROOT / 'img/cards' / (c['id'] + '.webp')).exists(): return
             try:
-                title = (c.get('wk') or c['ne']).split(' · ')[0].strip(); u = fandom_img(title, c['g'])
+                title = (c.get('wk') or c['ne']).split(' · ')[0].strip(); u = (atlas_img(title) if c['g'] == 'fgo' else None) or fandom_img(title, c['g'])
                 if u:
-                    im = portrait(Image.open(io.BytesIO(get(u, True))).convert('RGBA')); im.save(ROOT / 'img/cards' / (c['id'] + '.webp'), 'WEBP', quality=80); c['img'] = f"img/cards/{c['id']}.webp"; fails = 0
-                else: fails = 0
-            except Exception as ex_: fails += 1; print('fandom', c['id'], ex_)
-            time.sleep(0.5)
+                    im = portrait(Image.open(io.BytesIO(get(u, True, 30))).convert('RGBA')); im.save(ROOT / 'img/cards' / (c['id'] + '.webp'), 'WEBP', quality=80); c['img'] = f"img/cards/{c['id']}.webp"
+            except Exception as ex_: print('image', c['id'], ex_)
+            time.sleep(0.2)
+        if any(c['g'] == 'fgo' for c in out): atlas_img('x')   # charge l'index Atlas une seule fois avant les threads
+        with ThreadPoolExecutor(6) as ex: list(ex.map(wiki_one, out))
+        if time.time() - t0 > 1200: print('images : arrêt anticipé après 20 min')
     for c in out: c.pop('art', None)
     # on garde 'img' seulement si le fichier existe
     for c in out:
