@@ -1395,11 +1395,43 @@ function miniTrain() {
 }
 
 // --- barre de navigation mobile
+// ------------------------------------------------------------ v28 : barre du bas « application » (propre à chaque univers) + feuille « Plus »
+function sectOf(h) { return /^#\/cartes/.test(h) ? 'fv' : /^#\/bleach/.test(h) ? 'bl' : (h === '' || h === '#/' || h === '#/home') ? 'hub' : 'as'; }
+const TBAR = {
+  hub: () => [['#/home', 'home', L('Accueil', 'Home')], ['#/astrolabe', 'star', 'Astrolabe'], ['#/cartes', 'spark', 'Foilvault'], ['#/bleach', 'swords', 'Bleach'], ['#/profil', 'user', L('Profil', 'Profile')]],
+  as: () => [['#/astrolabe', 'star', 'Astrolabe'], ['#/perso', 'users', L('Persos', 'Chars')], ['#/tier', 'crown', 'Tier list'], ['#/calendar', 'clock', L('Bannières', 'Banners')]],
+  fv: () => [['#/cartes', 'spark', 'Boosters'], ['#/cartes/mine', 'box', L('Collection', 'Collection')], ['#/cartes/shop', 'gem', L('Boutique', 'Shop')], ['#/cartes/market', 'share', L('Marché', 'Market')]],
+  bl: () => [['#/bleach', 'swords', L('Arcs', 'Arcs')], ['#/bleach/tier', 'crown', 'Tier list'], ['#/bleach/persos', 'users', L('Persos', 'Chars')], ['#/bleach/events', 'clock', L('Événements', 'Events')]]
+};
+const TMORE = {
+  fv: () => [['#/cartes/all', L('Catalogue', 'Catalogue')], ['#/cartes/ach', L('Succès', 'Achievements')], ['#/cartes/fight', L('Combats', 'Battles')], ['#/cartes/rank', L('Classement', 'Ranking')]],
+  bl: () => [['#/bleach/apercu', L('Aperçu', 'Overview')], ['#/bleach/systeme', L('Système de jeu', 'Game systems')], ['#/bleach/plan', L('Calculateur d’invocations', 'Summon planner')]]
+};
+const TCOL = { hub: '#0b0d17', as: '#0b0d17', fv: '#04070b', bl: '#0a0a0e' };
+function sheetClose() { const m = $('#msheet'); if (m) { m.classList.remove('on'); setTimeout(() => { m.hidden = true; }, 220); } document.body.classList.remove('ms-open'); }
+function sheetOpen() {
+  const h = location.hash || '#/home', sc = sectOf(h); let m = $('#msheet'); if (!m) { m = document.createElement('div'); m.id = 'msheet'; document.body.appendChild(m); }
+  const U = [['#/home', L('Accueil', 'Home'), 'hub'], ['#/astrolabe', 'Astrolabe', 'as'], ['#/cartes', 'Foilvault', 'fv'], ['#/bleach', 'Bleach', 'bl']];
+  let links = '';
+  if (sc === 'as') { const nav = (window.__NAV || []).slice(1); links = nav.map(g => `<h4>${g[0]}</h4>` + g[1].map(i => `<a href="${i[0]}">${ico(i[1])}<span>${i[2]}</span></a>`).join('')).join(''); }
+  else if (TMORE[sc]) links = TMORE[sc]().map(i => `<a href="${i[0]}"><span>${i[1]}</span></a>`).join('');
+  links += `<h4>${L('Outils', 'Tools')}</h4><button data-search="1" class="ms-b">${ico('search')}<span>${L('Rechercher', 'Search')}</span></button><a href="#/profil">${ico('user')}<span>${L('Profil et réglages', 'Profile and settings')}</span></a>`;
+  m.innerHTML = `<div class="ms-bd" data-msx="1"></div><div class="ms-p" role="dialog" aria-modal="true"><i class="ms-grab"></i><div class="ms-u">${U.map(u => `<a href="${u[0]}" class="${u[2] === sc ? 'on' : ''} u-${u[2]}">${u[1]}</a>`).join('')}</div><div class="ms-l">${links}</div></div>`;
+  m.hidden = false; requestAnimationFrame(() => m.classList.add('on')); document.body.classList.add('ms-open');
+}
 function tabbar() {
   let t = $('#tabbar'); if (!t) { t = document.createElement('nav'); t.id = 'tabbar'; t.setAttribute('aria-label', 'Navigation'); document.body.appendChild(t); }
-  const h = location.hash || '#/home', is = p => h === p || h.startsWith(p + '/'), items = [['#/home', 'home', L('Accueil', 'Home'), h === '#/home' || h === '#/' || h === ''], ['#/perso', 'users', L('Persos', 'Chars'), is('#/perso')], ['#/tier', 'crown', 'Tier list', is('#/tier') || is('#/teamtier') || is('#/gear')], ['#/calendar', 'clock', L('Bannières', 'Banners'), is('#/calendar') || is('#/banners')], ['#/profil', 'user', L('Profil', 'Profile'), is('#/profil') || is('#/settings')]];
-  t.innerHTML = items.map(i => `<a href="${i[0]}" class="${i[3] ? 'on' : ''}">${ico(i[1])}<span>${i[2]}</span></a>`).join('') + `<button data-search="1">${ico('search')}<span>${L('Chercher', 'Search')}</span></button>`;
+  const h = location.hash || '#/home', sc = sectOf(h), is = p => h === p || h.startsWith(p + '/');
+  const act = i => { const p = i[0]; if (sc === 'hub') return p === '#/home' && (h === '#/home' || h === '#/' || h === '#/home/') || (p !== '#/home' && is(p)); if (p === '#/cartes') return h === '#/cartes' || h === '#/cartes/' || h === '#/cartes/open'; if (p === '#/bleach') return h === '#/bleach' || h === '#/bleach/' || h === '#/bleach/arcs'; if (sc === 'as' && p === '#/tier') return is('#/tier') || is('#/teamtier') || is('#/gear'); if (sc === 'as' && p === '#/calendar') return is('#/calendar') || is('#/banners'); return is(p); };
+  const items = TBAR[sc](); const anyOn = items.some(act);
+  t.dataset.s = sc;
+  t.innerHTML = items.map(i => `<a href="${i[0]}" class="${act(i) ? 'on' : ''}">${ico(i[1])}<span>${i[2]}</span></a>`).join('') + (sc === 'hub' ? '' : `<button data-ms="1" class="${anyOn ? '' : 'on'}" aria-haspopup="dialog">${ico('menu')}<span>${L('Plus', 'More')}</span></button>`);
+  const mt = document.querySelector('meta[name="theme-color"]'); if (mt) mt.setAttribute('content', (sc === 'as' || sc === 'hub') ? (getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || TCOL[sc]) : TCOL[sc]);
+  sheetClose();
 }
+document.addEventListener('click', e => { if (e.target.closest('[data-ms]')) { e.preventDefault(); const m = $('#msheet'); if (m && !m.hidden) sheetClose(); else sheetOpen(); } else if (e.target.closest('[data-msx]') || e.target.closest('#msheet a,#msheet .ms-b')) setTimeout(sheetClose, 30); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') sheetClose(); });
+try { const st = (matchMedia('(display-mode: standalone)').matches || navigator.standalone === true); document.documentElement.classList.toggle('standalone', st); document.documentElement.classList.toggle('ios', /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)); } catch (e) { }
 window.addEventListener('hashchange', tabbar); setTimeout(tabbar, 0); document.addEventListener('click', e => { if (e.target.closest('[data-lang]')) setTimeout(tabbar, 50); });
 // ------------------------------------------------------------ v10 : résumé de version, événements, aide, communauté
 const VS = { i: -1, spo: store.get('astro_spo', '1') === '1', play: null, q: '' };
@@ -1553,7 +1585,7 @@ const HC = (() => {
     return L(`Personnage ${c.r}★ de ${GN[c.g][1]}, ${el}.`, `${c.r}★ character from ${GN[c.g][1]}, ${el}.`) + tl; }
   const LV = [[0, 'Novice', 'Novice'], [30, 'Apprenti', 'Apprentice'], [100, 'Collectionneur', 'Collector'], [250, 'Chasseur d’étoiles', 'Star hunter'], [500, 'Expert', 'Expert'], [900, 'Maître', 'Master'], [1500, 'Grand maître', 'Grand master'], [2500, 'Archiviste', 'Archivist'], [4000, 'Légende', 'Legend'], [6500, 'Mythe', 'Myth']];
   const hs = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
-  let CD = null, byC = {}, pools = {}, loadP = null, G = null, tab = 'open', AF = { g: '', r: '', o: '', q: '', s: 'rar', n: 90, f: '', d: '' }, SELL = { cap: 3, keep: 1, conf: 0 }, AFL = { c: '', st: '' }, timer = null, pushT = null;
+  let CD = null, byC = {}, pools = {}, loadP = null, G = null, tab = 'open', AF = { g: '', r: '', o: '', q: '', s: 'rar', n: 60, f: '', d: '' }, SELL = { cap: 3, keep: 1, conf: 0 }, AFL = { c: '', st: '' }, timer = null, pushT = null;
   const today = () => new Date().toISOString().slice(0, 10);
   const weekK = () => { const d = new Date(); d.setUTCHours(0, 0, 0, 0); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7)); return d.toISOString().slice(0, 10); };
   const FMAX = 5, FREW = { 0.8: 1, 0.9: 2, 1: 4 }, fLeft = () => Math.max(0, FMAX - (G.fw && G.fw.k === today() ? G.fw.n : 0));
@@ -1592,7 +1624,7 @@ const HC = (() => {
     const noise = (t0, d, f1, f2, v = 0.4) => { const a = ctx(); if (!a) return; const n = a.sampleRate * d, b = a.createBuffer(1, n, a.sampleRate), x = b.getChannelData(0); for (let i = 0; i < n; i++) x[i] = Math.random() * 2 - 1; const s = a.createBufferSource(), fl = a.createBiquadFilter(), g = a.createGain(), t = a.currentTime + t0; s.buffer = b; fl.type = 'bandpass'; fl.frequency.setValueAtTime(f1, t); fl.frequency.exponentialRampToValueAtTime(f2, t + d); g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d); s.connect(fl); fl.connect(g); g.connect(mg); s.start(t); };
     const N = { C5: 523, E5: 659, G5: 784, C6: 1047, E6: 1319, G6: 1568, C4: 262, G4: 392 };
     return { tear() { noise(0, 0.5, 400, 5000, 0.5); tone(90, 0.45, 0.25, 'sine', 0.5, 40); }, flip() { noise(0, 0.18, 1200, 5200, 0.25); },
-      reveal(r, f) { if (r === 0) tone(N.C5, 0, 0.25, 'sine', 0.35); else if (r === 1) { tone(N.C5, 0, 0.2, 'triangle', 0.4); tone(N.E5, 0.1, 0.3, 'triangle', 0.4); } else if (r === 2) { [N.C5, N.E5, N.G5].forEach((x, i) => tone(x, i * 0.09, 0.4, 'triangle', 0.45)); noise(0.25, 0.3, 4000, 9000, 0.12); }
+      reveal(r, f) { try { if (G && G.snd && navigator.vibrate) navigator.vibrate(r >= 4 || f >= 3 ? [40, 50, 90] : r >= 3 ? [30] : r >= 2 ? [15] : 0); } catch (e) { } if (r === 0) tone(N.C5, 0, 0.25, 'sine', 0.35); else if (r === 1) { tone(N.C5, 0, 0.2, 'triangle', 0.4); tone(N.E5, 0.1, 0.3, 'triangle', 0.4); } else if (r === 2) { [N.C5, N.E5, N.G5].forEach((x, i) => tone(x, i * 0.09, 0.4, 'triangle', 0.45)); noise(0.25, 0.3, 4000, 9000, 0.12); }
         else if (r === 3) { [N.C5, N.E5, N.G5, N.C6].forEach((x, i) => tone(x, i * 0.09, 0.7, 'triangle', 0.45)); [N.C5, N.G5].forEach(x => tone(x, 0.3, 0.9, 'sine', 0.3)); noise(0.3, 0.6, 5000, 11000, 0.15); }
         else { tone(70, 0, 0.7, 'sine', 0.8, 35); [N.C5, N.E5, N.G5, N.C6, N.E6, N.G6].forEach((x, i) => tone(x, 0.12 + i * 0.1, 1.2, 'sawtooth', 0.22)); [N.C4, N.G4, N.C5, N.E5].forEach(x => tone(x, 0.7, 1.5, 'triangle', 0.3)); noise(0.5, 1, 4000, 12000, 0.18); }
         if (f >= 1) { tone(N.G6, 0.35, 0.35, 'sine', 0.2); tone(N.C6 * 2, 0.45, 0.4, 'sine', 0.18); } if (f === 3) [0, 1, 2, 3].forEach(i => tone(N.C6 * (1 + i * 0.25), 0.5 + i * 0.07, 0.9, 'triangle', 0.22)); },
@@ -1697,7 +1729,9 @@ const HC = (() => {
   function head() { const s = summary(), lv = LV[s.lv], nx = LV[s.lv + 1]; const a = $('#hclv'), b = $('#hcco'), c = $('#hcsnd'); if (a) a.innerHTML = `<b>${L(lv[1], lv[2])}</b><i style="--w:${nx ? Math.round((s.p - lv[0]) / (nx[0] - lv[0]) * 100) : 100}%"></i>`; if (b) b.innerHTML = `${coinI} <b>${G.coins}</b>`; chip(); if (c) c.textContent = G.snd ? '🔊' : '🔇'; }
   function mount() { const r = $('#hcr'); if (!r) return; clearInterval(timer); regen(); checkAch(); save(); head();
     r.innerHTML = { open: openView, shop: shopView, mine: () => albumView(true), all: () => albumView(false), ach: achView, fight: fightView, market: marketView, rank: rankView }[tab]();
-    if (tab === 'shop') supFill(); if (tab === 'rank') loadRank(); { timer = setInterval(() => { if (!$('#hcr')) return clearInterval(timer); const b = G.st; regen(); if (b !== G.st) return mount(); chip(); const nx = $('#hcnext'); if (nx) nx.textContent = G.st >= MAXB ? L('Réserve pleine', 'Stock full') : L('Prochain gratuit dans ', 'Next free one in ') + mmss(REGEN - (Date.now() - G.t)); }, 1000); } }
+    if (tab === 'shop') supFill(); if (tab === 'rank') loadRank(); { timer = setInterval(() => { if (!$('#hcr')) return clearInterval(timer); const b = G.st; regen(); if (b !== G.st) return mount(); chip(); const nx = $('#hcnext'); if (nx) nx.textContent = G.st >= MAXB ? L('Réserve pleine', 'Stock full') : L('Prochain gratuit dans ', 'Next free one in ') + mmss(REGEN - (Date.now() - G.t)); }, 1000); } autoMore(); }
+  let moreIO = null;
+  function autoMore() { if (moreIO) moreIO.disconnect(); const b = $('[data-hc="more"]'); if (!b || !('IntersectionObserver' in window)) return; moreIO = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { moreIO.disconnect(); const y = scrollY; AF.n += 60; mount(); scrollTo(0, y); } }, { rootMargin: '700px' }); moreIO.observe(b); }
   const stockOf = pk => pk === 'gen' ? G.st + G.inv.gen : G.inv[pk] || 0;
   function heroFan(n = 5) { const o = own().filter(i => byC[i].img && byC[i].R >= 2).sort((a, b) => hs(a + today()) - hs(b + today())).slice(0, n), fill = CD.filter(c => c.img && c.R >= 3).sort((a, b) => hs(a.id + today()) - hs(b.id + today())), ids = o.concat(fill.map(c => c.id).filter(i => !o.includes(i))).slice(0, n); return `<div class="hc-fan" aria-hidden="true">${ids.map((i, k) => `<div style="--k:${k - (n - 1) / 2}">${cardHtml(byC[i], { fin: k === 2 ? 3 : k % 2 ? 2 : 1, cls: 'tilt' })}</div>`).join('')}</div>`; }
   function openView() { const s = summary(); const d = G.day, lgv = lgReward(G.lg.n);
@@ -2012,7 +2046,7 @@ const HC = (() => {
     if ((b = t.closest('[data-hc]'))) { const k = b.dataset.hc;
       if (k === 'open' || k === 'again') { await data().catch(() => { }); if (!CD) return; const pk = k === 'again' ? cur.pk : b.dataset.pk; if (k === 'again') closeOv(); if (pk === 'gen' || G.inv[pk] > 0 || true) openPack(pk); }
       else if (k === 'close') closeOv(); else if (k === 'all') skipAll();
-      else if (k === 'more') { AF.n += 90; mount(); } else if (k === 'fbtoggle') { FBO = !FBO; mount(); } else if (k === 'freset') { AF.g = AF.r = AF.f = AF.o = AF.d = AF.q = ''; AF.n = 90; mount(); } else if (k === 'auto') { FS.team = own().sort((a, c) => power(c) - power(a)).slice(0, 3); mount(); } else if (k === 'fight') fight();
+      else if (k === 'more') { AF.n += 60; mount(); } else if (k === 'fbtoggle') { FBO = !FBO; mount(); } else if (k === 'freset') { AF.g = AF.r = AF.f = AF.o = AF.d = AF.q = ''; AF.n = 60; mount(); } else if (k === 'auto') { FS.team = own().sort((a, c) => power(c) - power(a)).slice(0, 3); mount(); } else if (k === 'fight') fight();
       else if (k === 'sync') { const r = await sync(true); syShow(); toast(SY.s === 'ok' ? L('Cartes synchronisées ✓', 'Cards synced ✓') : L('Synchronisation impossible : ', 'Sync failed: ') + (SY.m || L('SQL v10 installé ?', 'is the v10 SQL installed?'))); }
       else if (k === 'snd') { G.snd = !G.snd; save(); head(); if (G.snd) SFX.click(); }
       else if (k === 'login') { if (!G.lg.c) { G.lg.c = true; credit(lgReward(G.lg.n)); SFX.coin(); checkAch(); save(); mount(); } }
@@ -2031,7 +2065,7 @@ const HC = (() => {
     if ((b = t.closest('[data-hcsc]'))) { SELL.cap = +b.dataset.hcsc; SELL.conf = 0; return mount(); }
     if ((b = t.closest('[data-hcsk]'))) { SELL.keep = SELL.keep ? 0 : 1; SELL.conf = 0; return mount(); }
     if ((b = t.closest('[data-hcaf]'))) { AFL[b.dataset.hcaf] = b.dataset.v; return mount(); }
-    if ((b = t.closest('[data-hcf]'))) { AF[b.dataset.hcf] = b.dataset.v; AF.n = 90; return mount(); }
+    if ((b = t.closest('[data-hcf]'))) { AF[b.dataset.hcf] = b.dataset.v; AF.n = 60; return mount(); }
     if ((b = t.closest('[data-hcd]'))) { FS.diff = +b.dataset.hcd; return mount(); }
     if ((b = t.closest('[data-hcteam]'))) { const id = b.dataset.hcteam, i = FS.team.indexOf(id); if (i >= 0) FS.team.splice(i, 1); else if (FS.team.length < 3) FS.team.push(id); return mount(); }
     if ((b = t.closest('[data-hcfin]'))) { const d = $('#hczd'); if (d) d.__set('fin', +b.dataset.hcfin); return; }
@@ -2043,8 +2077,8 @@ const HC = (() => {
     if ((b = t.closest('[data-hcz]'))) { const c = b.closest('.hc'); if (c && c.dataset.hcid && !t.closest('#hcov')) return zoom(c.dataset.hcid); }
   });
   document.addEventListener('change', e => { if (e.target.id === 'hcimp') { const f = e.target.files[0]; if (!f) return; f.text().then(x => { try { const d = JSON.parse(x); if (!d || typeof d.col !== 'object') throw 0; G = Object.assign(dflt(), d); regen(); daily(); save(); mount(); toast(L('Cartes importées', 'Cards imported')); } catch { toast(L('Fichier invalide', 'Invalid file')); } }); } });
-  document.addEventListener('change', e => { const t = e.target; if (t.dataset && t.dataset.hcsel) { AF[t.dataset.hcsel] = t.value; AF.n = 90; mount(); } });
-  document.addEventListener('input', e => { if (e.target.id === 'hcq') { AF.q = e.target.value; AF.n = 90; const pos = e.target.selectionStart; mount(); const q = $('#hcq'); if (q) { q.focus(); q.setSelectionRange(pos, pos); } } });
+  document.addEventListener('change', e => { const t = e.target; if (t.dataset && t.dataset.hcsel) { AF[t.dataset.hcsel] = t.value; AF.n = 60; mount(); } });
+  document.addEventListener('input', e => { if (e.target.id === 'hcq') { AF.q = e.target.value; AF.n = 60; const pos = e.target.selectionStart; mount(); const q = $('#hcq'); if (q) { q.focus(); q.setSelectionRange(pos, pos); } } });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#hcov')) closeOv(); });
   window.addEventListener('hashchange', () => { if (!/^#\/cartes/.test(location.hash)) document.body.classList.remove('hcsite'); });
   document.addEventListener('pointermove', e => { const c = e.target.closest && e.target.closest('.hc.tilt'); if (!c || red()) return; const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height; c.style.setProperty('--mx', (x * 100).toFixed(1) + '%'); c.style.setProperty('--my', (y * 100).toFixed(1) + '%'); c.style.setProperty('--rx', ((0.5 - y) * 14).toFixed(1) + 'deg'); c.style.setProperty('--ry', ((x - 0.5) * 16).toFixed(1) + 'deg'); });
@@ -2076,7 +2110,7 @@ const HC = (() => {
     } catch { m.innerHTML = `<p class="sub">${join}</p>`; r.innerHTML = ''; } }
   const megaFx = () => { if (red()) { $$('.hcm-cnt').forEach(e => e.textContent = e.dataset.to); } else $$('.hcm-cnt').forEach(e => { const to = +e.dataset.to, t0 = performance.now(); const f = t => { const p = Math.min(1, (t - t0) / 1400); e.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); });
     if (CD) $$('[data-hcn]').forEach(e => { e.textContent = CD.filter(c => c.g === e.dataset.hcn).length; }); };
-  document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('[data-hcgame]'); if (a) { AF.g = a.dataset.hcgame; AF.n = 90; } });
+  document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('[data-hcgame]'); if (a) { AF.g = a.dataset.hcgame; AF.n = 60; } });
   return { community, communityFill, supFill, mega, megaFx, page, section, sync, today: () => { load(); const q = G.day.q || [], cl = G.day.c || {}, done = q.filter(id => { const d = QPOOL.find(z => z[0] === id); return d && (G.day.p[id] || 0) >= d[1]; }).length; return { st: G.st, claim: G.lg.d === today() && !G.lg.c, streak: G.lg.n, qd: done, qt: q.length, qc: q.filter(id => cl[id]).length }; }, showCards: () => { load(); return showList().map(x => cardHtml(byC[x.id], { fin: x.f, alt: !!x.a, cls: 'tilt', d: 'data-hcz="1"' })).join(''); }, mini: async () => { await data(); load(); const s = summary(), lv = LV[s.lv]; return { s, lv: L(lv[1], lv[2]), coins: G.coins, st: G.st, sh: showList().length }; }, oddsHtml, vitrine, vitrineInner, data2: 0, heroFan: () => { load(); return heroFan(); }, count: () => CD ? CD.length : 0, inst: instStrip, data, load, packHtml, publicCards, MAXB, byC: () => byC, home: () => { load(); const n = G.st + Object.values(G.inv).reduce((s, x) => s + x, 0); return [n, G.coins]; } };
 })();
 pages.cartes = HC.page;
@@ -2362,6 +2396,7 @@ function chrome() {
     [L('End game', 'End game'), [['#/end/moc', 'orbit', 'Memory of Chaos'], ['#/end/pf', 'orbit', 'Pure Fiction'], ['#/end/as', 'orbit', 'Apocalyptic Shadow'], ['#/end/aa', 'orbit', 'Anomaly Arbitration']]],
     [L('Outils', 'Tools'), [['#/relic', 'shield', L('Évaluateur de reliques', 'Relic checker')], ['#/compare', 'cmp', L('Comparateur', 'Compare')], ['#/calc', 'calc', L('Calculateur', 'Calculator')], ['#/plan', 'dice', L('Tirages', 'Pull planner')], ['#/teams', 'team', L('Équipes', 'Teams')]]], [L('Guides', 'Guides'), [['#/next', 'star', L('Prochaine version', 'Next version')], ['#/versions', 'book', L('Résumé de version', 'Version recap')], ['#/events', 'cal', L('Événements', 'Events')], ['#/aide', 'book', L('Aides', 'Help')]]],
     [L('Communauté', 'Community'), [['#/social', 'share', L('Réseau social', 'Social')], ['#/community', 'users', L('Joueurs', 'Players')], ['#/stats', 'chart', L('Statistiques', 'Statistics')]]], ...(isAdmin ? [[L('Administration', 'Admin'), [['#/admin', 'shield', L('Retours & signalements', 'Feedback & reports')]]]] : [])];
+  window.__NAV = NAV;
   $('#side').innerHTML = `<a class="brand" href="#/home"><svg class="logo" viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".55" stop-color="#e0b050"/><stop offset="1" stop-color="#b98cff"/></linearGradient></defs><g stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round"><circle cx="32" cy="32" r="26" class="r1"/><circle cx="32" cy="32" r="17" stroke-dasharray="2 4" class="r2"/><path d="M32 3v58M3 32h58" opacity=".55"/><path d="M32 12l5 15 15 5-15 5-5 15-5-15-15-5 15-5z" fill="url(#lg)" fill-opacity=".22"/></g><circle cx="32" cy="32" r="3" fill="#fff"/></svg><div class="wm"><b>ASTROLABE</b><i>${L('Guide HSR', 'HSR guide')}</i><small>HSR v${esc(D.version || '')} · ${D.updated}</small></div></a>
   <nav class="nv">${NAV.map((g, gi) => (g[0] ? `<h4 style="--k:${[42, 262, 330, 190, 150, 20, 215, 0][gi]}">${g[0]}</h4>` : '') + g[1].map(i => `<a href="${i[0]}" style="--k:${[42, 262, 330, 190, 150, 20, 215, 0][gi]}">${ico(i[1])}${i[2]}</a>`).join('')).join('')}</nav><div class="sf"><small>${L('Site de fans non officiel. Images et noms © HoYoverse. Classements : Game8.', 'Unofficial fan site. Images and names © HoYoverse. Rankings: Game8.')} · site v9</small><small style="display:block;margin-top:6px"><a href="#/legal">${L('Mentions légales', 'Legal notice')}</a> · <a href="#/credits">${L('Crédits', 'Credits')}</a></small></div>`;
   $('#hd').innerHTML = `<button class="btn io" id="burger" aria-label="Menu">${ico('menu')}</button><button class="srch" data-search="1">${ico('search')}<span id="srph">${L('Rechercher…', 'Search…')}</span><kbd>Ctrl K</kbd></button><span class="sp"></span>

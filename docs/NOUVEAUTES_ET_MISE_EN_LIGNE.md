@@ -1,7 +1,7 @@
 # Foilvault : récapitulatif et mise en ligne
 
 ## Mise en ligne (à chaque nouvelle version)
-1. Dézippez `astrolabe-site-v27.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
+1. Dézippez `astrolabe-site-v28.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
 2. Ouvrez GitHub Desktop : les fichiers modifiés apparaissent à gauche. Écrivez un titre (ex. « v13 ») puis **Commit to main**, puis **Push origin**.
 3. Sur github.com, dépôt du site → onglet **Actions** → « Mise à jour » → **Run workflow** (met à jour cartes, raretés et données).
 4. Supabase (une seule fois par nouveauté) → **SQL Editor** → collez le contenu de `supabase/schema_v6.sql` puis **Run** ; faites pareil avec `supabase/schema_v7.sql` (photos de profil).
@@ -50,3 +50,8 @@
 - **Page Bleach : Mirrors High** refaite (verre sombre, dégradés orange, grandes images d'arcs, « L'animé par arcs » en premier).
 - **Menu** : Accueil (nouvelle page à 3 portes), Astrolabe, Foilvault, Bleach.
 - **Images** : le script de cartes charge maintenant le casting complet des séries (Bleach, One Piece, Persona 5, Umamusume) et associe par nom exact ; toutes les images des wikis sont refaites au prochain passage d'Actions (`_v27.json`). Vérifiez `data/img_report.json` après.
+
+## v28
+- **Mobile comme une vraie application** (écrans ≤ 760 px uniquement ; PC et tablette inchangés) : barre du bas propre à chaque univers (Accueil / Astrolabe / Foilvault / Bleach) avec feuille « Plus », en-tête Foilvault compact, zones sûres iPhone (encoche, barre du bas), plein écran une fois installé, pas de zoom involontaire, cibles tactiles agrandies, vibrations sur Android pour les cartes rares.
+- Installation : nouvelles icônes (Apple 180, maskable), raccourcis (Foilvault, Bleach, Tier list), scripts chargés en différé.
+- **Fluidité PC + mobile** : fond étoilé, boosters, halos des cartes légendaires et en-têtes ne sont plus animés en permanence (charge au repos passée de 20-90 % à moins de 2 % sur les pages concernées) ; listes de cartes chargées par paquets de 60 au fil du défilement ; flou d'en-tête supprimé.
