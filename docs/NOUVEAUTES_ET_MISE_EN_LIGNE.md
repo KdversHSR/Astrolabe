@@ -1,7 +1,7 @@
 # Foilvault : récapitulatif et mise en ligne
 
 ## Mise en ligne (à chaque nouvelle version)
-1. Dézippez `astrolabe-site-v26.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
+1. Dézippez `astrolabe-site-v27.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
 2. Ouvrez GitHub Desktop : les fichiers modifiés apparaissent à gauche. Écrivez un titre (ex. « v13 ») puis **Commit to main**, puis **Push origin**.
 3. Sur github.com, dépôt du site → onglet **Actions** → « Mise à jour » → **Run workflow** (met à jour cartes, raretés et données).
 4. Supabase (une seule fois par nouveauté) → **SQL Editor** → collez le contenu de `supabase/schema_v6.sql` puis **Run** ; faites pareil avec `supabase/schema_v7.sql` (photos de profil).
@@ -44,3 +44,9 @@
 - **Foilvault** remplace le nom Gachadex, avec sa propre identité visuelle (coffre-fort holographique : acier, hexagones, reflets irisés). Astrolabe et Bleach gardent la leur.
 - Animations : les effets permanents des cartes légendaires sont figés hors de l'ouverture (ils ralentissaient la page quand la collection grossissait) ; mode allégé automatique sur mobile.
 - Dokkan Battle retiré ; les joueurs qui avaient des cartes ou boosters Dokkan sont remboursés en éclats (10 ✦ par carte, 200 ✦ par booster).
+
+## v27
+- **Nouvelle ouverture « Rituel du coffre »** : on découpe le booster du doigt (ou d'un tap), les cartes se déploient face cachée (le halo trahit les plus rares), on les révèle une à une ou d'un coup, plan large pour épique et plus.
+- **Page Bleach : Mirrors High** refaite (verre sombre, dégradés orange, grandes images d'arcs, « L'animé par arcs » en premier).
+- **Menu** : Accueil (nouvelle page à 3 portes), Astrolabe, Foilvault, Bleach.
+- **Images** : le script de cartes charge maintenant le casting complet des séries (Bleach, One Piece, Persona 5, Umamusume) et associe par nom exact ; toutes les images des wikis sont refaites au prochain passage d'Actions (`_v27.json`). Vérifiez `data/img_report.json` après.

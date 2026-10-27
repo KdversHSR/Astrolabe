@@ -26,6 +26,7 @@ WIKI = {'hi3': ['honkaiimpact3'], 'ww': ['wutheringwaves'], 'r99': ['reverse1999
 # recherche automatique de wikis Fandom si les noms ci-dessus échouent (API publique Fandom)
 DISCO = {'bb': 'Bleach Brave Souls', 'ef': 'Arknights Endfield', 'op': 'One Piece Bounty Rush', 'tot': 'Tears of Themis', 'nte': 'Neverness to Everness', 'nk': 'Nikke Goddess of Victory', 'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach Mirrors High'}
 DEAD = set()
+GAMENAME = {'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach Mirrors High', 'hi3': 'Honkai Impact 3rd', 'zzz': 'Zenless Zone Zero', 'ww': 'Wuthering Waves', 'r99': 'Reverse 1999', 'uma': 'Umamusume', 'bb': 'Bleach Brave Souls', 'ef': 'Arknights Endfield', 'fgo': 'Fate Grand Order', 'nk': 'Nikke', 'nte': 'Neverness to Everness', 'op': 'One Piece Bounty Rush', 'tot': 'Tears of Themis', 'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach'}
 def _api(host, q):
     h = host if '.' in host else host + '.fandom.com'
     return get(f'https://{h}/api.php?format=json&redirects=1&' + q, timeout=12)
@@ -37,28 +38,106 @@ import threading
 USED = {}; _LK = threading.Lock()
 def _pages(d):
     ps = [p for p in d.get('query', {}).get('pages', {}).values() if (p.get('original') or {}).get('source')]
-    ps.sort(key=lambda p: p.get('index', 0)); return [p['original']['source'] for p in ps]
+    ps.sort(key=lambda p: p.get('index', 0)); return [(p.get('title', ''), p['original']['source']) for p in ps]
+import unicodedata
+STOP = {'the', 'of', 'a', 'an', 'and', 'de', 'la', 'le', 'jr', 'ver', 'version'}
+def toks(s):
+    s = unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode().lower()
+    return {t for t in re.findall(r'[a-z0-9]+', s) if t not in STOP}
+def title_ok(title, name):
+    """Le titre de la page du wiki doit correspondre au personnage : tous les mots du nom dans le titre, ou le titre est une partie du nom."""
+    T, N = toks(re.sub(r'\(.*?\)', ' ', title)), toks(name)
+    if not T or not N: return False
+    return N <= T or (T <= N and (len(T) >= 2 or max(len(t) for t in T) >= 4))
 def wiki_urls(host, q, exact=False):
-    """URLs d'images candidates (page exacte, sinon 5 meilleurs résultats de recherche) sur un wiki MediaWiki."""
+    """(titre, URL) candidats sur un wiki MediaWiki : page exacte, sinon les 6 meilleurs résultats de recherche."""
     if exact: return _pages(_api(host, 'action=query&prop=pageimages&piprop=original&titles=' + urllib.parse.quote(q)))
-    return _pages(_api(host, 'action=query&generator=search&gsrlimit=5&gsrnamespace=0&prop=pageimages&piprop=original&gsrsearch=' + urllib.parse.quote(q)))
-def fandom_img(queries, g='hi3'):
-    """Meilleure image (jamais déjà utilisée par une autre carte du même jeu) pour une liste de requêtes ; None si introuvable."""
-    seen = []
+    return _pages(_api(host, 'action=query&generator=search&gsrlimit=6&gsrnamespace=0&prop=pageimages&piprop=original&gsrsearch=' + urllib.parse.quote(q)))
+SRC = {}
+def fandom_img(queries, g='hi3', names=()):
+    """Image dont la PAGE porte le nom du personnage (contrôle strict du titre) ; None si aucune ne correspond (mieux vaut le visuel dessiné qu'une mauvaise image)."""
+    names = [n for n in names if n]
     for q in queries:
         for host in WIKI.get(g, []):
             if (g, host) in DEAD: continue
             try:
                 for ex in (True, False):
-                    for u in wiki_urls(host, q, ex):
-                        if u not in seen: seen.append(u)
-                    free = [u for u in seen if u not in USED.setdefault(g, set())]
-                    if free:
-                        with _LK:
-                            if free[0] not in USED[g]: USED[g].add(free[0]); return free[0]
+                    for t, u in wiki_urls(host, q, ex):
+                        if any(title_ok(t, n) for n in names):
+                            SRC[g] = SRC.get(g, 0) + 1; return u
             except Exception as ex_:
                 if 'timed out' not in str(ex_) and '404' not in str(ex_): DEAD.add((g, host)); print('wiki indisponible :', g, host, ex_)
     return None
+def anilist_img(name):
+    """Illustration via AniList (API publique GraphQL), seulement si le nom renvoyé correspond."""
+    try:
+        q = json.dumps({'query': 'query($s:String){Character(search:$s){name{full alternative} image{large}}}', 'variables': {'s': name}}).encode()
+        r = json.loads(urllib.request.urlopen(urllib.request.Request('https://graphql.anilist.co', q, {'Content-Type': 'application/json', 'User-Agent': 'astrolabe-cards'}), timeout=15).read())
+        c = ((r.get('data') or {}).get('Character') or {}); u = (c.get('image') or {}).get('large')
+        nm = [(c.get('name') or {}).get('full') or ''] + list((c.get('name') or {}).get('alternative') or [])
+        return u if u and 'default' not in u and any(title_ok(x, name) or title_ok(name, x) for x in nm if x) else None
+    except Exception: return None
+def wikipedia_img(name):
+    try:
+        r = get('https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=pageimages&piprop=original&generator=search&gsrlimit=3&gsrsearch=' + urllib.parse.quote(name), timeout=15)
+        for t, u in _pages(r):
+            if title_ok(t, name): return u
+        return None
+    except Exception: return None
+
+# ---- séries d'animation (AniList + Jikan) : on charge TOUT le casting d'une série, puis on associe par nom EXACT (bien plus fiable qu'une recherche libre)
+SERIES = {'bb': ['BLEACH', 'Bleach: Sennen Kessen-hen'], 'bmh': ['BLEACH', 'Bleach: Sennen Kessen-hen'], 'op': ['One Piece'],
+          'p5x': ['Persona 5 the Animation', 'Persona 5 The Animation: The Day Breakers'], 'uma': ['Uma Musume: Pretty Derby']}
+_POOL = {}
+def _gql(query, variables):
+    q = json.dumps({'query': query, 'variables': variables}).encode()
+    return json.loads(urllib.request.urlopen(urllib.request.Request('https://graphql.anilist.co', q, {'Content-Type': 'application/json', 'User-Agent': 'astrolabe-cards'}), timeout=25).read())
+def series_pool(g):
+    """{clé(nom): URL} pour le casting complet des séries liées au jeu g (cache)."""
+    if g in _POOL: return _POOL[g]
+    pool = {}; _POOL[g] = pool
+    for title in SERIES.get(g, []):
+        try:
+            for page in range(1, 9):
+                r = _gql('query($s:String,$p:Int){Media(search:$s,type:ANIME,sort:SEARCH_MATCH){title{romaji} characters(page:$p,perPage:50,sort:ROLE){pageInfo{hasNextPage} nodes{name{full alternative} image{large}}}}}', {'s': title, 'p': page})
+                ch = (((r.get('data') or {}).get('Media') or {}).get('characters') or {})
+                for n in ch.get('nodes') or []:
+                    u = (n.get('image') or {}).get('large')
+                    if not u or 'default' in u: continue
+                    for nm in [(n.get('name') or {}).get('full') or ''] + list((n.get('name') or {}).get('alternative') or []):
+                        k = ''.join(sorted(toks(nm)))
+                        if k: pool.setdefault(k, (nm, u))
+                if not (ch.get('pageInfo') or {}).get('hasNextPage'): break
+        except Exception as ex: print('AniList série indisponible :', g, title, ex)
+    print('casting chargé :', g, len(pool), 'noms')
+    return pool
+def series_img(g, name):
+    """Image du personnage dans le casting de la série, si le nom correspond EXACTEMENT (mêmes mots, dans n'importe quel ordre) ; sinon None."""
+    if g not in SERIES: return None
+    base = re.sub(r'\(.*?\)', ' ', name); k = ''.join(sorted(toks(base)))
+    if not k: return None
+    hit = series_pool(g).get(k)
+    if hit: return hit[1]
+    N = toks(base)
+    if len(N) >= 2:                               # nom complet inclus dans un nom plus long (ex. « Yasutora Sado » ↔ « Yasutora "Chad" Sado »)
+        for kk, (nm, u) in series_pool(g).items():
+            if N <= toks(nm): return u
+    return None
+_VQD = {}
+def web_img(name, game):
+    """Dernier recours : recherche d'images web (DuckDuckGo, sans clé). On exige que le TITRE du résultat contienne le nom du personnage."""
+    try:
+        q = f'{name} {game} character art'
+        h = urllib.request.urlopen(urllib.request.Request('https://duckduckgo.com/?q=' + urllib.parse.quote(q) + '&iax=images&ia=images', headers={'User-Agent': UA_}), timeout=15).read().decode('utf-8', 'ignore')
+        m = re.search(r'vqd=["\']?([\d-]+)', h)
+        if not m: return None
+        r = json.loads(urllib.request.urlopen(urllib.request.Request('https://duckduckgo.com/i.js?l=us-en&o=json&q=' + urllib.parse.quote(q) + '&vqd=' + m.group(1), headers={'User-Agent': UA_, 'Referer': 'https://duckduckgo.com/'}), timeout=15).read())
+        for it in r.get('results', [])[:12]:
+            w, hh = it.get('width') or 0, it.get('height') or 0
+            if w >= 300 and hh >= 300 and toks(name) <= toks(it.get('title', '') + ' ' + it.get('url', '')): return it.get('image')
+    except Exception: return None
+    return None
+UA_ = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36'
 def discover(g):
     try:
         r = get('https://www.fandom.com/api/v1/Wikis/ByString?includeDomain=true&limit=3&string=' + urllib.parse.quote(DISCO[g]), timeout=15)
@@ -66,20 +145,6 @@ def discover(g):
             h = (it.get('domain') or '').replace('https://', '').replace('http://', '').strip('/')
             if h and h not in WIKI[g]: WIKI[g].append(h); print('wiki découvert :', g, h)
     except Exception as ex: print('découverte impossible', g, ex)
-def anilist_img(name):
-    """Illustration du personnage via AniList (API publique GraphQL) : bon repli pour Bleach, One Piece, Dragon Ball, Fate, Uma Musume."""
-    try:
-        q = json.dumps({'query': 'query($s:String){Character(search:$s){image{large}}}', 'variables': {'s': name}}).encode()
-        r = json.loads(urllib.request.urlopen(urllib.request.Request('https://graphql.anilist.co', q, {'Content-Type': 'application/json', 'User-Agent': 'astrolabe-cards'}), timeout=15).read())
-        u = (((r.get('data') or {}).get('Character') or {}).get('image') or {}).get('large')
-        return u if u and 'default' not in u else None
-    except Exception: return None
-def wikipedia_img(name):
-    try:
-        r = get('https://en.wikipedia.org/w/api.php?format=json&redirects=1&action=query&prop=pageimages&piprop=original&generator=search&gsrlimit=1&gsrsearch=' + urllib.parse.quote(name), timeout=15)
-        u = _pages(r); return u[0] if u else None
-    except Exception: return None
-
 _ATLAS = None
 def atlas_img(name):
     """Fate/Grand Order : illustration d'ascension finale depuis l'API publique Atlas Academy (correspondance floue sur le nom)."""
@@ -168,7 +233,11 @@ def build(art=False):
     if art:
         from PIL import Image
         (ROOT / 'img/cards').mkdir(exist_ok=True)
-        VF = ROOT / 'img/cards/_v24.json'; DONE = set(json.load(open(VF)) if VF.exists() else [])   # images déjà refaites avec le nouveau cadrage (v24)
+        VF = ROOT / 'img/cards/_v27.json'; DONE = set(json.load(open(VF)) if VF.exists() else [])   # images déjà refaites avec le contrôle strict des noms (v27)
+        if not VF.exists():   # première exécution v27 : on supprime les anciennes images des wikis (certaines ne correspondaient pas au personnage)
+            for f in (ROOT / 'img/cards').glob('*.webp'):
+                if f.stem.split('-')[0] in WIKI: f.unlink()
+            for f in (ROOT / 'img/cards').glob('_v2[0-6].json'): f.unlink()
         from concurrent.futures import ThreadPoolExecutor
         def one(c):
             dest = ROOT / 'img/cards' / (c['id'] + '.webp')
@@ -194,8 +263,10 @@ def build(art=False):
                 ne = c['ne']; base = (c.get('wk') or ne).split(' · ')[0].strip(); suit = ne.split(' · ')[-1].strip() if ' · ' in ne else ''
                 qs = [suit + ' ' + base.split()[0], suit, ne.replace(' · ', ' ')] if c['g'] == 'hi3' and suit else [re.sub(r'[()]', ' ', ne), base]
                 u = atlas_img(base) if c['g'] == 'fgo' else None
-                u = u or fandom_img(qs, c['g'])
+                u = u or series_img(c['g'], base) or series_img(c['g'], ne)
+                u = u or fandom_img(qs, c['g'], [base, re.sub(r'[()]', ' ', ne), suit])
                 if not u and c['g'] != 'hi3': u = anilist_img(base) or wikipedia_img(base)
+                if not u: u = web_img(base, GAMENAME.get(c['g'], c['g']))
                 if u:
                     im = portrait(Image.open(io.BytesIO(get(u, True, 30))).convert('RGBA')); im.save(dest, 'WEBP', quality=80); c['img'] = f"img/cards/{c['id']}.webp"; DONE.add(c['id'])
                     if len(DONE) % 25 == 0: json.dump(sorted(DONE), open(VF, 'w'))
