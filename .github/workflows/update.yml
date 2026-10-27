@@ -28,6 +28,10 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Mettre à jour les données
         run: python scripts/update.py
+      - name: Tier list Bleach Mirrors High
+        continue-on-error: true
+        timeout-minutes: 10
+        run: python scripts/bmh_update.py
       - name: Mettre à jour les cartes Foilvault
         continue-on-error: true
         timeout-minutes: 50

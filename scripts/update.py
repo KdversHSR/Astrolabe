@@ -228,6 +228,35 @@ def scrape_game8():
     return res, gen, eg, ver[1] if ver else None
 
 
+PRYDWEN = 'https://www.prydwen.gg/star-rail/tier-list'
+PMAP = {'T0': 'SS', 'T0.5': 'S+', 'T1': 'S', 'T1.5': 'S', 'T2': 'A', 'T3': 'B', 'T4': 'C', 'T5': 'C', 'SS': 'SS', 'S+': 'S+', 'S': 'S', 'A': 'A', 'B': 'B', 'C': 'C'}
+
+
+def scrape_prydwen():
+    """Deuxième source (Prydwen) : lit le JSON interne de la page, sans dépendre de sa mise en forme HTML. Ne renvoie que le classement général."""
+    raw = get_browser('https://www.prydwen.gg/page-data/star-rail/tier-list/page-data.json')
+    data = json.loads(raw)
+    found = {}
+
+    def walk(o):
+        if isinstance(o, dict):
+            nm = o.get('name') or o.get('title')
+            for k, v in o.items():
+                if isinstance(v, str) and 'tier' in k.lower() and v.strip() in PMAP and isinstance(nm, str) and 2 < len(nm) < 40:
+                    found.setdefault(nm.strip(), PMAP[v.strip()])
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+    walk(data)
+    if len(found) < 40:
+        raise RuntimeError(f'structure Prydwen inattendue ({len(found)} personnages reconnus)')
+    res = {}
+    for n, t in found.items():
+        res.setdefault(t, []).append(n)
+    return res
+
 
 # ------------------------------------------------------------------ tendances (historique des classements)
 ORDER = ['SS', 'S+', 'S', 'A', 'B', 'C']
@@ -384,7 +413,17 @@ def main():
             print('   tier list mise à jour depuis Game8')
         except Exception as e:
             ST['tiers_err'] = str(e)[:240]
-            print('   ATTENTION Game8 indisponible, anciennes données conservées :', e)
+            print('   ATTENTION Game8 indisponible :', e)
+            try:
+                pr = scrape_prydwen()
+                tiers = {t: pr.get(t, []) for t in ('SS', 'S+', 'S', 'A', 'B', 'C')}
+                ST['tiers'] = 'prydwen'
+                (DATA / 'seed_tiers.json').write_text(json.dumps({'overall': tiers, 'general': gen, 'endgame': eg, 'checked': datetime.date.today().isoformat()}, ensure_ascii=False, indent=1), 'utf-8')
+                seed['checked'] = datetime.date.today().isoformat()
+                print('   tier list mise à jour depuis Prydwen (secours)')
+            except Exception as e2:
+                ST['tiers_err'] += ' | Prydwen : ' + str(e2)[:160]
+                print('   Prydwen indisponible aussi, anciennes données conservées :', e2)
     ids_of = lambda d: {t: [i for i in (rid(n) for n in ns) if i] for t, ns in d.items()}
     tiers_out = {'ov': ids_of(tiers), **{k: ids_of(v) for k, v in gen.items()}, **{k: ids_of(v) for k, v in eg.items()}}
     inv = {m: {i: t for t, l in d.items() for i in l} for m, d in tiers_out.items()}

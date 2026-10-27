@@ -162,9 +162,22 @@ def atlas_img(name):
     m = difflib.get_close_matches(k, list(_ATLAS), 1, 0.8)
     return _ATLAS[m[0]] if m else None
 
+def quality_gate(im):
+    """Refuse les images qui rendraient mal en carte : trop petites, bannières très larges, quasi vides (logo, aplat), presque entièrement transparentes."""
+    from PIL import ImageStat
+    W, H = im.size
+    if min(W, H) < 140 or W * H < 30000: raise ValueError('trop petite')
+    if W / H > 1.9: raise ValueError('bannière trop large')
+    if H / W > 3.2: raise ValueError('trop étroite')
+    a = im.getchannel('A')
+    if a.getextrema()[0] < 250:
+        if sum(1 for v in a.resize((32, 32)).getdata() if v > 40) < 120: raise ValueError('quasi transparente')
+    if max(ImageStat.Stat(im.convert('RGB').resize((64, 64))).stddev) < 9: raise ValueError('aplat / sans détail')
+
 def portrait(im):
     """Cadre 5:7 (300x420) sans zoom excessif : visuel opaque -> entier sur fond flouté ; détourage transparent -> personnage complet en largeur, haut du corps si très haut."""
     from PIL import Image, ImageFilter
+    quality_gate(im)
     R = 5 / 7; W, H = im.size; TW, TH = 300, 420
     if im.getchannel('A').getextrema()[0] > 200:
         im = im.convert('RGB')
@@ -302,6 +315,12 @@ def build(art=False):
                 c['tl'] = t
         print('tiers appliquées :', sum(1 for c in out if 'q' in c), '/', len(out))
     except Exception as e: print('tiers ignorées :', e)
+    # Bleach : Mirrors High -> tier list mise à jour chaque lundi par scripts/bmh_update.py (data/bmh_tiers.json)
+    try:
+        BT = json.load(open(ROOT / 'data/bmh_tiers.json', encoding='utf-8'))['tiers']; QM = {'S': 4, 'A': 3, 'B': 2, 'C': 1}
+        for c in out:
+            if c['g'] == 'bmh' and BT.get(c['ne']) in QM: c['q'] = QM[BT[c['ne']]]; c['tl'] = BT[c['ne']]
+    except Exception: pass
     # descriptifs façon Pokédex (data/card_desc.json) -> d (FR) / de (EN)
     try:
         DS = json.load(open(ROOT / 'data/card_desc.json', encoding='utf-8'))

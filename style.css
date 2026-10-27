@@ -1559,3 +1559,41 @@ html.standalone body{overscroll-behavior-y:none}
 @media(max-width:760px){.hc-grid>.hc{contain-intrinsic-size:auto 200px}.hc.r4:not(.lock):not(.dim)::before{display:none}.hc.r4:not(.dim){box-shadow:0 6px 16px #0008,0 0 14px #ffcf5a88}}
 .hc-hero2 h2{animation:none!important}
 @media(max-width:760px){.hc-ach{grid-template-columns:minmax(0,1fr)}.hc-a{min-width:0}}
+
+/* ===== v30 : passage visuel sur les 3 sites ===== */
+/* — global : l'en-tête masque vraiment le contenu qui défile dessous */
+.hd{background:color-mix(in srgb,var(--bg) 95%,transparent)!important}
+/* — pastille Foilvault : compacte sur ordinateur, se déplie au survol */
+@media(min-width:901px){.hc-fab{padding:9px 12px;opacity:.9;transition:opacity .2s,padding .2s}.hc-fab em{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .25s}.hc-fab:hover,.hc-fab:focus-visible{opacity:1;padding:9px 16px}.hc-fab:hover em,.hc-fab:focus-visible em{max-width:120px}}
+/* — accueil : puces sobres, coins nets, statistiques alignées */
+.hub-door{clip-path:none!important}
+.hub-door ul{list-style:none;padding-left:0;display:grid;gap:7px;line-height:1.35}
+.hub-door li{position:relative;padding-left:20px}
+.hub-door li::before{content:"";position:absolute;left:3px;top:.45em;width:7px;height:7px;transform:rotate(45deg);background:currentColor;opacity:.75;border-radius:1px}
+.hub-door.d-ast li::before{background:#e8c26a;opacity:1}.hub-door.d-bl li::before{background:#ff8a1f;opacity:1}
+.hub-door.d-hc li::before,.hub-door:nth-child(2) li::before{background:#7fe9ff;opacity:1}
+.hub-st{grid-template-columns:minmax(52px,auto) 1fr;row-gap:4px}
+.hub-st b{font-variant-numeric:tabular-nums}
+.hub-go{margin-top:16px;font-weight:800;letter-spacing:.01em}
+.hub-door:focus-visible{outline:3px solid #fff;outline-offset:3px}
+/* — Foilvault : niveau lisible, récompense du jour mise en valeur, vente de doublons rangée */
+.hcsite .hcs-lv{min-width:150px;padding:8px 14px 9px;gap:6px}
+.hcsite .hcs-lv b{font:800 13px/1 var(--se,system-ui);letter-spacing:.04em}
+.hcsite .hcs-lv i{display:block;height:6px;border-radius:99px;background:#ffffff1c;overflow:hidden;position:relative}
+.hcsite .hcs-lv i::before{content:"";position:absolute;inset:0;width:max(var(--w,0%),6px);background:var(--holo,linear-gradient(90deg,#7fe9ff,#c79bff));border-radius:inherit}
+.hc-top3 .hc-lg:first-child{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.hc-top3 .hc-lg:first-child .sub{display:flex;flex-direction:column;align-items:center;gap:2px;margin:0;font-size:13px}
+.hc-top3 .hc-lg:first-child .sub b{font:900 64px/1 var(--se,system-ui);background:var(--holo,linear-gradient(90deg,#ffd27a,#ff8aa8));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hc-dup1 .chips{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0}
+.hc-dup1 .chips .lab{flex:0 0 100%;margin:0 0 -2px}
+.hc-dup1 .chip{margin:0}
+.hcsite .hc-pt .btn{min-height:36px}
+.hcsite .hc-pt h3,.hcsite .hc-pt b{text-wrap:balance}
+/* — Bleach : en-tête plus compact pour voir les arcs dès le premier écran */
+@media(min-width:761px){.bm-hero{padding:40px 44px}.bm-hx h1{font-size:clamp(54px,7vw,92px)}.bm-hx p{max-width:46ch}}
+.bm-arc{box-shadow:0 18px 50px -24px #000}
+.bm-arc:focus-within,.bm-nav a:focus-visible{outline:2px solid #ff8a1f;outline-offset:3px}
+/* — Astrolabe : chiffres des tuiles et titres de section plus affirmés */
+.hero ~ .stats .stat b,.stat b,.tile b{font-variant-numeric:tabular-nums}
+a:focus-visible,button:focus-visible{outline:2px solid var(--ac,#e8c26a);outline-offset:2px}
+.hub-q{margin:22px 0 14px}

@@ -55,3 +55,13 @@
 - **Mobile comme une vraie application** (écrans ≤ 760 px uniquement ; PC et tablette inchangés) : barre du bas propre à chaque univers (Accueil / Astrolabe / Foilvault / Bleach) avec feuille « Plus », en-tête Foilvault compact, zones sûres iPhone (encoche, barre du bas), plein écran une fois installé, pas de zoom involontaire, cibles tactiles agrandies, vibrations sur Android pour les cartes rares.
 - Installation : nouvelles icônes (Apple 180, maskable), raccourcis (Foilvault, Bleach, Tier list), scripts chargés en différé.
 - **Fluidité PC + mobile** : fond étoilé, boosters, halos des cartes légendaires et en-têtes ne sont plus animés en permanence (charge au repos passée de 20-90 % à moins de 2 % sur les pages concernées) ; listes de cartes chargées par paquets de 60 au fil du défilement ; flou d'en-tête supprimé.
+
+## v29 — mises à jour du lundi (Astrolabe, Foilvault, Bleach)
+Le workflow « Mise à jour hebdomadaire » tourne déjà chaque lundi à 05:00 UTC (et à la main via Run workflow). Il fait maintenant :
+1. **Astrolabe** : Game8 d'abord ; si Game8 bloque, **Prydwen** (https://www.prydwen.gg/star-rail/tier-list) en secours. Si les deux échouent, l'ancien classement reste.
+2. **Bleach : Mirrors High** (`scripts/bmh_update.py`) : cherche des tier lists publiques, met à jour `data/bmh_tiers.json` si au moins 10 personnages sont reconnus, et inscrit la date de vérification sur la page. Pour imposer votre propre classement, ajoutez `"manual": true` dans ce fichier.
+3. **Foilvault** : les images manquantes sont réessayées à chaque lundi ; un filtre qualité refuse désormais les images trop petites, les bannières, les aplats et les images quasi transparentes.
+Limites : ces trois sources n'ont pas pu être testées depuis mon environnement (sites bloqués). Premier contrôle réel = premier Run workflow ; regardez `data/status.json`, `data/bmh.json` (champ `check`) et `data/img_report.json`.
+
+## v30 — passage visuel (CSS uniquement, aucune donnée touchée)
+Accueil : puces en losanges aux couleurs de chaque site, coins nets, statistiques alignées. Foilvault : niveau avec vraie barre de progression, récompense du jour mise en valeur (grand chiffre de série), vente de doublons rangée. Bleach : en-tête plus compact pour voir les arcs plus tôt. Global : en-tête opaque (plus de texte fantôme derrière), pastille Foilvault réduite sur ordinateur, focus clavier visible.
