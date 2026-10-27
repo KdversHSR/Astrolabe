@@ -7,9 +7,9 @@ Option --art : tente de télécharger des illustrations (Genshin, ZZZ) dans img/
 import json, re, sys, io, urllib.request, urllib.parse, pathlib
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 RAW = 'https://raw.githubusercontent.com/EnkaNetwork/API-docs/master/store/'
-def get(u, binary=False):
+def get(u, binary=False, timeout=60):
     u = urllib.parse.quote(u, safe=':/?=&%')
-    r = urllib.request.urlopen(urllib.request.Request(u, headers={'User-Agent': 'astrolabe-cards'}), timeout=60).read()
+    r = urllib.request.urlopen(urllib.request.Request(u, headers={'User-Agent': 'astrolabe-cards'}), timeout=timeout).read()
     return r if binary else json.loads(r)
 
 MIAO = 'https://raw.githubusercontent.com/yoimiya-kokomi/miao-plugin/master/resources/meta-gs/character/'
@@ -21,7 +21,7 @@ EL_ZZZ = {'Elec': 'elec', 'Fire': 'fire', 'Ice': 'ice', 'Physics': 'phys', 'Ethe
 WIKI = {'hi3': 'honkaiimpact3', 'ww': 'wutheringwaves', 'r99': 'reverse1999', 'uma': 'umamusume'}
 def fandom_img(title, g='hi3'):
     """Image principale de la page Fandom d'un personnage Honkai Impact 3rd (None si introuvable)."""
-    d = get(f'https://{WIKI[g]}.fandom.com/api.php?action=query&redirects=1&prop=pageimages&piprop=original&format=json&titles=' + urllib.parse.quote(title))
+    d = get(f'https://{WIKI[g]}.fandom.com/api.php?action=query&redirects=1&prop=pageimages&piprop=original&format=json&titles=' + urllib.parse.quote(title), timeout=12)
     for p in d.get('query', {}).get('pages', {}).values():
         o = p.get('original')
         if o and o.get('source'): return o['source']
@@ -97,13 +97,16 @@ def build(art=False):
         with ThreadPoolExecutor(8) as ex: list(ex.map(one, out))
         # Honkai Impact 3rd : illustrations depuis le wiki Fandom (page de la Valkyrie). Échec = carte dessinée.
         import time
+        t0, fails = time.time(), 0   # garde-fou : on abandonne les images Fandom après 8 min ou 8 échecs d'affilée
         for c in out:
+            if time.time() - t0 > 480 or fails >= 8: print('images Fandom : arrêt anticipé (wiki lent ou bloqué), cartes restantes dessinées'); break
             if c['g'] not in WIKI or c.get('img') or (ROOT / 'img/cards' / (c['id'] + '.webp')).exists(): continue
             try:
                 title = (c.get('wk') or c['ne']).split(' · ')[0].strip(); u = fandom_img(title, c['g'])
                 if u:
-                    im = portrait(Image.open(io.BytesIO(get(u, True))).convert('RGBA')); im.save(ROOT / 'img/cards' / (c['id'] + '.webp'), 'WEBP', quality=80); c['img'] = f"img/cards/{c['id']}.webp"
-            except Exception as ex_: print('fandom', c['id'], ex_)
+                    im = portrait(Image.open(io.BytesIO(get(u, True))).convert('RGBA')); im.save(ROOT / 'img/cards' / (c['id'] + '.webp'), 'WEBP', quality=80); c['img'] = f"img/cards/{c['id']}.webp"; fails = 0
+                else: fails = 0
+            except Exception as ex_: fails += 1; print('fandom', c['id'], ex_)
             time.sleep(0.5)
     for c in out: c.pop('art', None)
     # on garde 'img' seulement si le fichier existe

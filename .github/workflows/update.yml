@@ -30,6 +30,7 @@ jobs:
         run: python scripts/update.py
       - name: Mettre à jour les cartes Hoyo Cards
         continue-on-error: true
+        timeout-minutes: 15
         run: python scripts/cards.py --art
       - name: Prévenir en cas d'échec
         if: failure()

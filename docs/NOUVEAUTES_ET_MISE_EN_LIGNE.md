@@ -1,7 +1,7 @@
 # Hoyo Cards : récapitulatif et mise en ligne
 
 ## Mise en ligne (à chaque nouvelle version)
-1. Dézippez `astrolabe-site-v21.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
+1. Dézippez `astrolabe-site-v21b.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
 2. Ouvrez GitHub Desktop : les fichiers modifiés apparaissent à gauche. Écrivez un titre (ex. « v13 ») puis **Commit to main**, puis **Push origin**.
 3. Sur github.com, dépôt du site → onglet **Actions** → « Mise à jour » → **Run workflow** (met à jour cartes, raretés et données).
 4. Supabase (une seule fois par nouveauté) → **SQL Editor** → collez le contenu de `supabase/schema_v6.sql` puis **Run** ; faites pareil avec `supabase/schema_v7.sql` (photos de profil).
