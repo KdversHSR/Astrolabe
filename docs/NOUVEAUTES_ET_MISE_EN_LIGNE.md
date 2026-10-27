@@ -1,7 +1,7 @@
 # Gachadex : récapitulatif et mise en ligne
 
 ## Mise en ligne (à chaque nouvelle version)
-1. Dézippez `astrolabe-site-v24.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
+1. Dézippez `astrolabe-site-v25.zip` **par-dessus** votre dossier local du site (acceptez de remplacer). Votre fichier `config.js` n'est pas dans le zip : il reste intact.
 2. Ouvrez GitHub Desktop : les fichiers modifiés apparaissent à gauche. Écrivez un titre (ex. « v13 ») puis **Commit to main**, puis **Push origin**.
 3. Sur github.com, dépôt du site → onglet **Actions** → « Mise à jour » → **Run workflow** (met à jour cartes, raretés et données).
 4. Supabase (une seule fois par nouveauté) → **SQL Editor** → collez le contenu de `supabase/schema_v6.sql` puis **Run** ; faites pareil avec `supabase/schema_v7.sql` (photos de profil).
@@ -34,3 +34,8 @@
   - **SQL à exécuter une fois** dans Supabase > SQL Editor : `supabase/schema_v8.sql` (marché). Sans cela, l'onglet Marché affiche « indisponible ».
   - Images Honkai Impact 3rd, Wuthering Waves, Reverse: 1999 et Umamusume : lancez le workflow « Actions » (Run workflow). Images © Fandom et ayants droit (Kuro Games, Bluepoch, Cygames, HoYoverse), non testé depuis mon environnement ; si Fandom bloque, les cartes restent dessinées.
 - v14 : dos de carte aux couleurs du site, ouverture carte par carte façon Pokémon (booster qui se déchire), cartes d'ouverture agrandies, descriptif « Pokédex » des personnages (`data/card_desc.json`, 276 sur 362 pour l'instant), ajout automatique au portfolio avec filtres (jeu, rareté, finition), grand bandeau Gachadex sur l'accueil, entrée « NEW » dans le menu et bouton flottant.
+
+## v25
+- Gachadex : 2 nouveaux jeux et boosters — **Persona 5: The Phantom X** (47 cartes) et **Bleach: Mirrors High** (30 cartes). Fichier `data/cards_games3.json`, généré par `scripts/newgames.py`.
+- Nouvel onglet Astrolabe **Bleach : Mirrors High** (`#/bleach`) avec sa propre DA (noir/blanc/orange, uniquement sur cette page) : aperçu, tier list prévisionnelle (estimation), personnages, animé par arcs, système de jeu, événements (confirmé / probable, éditable dans `data/bmh.json`), calculateur d'invocations.
+- Images : lancer Actions → Run workflow ; vérifier `data/img_report.json`.
