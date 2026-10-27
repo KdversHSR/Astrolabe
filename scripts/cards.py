@@ -21,9 +21,10 @@ EL_ZZZ = {'Elec': 'elec', 'Fire': 'fire', 'Ice': 'ice', 'Physics': 'phys', 'Ethe
 # wikis (MediaWiki) essayés dans l'ordre pour chaque jeu : un nom sans point = sous-domaine fandom.com ; sinon nom d'hôte complet
 WIKI = {'hi3': ['honkaiimpact3'], 'ww': ['wutheringwaves'], 'r99': ['reverse1999'], 'uma': ['umamusume'], 'bb': ['bleach-bravesouls', 'bleach-brave-souls'],
         'dk': ['dbz-dokkanbattle'], 'ef': ['endfield.wiki.gg', 'arknightsendfield', 'arknights-endfield'], 'nk': ['nikke-goddess-of-victory-international'],
-        'fgo': ['fategrandorder'], 'nte': ['neverness-to-everness', 'nte'], 'op': ['opbr', 'onepiecebountyrush'], 'tot': ['tearsofthemis', 'tot.wiki']}
+        'fgo': ['fategrandorder'], 'nte': ['neverness-to-everness', 'nte'], 'op': ['opbr', 'onepiecebountyrush'], 'tot': ['tearsofthemis', 'tot.wiki'],
+        'p5x': ['persona5x', 'p5x.wiki.gg', 'persona-5-the-phantom-x'], 'bmh': ['bleach-mirrors-high', 'bleach', 'bleachmirrorshigh']}
 # recherche automatique de wikis Fandom si les noms ci-dessus échouent (API publique Fandom)
-DISCO = {'bb': 'Bleach Brave Souls', 'dk': 'Dokkan Battle', 'ef': 'Arknights Endfield', 'op': 'One Piece Bounty Rush', 'tot': 'Tears of Themis', 'nte': 'Neverness to Everness', 'nk': 'Nikke Goddess of Victory'}
+DISCO = {'bb': 'Bleach Brave Souls', 'dk': 'Dokkan Battle', 'ef': 'Arknights Endfield', 'op': 'One Piece Bounty Rush', 'tot': 'Tears of Themis', 'nte': 'Neverness to Everness', 'nk': 'Nikke Goddess of Victory', 'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach Mirrors High'}
 DEAD = set()
 def _api(host, q):
     h = host if '.' in host else host + '.fandom.com'
@@ -147,7 +148,7 @@ def build(art=False):
             cards.append({'id': 'zzz-' + k, 'g': 'zzz', 'n': zl.get('fr', {}).get(v['Name'], nm), 'ne': nm, 'r': 5 if v.get('Rarity') == 4 else 4, 'e': EL_ZZZ.get(ets[-1], 'phys'), 'art': 'https://enka.network' + v['Image'] if v.get('Image') else ''})
     except Exception as ex: print('ZZZ ignoré :', ex)
     # --- ajouts manuels
-    for fn in ('cards_extra', 'cards_games', 'cards_games2'):   # cards_games = Wuthering Waves / Reverse: 1999 / Umamusume (scripts/extra_games.py)
+    for fn in ('cards_extra', 'cards_games', 'cards_games2', 'cards_games3'):   # cards_games = Wuthering Waves / Reverse: 1999 / Umamusume (scripts/extra_games.py)
         try:
             for c in json.load(open(ROOT / f'data/{fn}.json', encoding='utf-8'))['cards']: cards.append(c)
         except Exception as ex: print(fn, 'ignoré :', ex)
