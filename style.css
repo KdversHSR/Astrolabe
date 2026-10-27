@@ -352,16 +352,16 @@ kbd{font-size:12px}
 input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;height:16px;width:16px;cursor:pointer;background:linear-gradient(45deg,transparent 45%,var(--mu) 45%,var(--mu) 55%,transparent 55%),linear-gradient(-45deg,transparent 45%,var(--mu) 45%,var(--mu) 55%,transparent 55%)}
 /* v8 : toast, bienvenue, bandeau, routine */
 #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);opacity:0;z-index:120;padding:11px 18px;border-radius:12px;background:var(--s2);color:var(--tx);border:1px solid var(--ac);box-shadow:0 10px 30px #0008;transition:all .3s;pointer-events:none;font-weight:500}#toast.show{opacity:1;transform:translate(-50%,0)}
-#welcome{position:fixed;inset:0;z-index:200;display:grid;place-items:center;overflow:hidden;cursor:pointer;background:radial-gradient(ellipse at 80% 10%,rgba(185,140,255,.35),transparent 55%),radial-gradient(ellipse at 10% 100%,rgba(230,185,94,.28),transparent 55%),#080a14;transition:opacity .7s}
+#welcome{position:fixed;inset:0;z-index:200;display:grid;place-items:center;overflow:hidden;cursor:pointer;background:radial-gradient(ellipse at 80% 10%,rgba(185,140,255,.35),transparent 55%),radial-gradient(ellipse at 10% 100%,rgba(230,185,94,.28),transparent 55%),#080a14;transition:opacity .45s}
 #welcome.out{opacity:0;pointer-events:none}
 #welcome .wstars{position:absolute;inset:0;background-image:radial-gradient(1.5px 1.5px at 8% 20%,#fff,transparent),radial-gradient(1px 1px at 22% 70%,#fffa,transparent),radial-gradient(1.5px 1.5px at 38% 35%,#fff,transparent),radial-gradient(1px 1px at 55% 80%,#fff9,transparent),radial-gradient(2px 2px at 70% 25%,#ffe9a8,transparent),radial-gradient(1px 1px at 84% 60%,#fff,transparent),radial-gradient(1.5px 1.5px at 93% 15%,#fffb,transparent),radial-gradient(1px 1px at 47% 12%,#fff8,transparent);animation:twk 3s ease-in-out infinite alternate}
-#welcome .wtxt{position:absolute;top:26%;left:0;right:0;text-align:center;opacity:0;animation:wtx 1.6s .9s ease forwards}
+#welcome .wtxt{position:absolute;top:26%;left:0;right:0;text-align:center;opacity:0;animation:wtx .8s .25s ease forwards}
 #welcome .wtxt span{display:block;font:600 clamp(13px,2.2vw,20px) var(--mo);letter-spacing:.5em;text-transform:uppercase;color:var(--ac2)}
 #welcome .wtxt b{display:block;font:800 clamp(40px,9vw,110px)/1.05 var(--se);letter-spacing:.14em;text-transform:uppercase;background:linear-gradient(100deg,#fff6d6 5%,#f0c964 45%,#c79bff 90%);-webkit-background-clip:text;background-clip:text;color:transparent;margin:6px 0}
 #welcome .wtxt small{color:var(--mu);font-size:15px;letter-spacing:.12em}
 @keyframes wtx{from{opacity:0;transform:translateY(14px) scale(.97);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
 #welcome .wrail{position:absolute;left:0;right:0;bottom:22%;height:150px}
-#welcome .wtrain{position:absolute;bottom:0;left:0;width:980px;max-width:none;transform:translateX(-1100px);animation:wdrive 4.4s cubic-bezier(.25,.6,.35,1) .3s forwards}
+#welcome .wtrain{position:absolute;bottom:0;left:0;width:980px;max-width:none;transform:translateX(-1100px);animation:wdrive 2.3s cubic-bezier(.3,.6,.4,1) .1s forwards}
 #welcome .wtrain svg{width:min(980px,150vw);height:auto;display:block}
 @keyframes wdrive{0%{transform:translateX(-1100px)}100%{transform:translateX(calc(100vw + 200px))}}
 #welcome .wline{position:absolute;left:0;right:0;bottom:-2px;height:3px;background:linear-gradient(90deg,transparent,var(--ac),#b98cff,transparent);box-shadow:0 0 18px var(--ac)}
@@ -881,3 +881,54 @@ nav.nv a[href="#/cartes"]:hover{box-shadow:0 0 20px #ffcf5a55}
 .so-chat aside{display:flex;flex-direction:column;gap:6px}.so-c{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:10px;border:1px solid transparent;background:none;color:var(--tx);cursor:pointer;text-align:left;font:inherit}.so-c:hover{background:var(--s2)}.so-c.on{background:var(--s2);border-color:var(--ac)}.so-c .so-av{width:28px;height:28px;font-size:12px}
 .so-msgs{height:min(54vh,460px);overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:6px;margin:10px 0;border-radius:12px;background:rgba(0,0,0,.18)}.so-m{max-width:80%;align-self:flex-start;padding:8px 12px;border-radius:14px;background:var(--s2)}.so-m.me{align-self:flex-end;background:color-mix(in srgb,var(--ac) 26%,var(--s2))}.so-m p{margin:2px 0 0;overflow-wrap:anywhere}
 .hc-sy{font-size:13px;min-width:44px}.hc-sy.ok{color:#4fd37a}.hc-sy.err{color:#ff7a8a}
+
+/* ===== v20 : confort mobile, accueil ===== */
+.flfold{margin:10px 0;border:1px solid var(--bd);border-radius:12px;background:var(--s1);padding:0 12px}.flfold>summary{cursor:pointer;padding:12px 0;font-weight:700}.flfold>summary b{background:var(--ac);color:#17120a;border-radius:99px;padding:1px 8px;font-size:12px;margin-left:6px}.flfold[open]{padding-bottom:6px}
+.hc-today{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:-6px 0 20px}.hc-today a{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:14px;border:1px solid var(--bd);background:var(--s1);color:inherit;text-decoration:none}.hc-today b{font-size:17px}.hc-today span{font-size:12.5px;color:var(--mu)}.hc-today a.go{border-color:color-mix(in srgb,var(--ac) 60%,var(--bd));box-shadow:0 0 20px -10px var(--ac)}
+@media(max-width:860px){.hc-mg-l,.hc-mg-r{flex:0 0 auto!important}.hc-mg-r{height:auto!important}}@media(max-width:640px){.hc-mega{padding:16px 16px 18px;gap:10px}.hc-mg-r{zoom:.42!important;margin:-14px 0 -10px!important}.hc-mg-st{display:none}.hc-mg-l p{font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.hc-mg-l h2{font-size:42px}.hc-mg-btn{padding:12px 18px!important;font-size:13px!important}.hc-today{gap:6px}.hc-today a{padding:10px}.hc-today b{font-size:14px}.hc-today span{font-size:11px}}
+/* finitions v20 */
+html{scroll-behavior:smooth;scrollbar-color:#3a3f63 transparent;scrollbar-width:thin}::selection{background:color-mix(in srgb,var(--ac) 45%,transparent);color:#fff}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:6px}
+.card,.btn,.cd,.pcard,.so-p{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}.pcard:hover,.so-p:hover{transform:translateY(-2px);box-shadow:0 14px 34px -18px #000}
+.fade{animation:fadein .35s ease both}@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.fade{animation:none}}
+
+/* ===== v21 : nouveaux univers (Wuthering Waves, Reverse: 1999, Umamusume) + cartes plus belles ===== */
+.g-ww .hc-pat{background:repeating-radial-gradient(circle at 50% 120%,var(--gc) 0 2px,transparent 2px 16px)}
+.g-r99 .hc-pat{background:repeating-linear-gradient(135deg,var(--gc) 0 1px,transparent 1px 9px),repeating-linear-gradient(45deg,var(--gc) 0 1px,transparent 1px 9px)}
+.g-uma .hc-pat{background:repeating-linear-gradient(100deg,var(--gc) 0 6px,transparent 6px 20px)}
+.sc-ww{background:radial-gradient(ellipse at 50% 45%,rgba(111,214,255,.25),transparent 65%),#050a14}
+.sc-wave{position:absolute;width:clamp(180px,40vw,360px);top:34%;filter:drop-shadow(0 0 14px #6fd6ff);animation:wvz 2s ease-out forwards}
+@keyframes wvz{0%{transform:scale(.3);opacity:0}35%{opacity:1}100%{transform:scale(1.7);opacity:0}}
+.sc-ech{position:absolute;width:6px;height:6px;border-radius:50%;background:#bfeeff;box-shadow:0 0 10px #6fd6ff;opacity:0;animation:ech 1.6s ease-out infinite}
+@keyframes ech{0%{transform:scale(0);opacity:0}30%{opacity:.9}100%{transform:scale(4);opacity:0}}
+.sc-r99{background:radial-gradient(ellipse at 50% 40%,rgba(217,178,124,.2),transparent 65%),#0b0a0d}
+.sc-clock{position:absolute;width:clamp(130px,26vw,220px);top:30%;filter:drop-shadow(0 0 16px #d9b27c);animation:ckz 2.1s ease-out forwards}
+.sc-hand{transform-origin:60px 60px;animation:spin 1.6s linear infinite}.sc-hand2{transform-origin:60px 60px;animation:spin 8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes ckz{0%{transform:scale(.4);opacity:0}30%{opacity:1}100%{transform:scale(1.25);opacity:0}}
+.sc-rain{position:absolute;top:-8%;width:2px;height:34px;background:linear-gradient(transparent,#ffe3b0);opacity:.6;animation:rn 1s linear infinite}
+@keyframes rn{to{transform:translateY(120vh)}}
+.sc-uma{background:radial-gradient(ellipse at 50% 40%,rgba(255,154,200,.22),transparent 65%),#120a14}
+.sc-shoe{position:absolute;width:clamp(120px,24vw,200px);top:32%;filter:drop-shadow(0 0 14px #ff9ac8);animation:shz 2s ease-in forwards}
+@keyframes shz{0%{transform:translateX(-60vw) rotate(-8deg);opacity:0}30%{opacity:1}100%{transform:translateX(60vw) rotate(4deg);opacity:0}}
+.sc-trk{position:absolute;left:0;right:0;top:calc(38% + min(14vw,110px));height:4px;background:repeating-linear-gradient(90deg,#ff9ac8 0 24px,transparent 24px 40px);animation:trk .5s linear infinite;opacity:.7}
+@keyframes trk{to{background-position:-40px 0}}
+.sc-pet{position:absolute;top:-6%;width:12px;height:12px;border-radius:60% 0 60% 0;background:#ffc6e0;opacity:.85;animation:fe 2s ease-in infinite}
+/* cartes : cadre plus travaillé, reflets, lisibilité */
+.hc-in::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:11px;box-shadow:inset 0 0 0 1px #ffffff1f,inset 0 -60px 50px -30px #000a,inset 0 40px 40px -30px #0007}
+.hc.r2 .hc-in::after,.hc.r3 .hc-in::after,.hc.r4 .hc-in::after{content:"";position:absolute;inset:4px;z-index:2;pointer-events:none;border-radius:8px;border:1px solid color-mix(in srgb,var(--rc) 55%,transparent)}
+.hc.r4{animation:hcleg 3.2s ease-in-out infinite}
+@keyframes hcleg{50%{box-shadow:0 8px 28px #0008,0 0 26px color-mix(in srgb,var(--rc) 70%,transparent)}}
+.hc.r3{box-shadow:0 8px 24px #0008,0 0 14px color-mix(in srgb,var(--rc) 40%,transparent)}
+.hc-nm b{letter-spacing:.01em}
+.hc.f-h .hc-art::after,.hc.f-s .hc-art::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,#ff6ec722 0 6px,#6ec3ff22 6px 12px,#6effc722 12px 18px);mix-blend-mode:overlay;pointer-events:none}
+.hc.f-g .hc-art{filter:saturate(1.15) contrast(1.05)}
+/* ouverture : rayons derrière les belles cartes */
+#hcov.b3::before,#hcov.b4::before{content:"";position:absolute;left:50%;top:50%;width:160vmax;height:160vmax;margin:-80vmax 0 0 -80vmax;z-index:0;pointer-events:none;background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--best) 28%,transparent) 0 6deg,transparent 6deg 18deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 55%);mask:radial-gradient(circle,#000 0,transparent 55%);animation:hcrays 24s linear infinite;opacity:.55}
+#hcov.b4::before{opacity:.9;animation-duration:12s}
+@keyframes hcrays{to{transform:rotate(360deg)}}
+#hcov>*{position:relative;z-index:1}#hcov>.hc-scene{position:absolute}
+.hc-fl.wow .hc-fr::after{content:"";position:absolute;inset:-30%;background:radial-gradient(circle,#fff 0,transparent 40%);opacity:0;pointer-events:none;animation:hcflash .8s ease-out}
+@keyframes hcflash{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(1.4)}}
+@media(prefers-reduced-motion:reduce){.hc.r4,#hcov.b3::before,#hcov.b4::before,.sc-trk{animation:none}}
+.so-sel option{color:#000}

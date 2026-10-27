@@ -18,10 +18,10 @@ EL_HSR = {'Fire': 'fire', 'Ice': 'ice', 'Thunder': 'elec', 'Wind': 'wind', 'Phys
 EL_ZZZ = {'Elec': 'elec', 'Fire': 'fire', 'Ice': 'ice', 'Physics': 'phys', 'Ether': 'ether', 'Wind': 'wind', 'Lumen': 'lumen'}
 
 
-FANDOM = 'https://honkaiimpact3.fandom.com/api.php?action=query&redirects=1&prop=pageimages&piprop=original&format=json&titles='
-def fandom_img(title):
+WIKI = {'hi3': 'honkaiimpact3', 'ww': 'wutheringwaves', 'r99': 'reverse1999', 'uma': 'umamusume'}
+def fandom_img(title, g='hi3'):
     """Image principale de la page Fandom d'un personnage Honkai Impact 3rd (None si introuvable)."""
-    d = get(FANDOM + urllib.parse.quote(title))
+    d = get(f'https://{WIKI[g]}.fandom.com/api.php?action=query&redirects=1&prop=pageimages&piprop=original&format=json&titles=' + urllib.parse.quote(title))
     for p in d.get('query', {}).get('pages', {}).values():
         o = p.get('original')
         if o and o.get('source'): return o['source']
@@ -64,9 +64,10 @@ def build(art=False):
             cards.append({'id': 'zzz-' + k, 'g': 'zzz', 'n': zl.get('fr', {}).get(v['Name'], nm), 'ne': nm, 'r': 5 if v.get('Rarity') == 4 else 4, 'e': EL_ZZZ.get(ets[-1], 'phys'), 'art': 'https://enka.network' + v['Image'] if v.get('Image') else ''})
     except Exception as ex: print('ZZZ ignoré :', ex)
     # --- ajouts manuels
-    try:
-        for c in json.load(open(ROOT / 'data/cards_extra.json'))['cards']: cards.append(c)
-    except Exception as ex: print('extra ignoré :', ex)
+    for fn in ('cards_extra', 'cards_games'):   # cards_games = Wuthering Waves / Reverse: 1999 / Umamusume (scripts/extra_games.py)
+        try:
+            for c in json.load(open(ROOT / f'data/{fn}.json', encoding='utf-8'))['cards']: cards.append(c)
+        except Exception as ex: print(fn, 'ignoré :', ex)
     try:
         loc = get(RAW + 'loc.json'); en2zh = {}
         for h, t in loc['en'].items():
@@ -97,9 +98,9 @@ def build(art=False):
         # Honkai Impact 3rd : illustrations depuis le wiki Fandom (page de la Valkyrie). Échec = carte dessinée.
         import time
         for c in out:
-            if c['g'] != 'hi3' or c.get('img') or (ROOT / 'img/cards' / (c['id'] + '.webp')).exists(): continue
+            if c['g'] not in WIKI or c.get('img') or (ROOT / 'img/cards' / (c['id'] + '.webp')).exists(): continue
             try:
-                title = c['ne'].split(' · ')[0].strip(); u = fandom_img(title)
+                title = (c.get('wk') or c['ne']).split(' · ')[0].strip(); u = fandom_img(title, c['g'])
                 if u:
                     im = portrait(Image.open(io.BytesIO(get(u, True))).convert('RGBA')); im.save(ROOT / 'img/cards' / (c['id'] + '.webp'), 'WEBP', quality=80); c['img'] = f"img/cards/{c['id']}.webp"
             except Exception as ex_: print('fandom', c['id'], ex_)
@@ -138,7 +139,7 @@ def build(art=False):
             if c['g'] == 'hi3':
                 a, _, b = c['ne'].partition(' · '); bio = DS.get('__B__' + a)
                 if bio: v = [bio[0] + (' Forme de Herrscher : une puissance qui dépasse celle des valkyries.' if 'Herrscher' in b else f' Tenue « {b} ».'), bio[1] + (' Herrscher form: a power beyond that of ordinary Valkyries.' if 'Herrscher' in b else f' Battlesuit “{b}”.')]
-            if v and c['g'] in ('hsr', 'gi', 'zzz', 'hi3'): c['d'], c['de'] = v
+            if v and c['g'] in ('hsr', 'gi', 'zzz', 'hi3') and not c.get('d'): c['d'], c['de'] = v
         print('descriptifs :', sum(1 for c in out if c.get('d')), '/', len(out))
     except Exception as e: print('descriptifs ignorés :', e)
     json.dump({'v': 1, 'cards': out}, open(ROOT / 'data/cards.json', 'w'), ensure_ascii=False, separators=(',', ':'))
