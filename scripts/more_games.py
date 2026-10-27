@@ -365,7 +365,8 @@ def build():
         n, q = l.split('|'); q = int(q); add('nk', n, 'unk', 5 if q >= 2 else 4, q, 5 if q >= 2 else 4, wk=n)
     for l in FGO.split('\n'):
         n, cl, q = l.split('|'); q = int(q); add('fgo', n, cl.lower().replace(' ', '') or 'unk', 5, q, 5 if q >= 3 else 4 if q >= 1 else 3, wk=n)
-    for l in DK.split('\n'):
+    for l in []:  # Dokkan Battle retiré en v26
+
         n, e, q = l.split('|'); q = int(q); add('dk', n, e, 5 if q >= 2 else 4, q, 5 if q >= 2 else 4, wk=re.sub(r'\s*\(.*?\)', '', n))
     for l in BB.split('\n'):
         n, e, q = l.split('|'); q = int(q); add('bb', n, e, 5 if q >= 2 else 4, q, 6 if q >= 3 else 5 if q >= 1 else 4, wk=re.sub(r'\s*\(.*?\)', '', n))

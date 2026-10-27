@@ -20,11 +20,11 @@ EL_ZZZ = {'Elec': 'elec', 'Fire': 'fire', 'Ice': 'ice', 'Physics': 'phys', 'Ethe
 
 # wikis (MediaWiki) essayés dans l'ordre pour chaque jeu : un nom sans point = sous-domaine fandom.com ; sinon nom d'hôte complet
 WIKI = {'hi3': ['honkaiimpact3'], 'ww': ['wutheringwaves'], 'r99': ['reverse1999'], 'uma': ['umamusume'], 'bb': ['bleach-bravesouls', 'bleach-brave-souls'],
-        'dk': ['dbz-dokkanbattle'], 'ef': ['endfield.wiki.gg', 'arknightsendfield', 'arknights-endfield'], 'nk': ['nikke-goddess-of-victory-international'],
+        'ef': ['endfield.wiki.gg', 'arknightsendfield', 'arknights-endfield'], 'nk': ['nikke-goddess-of-victory-international'],
         'fgo': ['fategrandorder'], 'nte': ['neverness-to-everness', 'nte'], 'op': ['opbr', 'onepiecebountyrush'], 'tot': ['tearsofthemis', 'tot.wiki'],
         'p5x': ['persona5x', 'p5x.wiki.gg', 'persona-5-the-phantom-x'], 'bmh': ['bleach-mirrors-high', 'bleach', 'bleachmirrorshigh']}
 # recherche automatique de wikis Fandom si les noms ci-dessus échouent (API publique Fandom)
-DISCO = {'bb': 'Bleach Brave Souls', 'dk': 'Dokkan Battle', 'ef': 'Arknights Endfield', 'op': 'One Piece Bounty Rush', 'tot': 'Tears of Themis', 'nte': 'Neverness to Everness', 'nk': 'Nikke Goddess of Victory', 'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach Mirrors High'}
+DISCO = {'bb': 'Bleach Brave Souls', 'ef': 'Arknights Endfield', 'op': 'One Piece Bounty Rush', 'tot': 'Tears of Themis', 'nte': 'Neverness to Everness', 'nk': 'Nikke Goddess of Victory', 'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach Mirrors High'}
 DEAD = set()
 def _api(host, q):
     h = host if '.' in host else host + '.fandom.com'

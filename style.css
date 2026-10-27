@@ -1308,3 +1308,60 @@ body.bmhsite{--ac:#ff7a1a}
 .bm-res{background:var(--ink);color:#fff;padding:10px 18px;border-left:8px solid var(--or);min-width:200px}.bm-res b{font:900 38px Impact,sans-serif;color:var(--or);margin-right:8px}.bm-res span{display:block;font-size:12px;color:#ccc}
 @media(max-width:700px){.bm-hero{padding:28px 18px}.bm-kj{font-size:70px}.bm-slash{width:180px}.bm-arc{grid-template-columns:1fr}.bm-av{min-height:150px}.bm-ev article{grid-template-columns:1fr}}
 @media(max-width:700px){.bm-slash{width:70px;right:-20px;opacity:.55}.bm-kj{display:none}.bm-hero p{max-width:none}.bm-cta a{padding:10px 12px}}
+
+/* ===== v26 : performances (les animations permanentes des cartes sont figées hors de l'ouverture) ===== */
+.hc,.hc *,.hc::before,.hc::after,.hc *::before,.hc *::after{animation-play-state:paused}
+#hcov .hc-fr .hc,#hcov .hc-fr .hc *,#hcov .hc-fr .hc::before,#hcov .hc-fr .hc::after,#hcov .hc-fr .hc *::before,#hcov .hc-fr .hc *::after,#hczd .hc,#hczd .hc *,#hczd .hc::before,#hczd .hc::after,#hczd .hc *::before,#hczd .hc *::after,.hc:hover,.hc:hover *,.hc:hover::before,.hc:hover::after{animation-play-state:running}
+.hc.r4:not(.lock):not(.dim)::before{filter:blur(4px)}
+#hcov::before{animation:none;opacity:.7}
+.hc-fl[data-r="3"]:not(.open) .hc-bk,.hc-fl[data-r="4"]:not(.open) .hc-bk{animation:hcbob 2s ease-in-out infinite}
+.hc-rays,.hc-cfl,.hc-ring,.tp-rays{will-change:transform,opacity}
+body.hc-lite .hc-rays,body.hc-lite .tp-rays,body.hc-lite #hcov::before,body.hc-lite .hc-scene *{animation:none!important}
+body.hc-lite .hc-rays{opacity:.5}
+body.hc-lite .hc-scene{opacity:.8}
+body.hc-lite #hcov.shk3 .hc-stage,body.hc-lite #hcov.shk4 .hc-stage{animation:none}
+body.hc-lite .hc-sp:nth-of-type(2n){display:none}
+
+/* ===== v26 : Foilvault, identité visuelle propre (coffre-fort holographique : acier, hexagones, reflets irisés) ===== */
+body.hcsite{--se:'Segoe UI',system-ui,-apple-system,sans-serif;--vl:#7fe9ff;--vp:#9a7bff;--vm:#ff7ad9;--vg:#ffd36b;--holo:linear-gradient(100deg,#7fe9ff,#9a7bff 38%,#ff7ad9 70%,#ffd36b);
+  background:radial-gradient(900px 500px at 85% -10%,#2ad7ff1c,transparent 62%),radial-gradient(800px 560px at -5% 105%,#9a7bff18,transparent 60%),#04070b}
+body.hcsite::before{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V16L28 0l28 16v34zM28 100V66M0 84l28 16 28-16' fill='none' stroke='%23aee7ff' stroke-opacity='.07'/%3E%3C/svg%3E") 0 0/56px 100px;opacity:1;animation:none;mask:linear-gradient(180deg,#000,transparent 85%);-webkit-mask:linear-gradient(180deg,#000,transparent 85%)}
+.hcs-brand b{display:flex;align-items:center;gap:10px;font:800 clamp(24px,3.6vw,36px)/1 var(--se);letter-spacing:.32em;text-transform:uppercase;background:var(--holo);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hcs-brand b svg{width:clamp(28px,3.4vw,38px);height:auto;flex:none;filter:drop-shadow(0 0 8px #7fe9ff66)}
+.hcs-brand small{letter-spacing:.2em;text-transform:uppercase;font-size:11px;font-family:ui-monospace,Menlo,Consolas,monospace;color:#8fa4b5}
+.hcs-back{border-radius:0;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);background:#0c141c;border-color:#233443}
+.hcs-lv,.hcs-co{border-radius:0;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);border:0;background:linear-gradient(135deg,#13202b,#0a1118);box-shadow:inset 0 0 0 1px #2b4152;color:#dff6ff}
+.hcs-co{background:linear-gradient(135deg,#102a33,#0a1118);color:#aef3ff}.hc-coin{color:#7fe9ff}
+.hcs-t{gap:4px;border-bottom:1px solid #1d2b37;padding-bottom:0}
+.hcs-t a{border-radius:0;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);border:0;background:#0b121a;color:#8fa4b5;padding:11px 22px;font-weight:700;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase}
+.hcs-t a:hover{color:#fff;background:#13202b}
+.hcs-t a.on{background:var(--holo);color:#04070b;animation:none;box-shadow:none}
+.hcsite .card,.hcsite .hc-pt,.hcsite .hc-a{border-radius:0;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));border-color:#233443;background:linear-gradient(160deg,#0f1822,#090e14)}
+.hcsite .hc-pt:hover{border-color:#7fe9ff88;transform:translateY(-3px)}
+.hcsite .hc-pt:not(.off){background:radial-gradient(circle at 50% 0,color-mix(in srgb,var(--pc,#7fe9ff) 16%,transparent),transparent 62%),linear-gradient(160deg,#0f1822,#090e14)}
+.hcsite .btn{border-radius:0;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);text-transform:uppercase;letter-spacing:.08em;font-weight:700;font-size:12.5px}
+.hcsite .btn.pri{background:var(--holo);color:#04070b;border-color:transparent}
+.hcsite .btn.pri:disabled{filter:grayscale(1) brightness(.6)}
+.hcsite .chip.on,.hcsite .hc-gp2.on{background:#7fe9ff22;border-color:#7fe9ff;color:#dff6ff}
+.hc-pr{color:#aef3ff;font-family:var(--se)}
+.hc-hero2{border-radius:0;clip-path:polygon(0 0,calc(100% - 28px) 0,100% 28px,100% 100%,28px 100%,0 calc(100% - 28px));border:0;box-shadow:inset 0 0 0 1px #2b4152;background:radial-gradient(circle at 82% 40%,#2ad7ff2e,transparent 55%),radial-gradient(circle at 12% 0,#9a7bff26,transparent 50%),linear-gradient(135deg,#0d1822,#070b11)}
+.hc-hero2 h2{background:var(--holo);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:.02em}
+.hc-hero2 p{color:#a9bccb}.hc-hero2 .lab,.hcsite .lab{color:#7fe9ff;letter-spacing:.2em;font-family:ui-monospace,Menlo,Consolas,monospace}
+.hcsite h1,.hcsite h2,.hcsite h3{font-family:var(--se)}
+.hc-a.ok{border-color:#7fe9ff88;background:linear-gradient(135deg,#0f2a33,#090e14)}
+.hcsite .pbar>div i,.hcsite .hcs-lv i b{background:var(--holo)}
+.hc-ban{background:radial-gradient(circle at 12% 50%,#7fe9ff30,transparent 55%),radial-gradient(circle at 90% 20%,#9a7bff30,transparent 50%),linear-gradient(120deg,#0e1a24,#070b11)}
+/* aperçu sur la page d'accueil d'Astrolabe */
+.hc-mega{border-radius:0!important;clip-path:polygon(0 0,calc(100% - 28px) 0,100% 28px,100% 100%,28px 100%,0 calc(100% - 28px))}
+.hc-mega .hc-mg-tag{color:#7fe9ff;font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.18em;text-transform:uppercase}
+@media(max-width:760px){.hcs-t a{padding:10px 16px}}
+body.hcsite{--ac:#7fe9ff}
+.hcsite .card::before,.hcsite .card::after{display:none}
+/* accueil Astrolabe : l'encart Foilvault porte l'identité du site de cartes */
+.hc-mega.hcm2{background:radial-gradient(circle at 10% 20%,#7fe9ff26,transparent 55%),radial-gradient(circle at 90% 80%,#9a7bff2e,transparent 55%),linear-gradient(135deg,#0d1822,#070b11)}
+.hc-mega.hcm2::after{content:"";position:absolute;inset:0;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V16L28 0l28 16v34zM28 100V66M0 84l28 16 28-16' fill='none' stroke='%23aee7ff' stroke-opacity='.07'/%3E%3C/svg%3E") 0 0/56px 100px}
+.hcm-bg .a1{background:#7fe9ff}.hcm-bg .a2{background:#9a7bff}.hcm-bg .a3{background:#ff7ad9}
+.hcm2 .hc-fan>div:nth-child(3) .hc{box-shadow:0 12px 36px #000a,0 0 40px #7fe9ffaa}
+.hc-mega .hc-mg-btn{background:var(--holo,linear-gradient(100deg,#7fe9ff,#9a7bff 38%,#ff7ad9 70%,#ffd36b));color:#04070b;border-radius:0;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);border:0}
+.hc-mega:hover .hc-mg-btn{box-shadow:none;filter:brightness(1.1)}
+.hc-mega .hcm-t,.hc-mega h1{font-family:'Segoe UI',system-ui,sans-serif!important;font-weight:800;letter-spacing:.14em;background:linear-gradient(100deg,#7fe9ff,#9a7bff 38%,#ff7ad9 70%,#ffd36b);-webkit-background-clip:text;background-clip:text;color:transparent}
