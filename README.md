@@ -1,107 +1,105 @@
 <div align="center">
 
-<img src="img/icon-192.png" width="110" alt="Logo Astrolabe">
+<img src="img/icon-192.png" width="110" alt="Astrolabe logo">
 
-# ASTROLABE
-### Le guide Honkai: Star Rail, gratuit et mis à jour automatiquement
+# ASTROLABE · FOILVAULT · BLEACH: MIRRORS HIGH
+### Three free fan sites in one place, refreshed automatically every Monday
 
-**[👉 Ouvrir le site](https://kdvershsr.github.io/Astrolabe/)**
+**[👉 Open the site](https://kdvershsr.github.io/Astrolabe/)**
 
-*Tier list · Builds · Équipes · Bannières · Outils · Communauté*
+*Honkai: Star Rail guide · collectible gacha card game · Bleach: Mirrors High info hub*
 
 </div>
 
-<p align="center"><img src="docs/screens/home.jpg" alt="Page d'accueil d'Astrolabe" width="860"></p>
+<p align="center"><img src="docs/screens/hub.jpg" alt="Home page linking to the three sites" width="880"></p>
 
-> **Site de fans non officiel**, gratuit, sans publicité et sans but lucratif. Honkai: Star Rail et tout son contenu (personnages, noms, images, textes) appartiennent à HoYoverse. Aucun lien avec HoYoverse.
+> **Unofficial fan project.** Free, ad-free and non-profit. Honkai: Star Rail, Bleach and every other game or series mentioned, with their characters, names, images and texts, belong to their respective owners (HoYoverse, Bandai Namco, Shueisha/Tite Kubo, Sega/Atlus and others). No affiliation with any of them. Nothing can be bought on this site.
 
-## Pourquoi Astrolabe ?
-Faire gagner du temps aux joueurs : tout ce qu'il faut pour préparer ses tirages, ses équipes et son end game réuni au même endroit, en **français et en anglais**, et qui **se met à jour tout seul** chaque lundi.
+## The three sites
 
-## Ce que vous trouverez sur le site
-
-### 📚 Base de données
-- **93 personnages** : kit complet (niveau réglable), stats par niveau, build recommandé (reliques, ornements, cônes, statistiques secondaires), équipes conseillées, classements, éidolons et estimation des dégâts.
-- **170 cônes de lumière** et **62 sets de reliques et d'ornements planaires**, avec leurs effets.
-
-### 🏆 Classements
-- **Tier list** par vue d'ensemble, par rôle (DPS, Support, Sustain) et par mode end game (Memory of Chaos, Pure Fiction, Apocalyptic Shadow), sur l'échelle T0 → T4, avec flèches de tendance et filtres (élément, voie, rareté, éidolon).
-- **Tier list des équipes** : classement calculé par le site à partir du niveau des membres et de leur synergie. Les équipes de moins de 4 personnages sont complétées par une suggestion.
-- **Équipes calculées** pour chaque personnage, d'après la synergie des kits (éléments, voies, mots-clés comme Allégresse, dégâts sur la durée, Rupture, mémosprites).
-- **Bannières** en cours et à venir, avec comptes à rebours et rappel 24 h avant la fin (fichier calendrier + notification).
-- **Calendrier end game** automatique pour les quatre modes, dont Anomaly Arbitration.
-
-### 🛠️ Outils
-- **Comparateur** de personnages.
-- **Calculateur de matériaux** d'ascension et de compétences.
-- **Planificateur de tirages** : chance d'obtenir un personnage ou un cône selon vos jades, passes, pity et 50/50, avec courbe de probabilité.
-- **Simulateur de tirages** pour s'amuser (pity, 50/50, animation).
-- **Constructeur d'équipes** enregistrables et partageables par lien, avec un **score de synergie** et des alternatives.
-- **Mes équipes possibles** : d'après votre collection, les équipes que vous pouvez jouer, celles à un personnage près et les personnages à tirer en priorité.
-
-### 📖 Guides
-- **Résumé de chaque version**, de la 1.0 à la 4.7, avec une image marquante, l'arc narratif, les nouveautés et un mode « sans spoiler ».
-- **Prochaine version** : teaser du prochain personnage, ce qui est confirmé ou non, compte à rebours.
-- **Centre d'aide** et événements.
-
-### 👥 Communauté
-- **Profils** (collection, favoris, équipes) et **profils publics** avec vitrine, statistiques et « j'aime ».
-- **Succès** (28 badges à débloquer).
-- **Statistiques** anonymes de ce que jouent les joueurs du site.
-- Connexion par **e-mail**, **double authentification** (application d'authentification), suppression du profil et du compte en un clic.
-
-### ⚙️ Confort
-- **Paramètres** : thème sombre, clair ou auto, 5 couleurs d'accent, taille du texte, densité, animations réduites, langue, fuseau horaire des dates, échelle de la tier list, page d'ouverture, export et import de vos données.
-- **Installable** sur téléphone et ordinateur (PWA), avec consultation hors-ligne.
-- **Routine du jour** à cocher sur l'accueil.
-- Recherche rapide (`Ctrl + K`), adapté au mobile.
-
-## Captures d'écran
-| Tier list | Fiche personnage |
+| | |
 |---|---|
-| <img src="docs/screens/tier.jpg" width="420"> | <img src="docs/screens/perso.jpg" width="420"> |
-| **Tier list des équipes** | **Planificateur de tirages** |
-| <img src="docs/screens/teamtier.jpg" width="420"> | <img src="docs/screens/plan.jpg" width="420"> |
-| **Prochaine version** | **Paramètres** |
-| <img src="docs/screens/next.jpg" width="420"> | <img src="docs/screens/settings.jpg" width="420"> |
+| **Astrolabe**<br>Honkai: Star Rail guide | Characters, light cones, relics, tier lists, banners, calculators and community tools. |
+| **Foilvault**<br>Collectible gacha card game | Open boosters, collect over 950 characters from 20+ games, trade and battle. |
+| **Bleach: Mirrors High**<br>Launch hub | Anime by arc, forecast tier list, systems, events and a summon planner for the game released on 28 October 2026. |
 
-## 🔄 Mise à jour automatique
-Chaque **lundi à 05:00 UTC**, un robot GitHub (GitHub Actions) met le site à jour sans intervention :
-
-| Automatique chaque lundi | À la main, à chaque version |
-|---|---|
-| Personnages, cônes, reliques, compétences, images | Résumé de l'histoire de la version |
-| Builds et équipes conseillées | Tier list (Game8 bloque les robots : mise à jour à chaque version) |
-| Bannières et calendrier end game | Collaborations et guides |
-| Équipes calculées et tier list des équipes | |
-| Date de la prochaine version, fiche du nouveau personnage dès qu'il existe | |
-
-Une page **« Statut des données »** (page Aides) indique l'état de chaque source, et une alerte GitHub est créée si la mise à jour échoue.
-
-## 📦 D'où viennent les données ?
-| Source | Utilisation |
-|---|---|
-| [StarRailRes](https://github.com/Mar-7th/StarRailRes) | Données du jeu et images |
-| [HSR Optimizer](https://github.com/fribbels/hsr-optimizer) | Builds et équipes conseillées |
-| [Game8](https://game8.co/games/Honkai-Star-Rail/archives/409604) | Tier list (convertie en T0 → T4) |
-| [Ennead API](https://api.ennead.cc) | Bannières et calendrier end game |
-| [Supabase](https://supabase.com) | Comptes et profils |
-
-Les équipes « calculées », les scores de synergie et les estimations de tirages sont produits par le site : **ils sont indicatifs** et peuvent contenir des erreurs.
-
-## 🧱 Technique
-Site statique en JavaScript pur (aucun framework), hébergé sur **GitHub Pages**. Mise à jour par un script Python (`scripts/update.py`) exécuté par **GitHub Actions**. Comptes, profils et sécurité (RLS, double authentification) via **Supabase**. Pour installer ou maintenir le projet : [docs/MAINTENANCE.md](docs/MAINTENANCE.md).
-
-## 🙏 Remerciements et mentions
-Merci aux auteurs des projets ci-dessus. Mentions légales, confidentialité et crédits complets : voir les pages **Mentions légales** et **Crédits** du site. Pour signaler une erreur ou demander un retrait, utilisez le bouton « Signaler » du site ou ouvrez une *issue*.
+Each site has its own look: Astrolabe is gold and violet, Foilvault is cyan and holographic with a hex-grid backdrop, Bleach is black, orange and white.
 
 ---
 
-<details>
-<summary><b>🇬🇧 English summary</b></summary>
+## 🌌 Astrolabe — Honkai: Star Rail guide
+<p align="center"><img src="docs/screens/astrolabe.jpg" alt="Astrolabe home" width="880"></p>
 
-**Astrolabe** is a free, ad-free, unofficial fan guide for *Honkai: Star Rail*, in French and English, updated automatically every Monday.
-It includes 93 character pages (kit, build, teams, eidolons, damage), 170 light cones, 62 relic sets, a tier list (T0 → T4) and a computed team tier list, banners with countdowns and reminders, an end game schedule, a materials calculator, a pull planner and simulator, a team builder with synergy score, version recaps from 1.0 to 4.7, a next-version teaser, player profiles with achievements, two-factor authentication, settings (themes, accent colours, text size…), and an installable offline-capable app (PWA).
-Honkai: Star Rail and its content belong to HoYoverse. This project is not affiliated with HoYoverse.
+- **Database**: 93 characters (full kit with adjustable level, stats, recommended build, suggested teams, eidolons, damage estimate), 170 light cones and 62 relic and planar sets.
+- **Rankings**: overall, by role and by end game mode (Memory of Chaos, Pure Fiction, Apocalyptic Shadow) on a T0 → T4 scale, with trend arrows and filters. A computed team tier list ranks teams from member levels and synergy.
+- **Banners and calendar**: current and upcoming banners with countdowns, plus an automatic end game calendar.
+- **Tools**: character comparator, materials calculator, pull planner (pity and 50/50 probability curve), pull simulator, shareable team builder with a synergy score, and "teams I can play" from your collection.
+- **Guides**: recap of every version from 1.0 to the latest (with a no-spoiler mode), next-version teaser, help centre.
+- **Community**: profiles with showcase and likes, 28 achievements, anonymous play statistics, e-mail sign-in with two-factor authentication.
 
-</details>
+<p align="center"><img src="docs/screens/tier.jpg" alt="Tier list" width="880"></p>
+
+## 🃏 Foilvault — the collectible card game
+<p align="center"><img src="docs/screens/foilvault.jpg" alt="Foilvault boosters" width="880"></p>
+
+- **959 cards** from 20+ gacha games, including Honkai: Star Rail, Genshin Impact, Zenless Zone Zero, Wuthering Waves, Reverse: 1999, Nikke, Fate/Grand Order, Persona 5: The Phantom X and Bleach: Mirrors High.
+- **Boosters**: a free general booster every 10 minutes, game boosters and a Prestige booster bought with in-game shards (earned, never purchased).
+- **"Vault ritual" opening**: cut the pack with a swipe, cards are dealt face down, then revealed one by one, with a spotlight for Epic and above.
+- **Finishes**: Normal, Holo, Shiny, Gold and a rare Eclipse variant. Rarity follows each character's place in the game's current tier list.
+- **Play**: collection and catalogue, daily reward and challenges, achievements, battles, a market to trade duplicates, and a ranking.
+- Progress is stored in your browser, and can be exported, imported and synced to your account.
+
+<p align="center"><img src="docs/screens/foilvault-shop.jpg" alt="Foilvault shop" width="880"></p>
+
+## ⚔️ Bleach: Mirrors High — launch hub
+<p align="center"><img src="docs/screens/bleach.jpg" alt="Bleach: Mirrors High page" width="880"></p>
+
+- **The anime, arc by arc**: six arcs, each with a large illustration, a spoiler-tagged summary, the main antagonist and the playable characters tied to it.
+- **Forecast tier list**: clearly labelled as an estimate. It is checked every Monday against public tier lists and updated when enough characters are recognised.
+- **Systems, events and aid**: confirmed information (launch, pre-registration rewards) is separated from likely information.
+- **Summon planner** based on the announced reward (9,000 Mirror Gems = 30 summons).
+
+<p align="center"><img src="docs/screens/bleach-tier.jpg" alt="Bleach forecast tier list" width="880"></p>
+
+---
+
+## 📱 Made for phones
+Installable as an app (PWA), with a bottom bar that adapts to the site you are on, safe-area support, standalone mode and offline access to your cards.
+
+<p align="center">
+<img src="docs/screens/mobile-hub.jpg" width="250" alt="Mobile home">
+<img src="docs/screens/mobile-foilvault.jpg" width="250" alt="Mobile Foilvault">
+<img src="docs/screens/mobile-bleach.jpg" width="250" alt="Mobile Bleach">
+</p>
+
+*On iPhone: Safari → Share → Add to Home Screen. On Android: browser menu → Install app.*
+
+## 🔄 Automatic updates
+A GitHub Actions workflow runs **every Monday at 05:00 UTC** (and on demand with *Run workflow*).
+
+| Step | What it does |
+|---|---|
+| `scripts/update.py` | Refreshes Honkai: Star Rail data, builds, teams, banners and calendar. Tier list from Game8, with **[Prydwen](https://www.prydwen.gg/star-rail/tier-list)** as a backup source. The previous ranking is kept if both fail. |
+| `scripts/bmh_update.py` | Looks for public Bleach: Mirrors High tier lists and updates `data/bmh_tiers.json` when at least 10 characters are recognised. Add `"manual": true` to that file to pin your own ranking. |
+| `scripts/cards.py --art` | Retries missing card images each week. A quality gate rejects images that are too small, banner-shaped, flat or mostly transparent. Writes `data/img_report.json`. |
+| `scripts/bleach_art.py` | Fetches the arc illustrations for the Bleach page. |
+
+A **data status** page shows each source's state, and a GitHub issue is opened if the workflow fails.
+
+## 📦 Data sources
+| Source | Used for |
+|---|---|
+| [StarRailRes](https://github.com/Mar-7th/StarRailRes) | Honkai: Star Rail data and images |
+| [HSR Optimizer](https://github.com/fribbels/hsr-optimizer) | Builds and suggested teams |
+| [Game8](https://game8.co/games/Honkai-Star-Rail/archives/409604) · [Prydwen](https://www.prydwen.gg/star-rail/tier-list) | Honkai: Star Rail tier list (converted to T0 → T4) |
+| [Ennead API](https://api.ennead.cc) | Banners and end game calendar |
+| AniList, Fandom wikis, Wikipedia | Card and arc illustrations, matched by exact character name |
+| [Supabase](https://supabase.com) | Accounts, profiles and trading |
+
+Computed teams, synergy scores, pull estimates and the Bleach forecast tier list are produced by the site and are **indicative only**.
+
+## 🧱 Technical notes
+A static site in plain JavaScript (no framework), hosted on **GitHub Pages**, with Python scripts run by **GitHub Actions**. Accounts, profiles and security (row-level security, two-factor authentication) use **Supabase**. French and English are both supported. To install or maintain the project, see [docs/MAINTENANCE.md](docs/MAINTENANCE.md) and the change log in [docs/NOUVEAUTES_ET_MISE_EN_LIGNE.md](docs/NOUVEAUTES_ET_MISE_EN_LIGNE.md) (in French).
+
+## 🙏 Credits and notices
+Thanks to the authors of the projects above. Full legal notice, privacy policy and credits are on the **Legal notice** and **Credits** pages of the site. To report a mistake or request a removal, use the site's report button or open an issue.
