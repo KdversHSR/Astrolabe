@@ -1,15 +1,13 @@
 {
- "updated": "2026-10-28T19:36:41Z",
+ "updated": "2026-10-28T20:01:36Z",
  "chars": 93,
  "lcs": 170,
  "sets": 62,
  "builds": 93,
- "tiers": "seed",
+ "tiers": "pockettactics.com",
  "banners": "auto",
  "schedule": "auto",
  "tiers_err": "Game8 bloque le robot : page reçue de 2045 octets au lieu de plus de 100 000 | Prydwen : HTTP Error 410: Gone",
- "tiers_checked": "2026-10-25",
- "problems": [
-  "tiers"
- ]
+ "tiers_checked": "2026-10-28",
+ "problems": []
 }
