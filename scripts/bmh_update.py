@@ -70,6 +70,8 @@ def main():
             res['source'] = src
         else:
             res['status'] = f'aucune source exploitable ({tried} pages essayées) : estimation conservée'
+    EN = {'inchangé': 'unchanged', 'vérifiée, sans changement': 'checked, no change'}
+    res['status_en'] = EN.get(res['status']) or ('tier list updated (%s characters)' % re.search(r'\((\d+)', res['status']).group(1) if 'mise à jour (' in res['status'] else 'ranking pinned by hand' if 'main' in res['status'] else 'no usable source: estimate kept')
     b = json.load(open(ROOT / 'data/bmh.json', encoding='utf-8'))
     b['updated'] = TODAY; b['check'] = res
     json.dump(b, open(ROOT / 'data/bmh.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

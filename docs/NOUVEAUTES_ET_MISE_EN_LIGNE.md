@@ -65,3 +65,7 @@ Limites : ces trois sources n'ont pas pu être testées depuis mon environnement
 
 ## v30 — passage visuel (CSS uniquement, aucune donnée touchée)
 Accueil : puces en losanges aux couleurs de chaque site, coins nets, statistiques alignées. Foilvault : niveau avec vraie barre de progression, récompense du jour mise en valeur (grand chiffre de série), vente de doublons rangée. Bleach : en-tête plus compact pour voir les arcs plus tôt. Global : en-tête opaque (plus de texte fantôme derrière), pastille Foilvault réduite sur ordinateur, focus clavier visible.
+
+## v34–v35
+- v34 : correctif de la grosse barre rouge (étiquette NOUVEAU étirée sur mobile pendant la mise en valeur d'une carte).
+- v35 : 3 nouveaux jeux dans Foilvault (Blue Archive, Arknights, Azur Lane : 136 cartes, raretés estimées d'après la popularité ; images à récupérer via Run workflow, wikis Fandom) et « Albums par jeu » : à 25, 50, 75 et 100 % d'un jeu, on réclame des éclats et des boosters de ce jeu.

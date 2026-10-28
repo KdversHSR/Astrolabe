@@ -1597,3 +1597,28 @@ html.standalone body{overscroll-behavior-y:none}
 .hero ~ .stats .stat b,.stat b,.tile b{font-variant-numeric:tabular-nums}
 a:focus-visible,button:focus-visible{outline:2px solid var(--ac,#e8c26a);outline-offset:2px}
 .hub-q{margin:22px 0 14px}
+
+/* v34 : correctif — grande barre rouge devant la carte pendant la mise en valeur (mobile).
+   Sur téléphone, l'étiquette NOUVEAU recevait top ET bottom, donc s'étirait en barre verticale. */
+.hc-new{top:auto}
+.rt-spot .hc-new,.rt-sc .hc-new{position:static!important;transform:none!important;display:inline-block;left:auto;top:auto;right:auto;bottom:auto;margin:6px 0 0}
+
+/* ===== v35 : albums par jeu avec paliers de récompense ===== */
+.hc-alb{padding:10px 0 12px;border-bottom:1px solid #ffffff10}.hc-alb:last-child{border-bottom:0}
+.hc-alb .pbar{margin:0 0 8px}
+.hc-msr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.hc-ms{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 4px;border-radius:10px;border:1px solid #ffffff1c;background:#ffffff08;color:var(--tx);font:inherit;cursor:default;min-height:44px}
+.hc-ms b{font-size:13px}.hc-ms small{font-size:11px;opacity:.75;text-align:center;line-height:1.25}
+.hc-ms.ready{cursor:pointer;border-color:var(--gc);background:color-mix(in srgb,var(--gc) 22%,transparent);box-shadow:0 0 0 1px var(--gc) inset,0 0 16px -4px var(--gc);color:#fff}
+.hc-ms.ready small{opacity:1;font-weight:700}
+.hc-ms.done{opacity:.55;border-style:dashed}
+.hc-ms:disabled:not(.done){opacity:.5}
+.hc-ms:focus-visible{outline:2px solid var(--gc);outline-offset:2px}
+@media(max-width:420px){.hc-ms small{font-size:10px}}
+
+/* v36 — Foilvault « Nuit & jade » */
+body.hcsite{--vl:#5fe0b0;--vp:#2fb985;--vm:#8fe8c4;--vg:#e6c46a;--ac:#5fe0b0;--holo:linear-gradient(100deg,#5fe0b0,#2fb985 45%,#9be8c8 72%,#e6c46a);
+background:radial-gradient(900px 520px at 85% -8%,#1f8f6a33,transparent 62%),radial-gradient(800px 560px at 0 105%,#e6c46a14,transparent 60%),#050c0b}
+body.hcsite::before{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V16L28 0l28 16v34zM28 100V66M0 84l28 16 28-16' fill='none' stroke='%2376f0c0' stroke-opacity='.06'/%3E%3C/svg%3E") 0 0/56px 100px;opacity:1}
+.hcsite .btn.pri,.hcs-t a.on,.hc-mega .hc-mg-btn{color:#031510}
+.hcsite .card,.hcsite .panel{border-color:#5fe0b022}

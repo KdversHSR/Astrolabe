@@ -22,11 +22,12 @@ EL_ZZZ = {'Elec': 'elec', 'Fire': 'fire', 'Ice': 'ice', 'Physics': 'phys', 'Ethe
 WIKI = {'hi3': ['honkaiimpact3'], 'ww': ['wutheringwaves'], 'r99': ['reverse1999'], 'uma': ['umamusume'], 'bb': ['bleach-bravesouls', 'bleach-brave-souls'],
         'ef': ['endfield.wiki.gg', 'arknightsendfield', 'arknights-endfield'], 'nk': ['nikke-goddess-of-victory-international'],
         'fgo': ['fategrandorder'], 'nte': ['neverness-to-everness', 'nte'], 'op': ['opbr', 'onepiecebountyrush'], 'tot': ['tearsofthemis', 'tot.wiki'],
-        'p5x': ['persona5x', 'p5x.wiki.gg', 'persona-5-the-phantom-x'], 'bmh': ['bleach-mirrors-high', 'bleach', 'bleachmirrorshigh']}
+        'p5x': ['persona5x', 'p5x.wiki.gg', 'persona-5-the-phantom-x'], 'bmh': ['bleach-mirrors-high', 'bleach', 'bleachmirrorshigh'],
+        'ba': ['bluearchive'], 'ak': ['arknights'], 'al': ['azurlane']}
 # recherche automatique de wikis Fandom si les noms ci-dessus échouent (API publique Fandom)
-DISCO = {'bb': 'Bleach Brave Souls', 'ef': 'Arknights Endfield', 'op': 'One Piece Bounty Rush', 'tot': 'Tears of Themis', 'nte': 'Neverness to Everness', 'nk': 'Nikke Goddess of Victory', 'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach Mirrors High'}
+DISCO = {'bb': 'Bleach Brave Souls', 'ef': 'Arknights Endfield', 'op': 'One Piece Bounty Rush', 'tot': 'Tears of Themis', 'nte': 'Neverness to Everness', 'nk': 'Nikke Goddess of Victory', 'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach Mirrors High', 'ba': 'Blue Archive', 'ak': 'Arknights', 'al': 'Azur Lane'}
 DEAD = set()
-GAMENAME = {'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach Mirrors High', 'hi3': 'Honkai Impact 3rd', 'zzz': 'Zenless Zone Zero', 'ww': 'Wuthering Waves', 'r99': 'Reverse 1999', 'uma': 'Umamusume', 'bb': 'Bleach Brave Souls', 'ef': 'Arknights Endfield', 'fgo': 'Fate Grand Order', 'nk': 'Nikke', 'nte': 'Neverness to Everness', 'op': 'One Piece Bounty Rush', 'tot': 'Tears of Themis', 'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach'}
+GAMENAME = {'ba': 'Blue Archive', 'ak': 'Arknights', 'al': 'Azur Lane', 'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach Mirrors High', 'hi3': 'Honkai Impact 3rd', 'zzz': 'Zenless Zone Zero', 'ww': 'Wuthering Waves', 'r99': 'Reverse 1999', 'uma': 'Umamusume', 'bb': 'Bleach Brave Souls', 'ef': 'Arknights Endfield', 'fgo': 'Fate Grand Order', 'nk': 'Nikke', 'nte': 'Neverness to Everness', 'op': 'One Piece Bounty Rush', 'tot': 'Tears of Themis', 'p5x': 'Persona 5 The Phantom X', 'bmh': 'Bleach'}
 def _api(host, q):
     h = host if '.' in host else host + '.fandom.com'
     return get(f'https://{h}/api.php?format=json&redirects=1&' + q, timeout=12)
@@ -226,7 +227,7 @@ def build(art=False):
             cards.append({'id': 'zzz-' + k, 'g': 'zzz', 'n': zl.get('fr', {}).get(v['Name'], nm), 'ne': nm, 'r': 5 if v.get('Rarity') == 4 else 4, 'e': EL_ZZZ.get(ets[-1], 'phys'), 'art': 'https://enka.network' + v['Image'] if v.get('Image') else ''})
     except Exception as ex: print('ZZZ ignoré :', ex)
     # --- ajouts manuels
-    for fn in ('cards_extra', 'cards_games', 'cards_games2', 'cards_games3'):   # cards_games = Wuthering Waves / Reverse: 1999 / Umamusume (scripts/extra_games.py)
+    for fn in ('cards_extra', 'cards_games', 'cards_games2', 'cards_games3', 'cards_games4', 'cards_games5'):   # cards_games = Wuthering Waves / Reverse: 1999 / Umamusume (scripts/extra_games.py)
         try:
             for c in json.load(open(ROOT / f'data/{fn}.json', encoding='utf-8'))['cards']: cards.append(c)
         except Exception as ex: print(fn, 'ignoré :', ex)
