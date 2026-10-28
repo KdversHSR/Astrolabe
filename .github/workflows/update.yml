@@ -32,6 +32,10 @@ jobs:
         continue-on-error: true
         timeout-minutes: 10
         run: python scripts/bmh_update.py
+      - name: Rosters et images Blue Archive / Arknights
+        continue-on-error: true
+        timeout-minutes: 15
+        run: python scripts/gh_images.py
       - name: Mettre à jour les cartes Foilvault
         continue-on-error: true
         timeout-minutes: 50
