@@ -51,6 +51,110 @@ def roster():
         seen.add(c['id']); res.append(c)
     return res
 
+def al_images(D, DONE):
+    """Azur Lane : peintures par défaut (repo Fernando2603/AzurLane) pour les cartes déjà définies dans cards_games4.json."""
+    from cards import portrait
+    from PIL import Image
+    try:
+        sk = json.loads(get(RAW + 'Fernando2603/AzurLane/main/ship_skin_list.json'))
+    except Exception as e:
+        print('AL indisponible', e); return
+    by = {x['name'].lower(): x for x in sk}
+    f = ROOT / 'data/cards_games4.json'
+    if not f.exists(): return
+    d = json.load(open(f, encoding='utf-8')); cs = d.get('cards', d) if isinstance(d, dict) else d
+    def one(c):
+        dest = D / (c['id'] + '.webp')
+        if dest.exists(): return True
+        x = by.get(c['n'].lower())
+        if not x: return False
+        for k in x['skins']:
+            if k.get('type') == 'Default' and k.get('painting'):
+                try:
+                    im = portrait(Image.open(io.BytesIO(get(k['painting']))).convert('RGBA')); im.save(dest, 'WEBP', quality=80); return True
+                except Exception: return False
+        return False
+    with ThreadPoolExecutor(8) as ex: ok = list(ex.map(one, cs))
+    for c, o in zip(cs, ok):
+        if o: DONE.add(c['id'])
+    print('Azur Lane images :', sum(ok), '/', len(cs))
+
+def nk_images(D, DONE):
+    """Nikke : pleines images de Nikke-db (uniquement quand le nom exact existe : jamais d'approximation)."""
+    from cards import portrait
+    from PIL import Image
+    NR = RAW + 'Nikke-db/Nikke-db.github.io/main/'
+    try:
+        ch = json.loads(get(NR + 'js/json/Characters.json'))
+    except Exception as e:
+        print('Nikke indisponible', e); return
+    nm = {c['name'].lower(): c['id'] for c in ch}
+    f = ROOT / 'data/cards.json'
+    if not f.exists(): return
+    d = json.load(open(f, encoding='utf-8')); cs = [c for c in (d.get('cards', d) if isinstance(d, dict) else d) if c.get('g') == 'nk']
+    def one(c):
+        dest = D / (c['id'] + '.webp')
+        if dest.exists(): return True
+        i = nm.get(c['n'].lower())
+        if not i: return False
+        try:
+            im = portrait(Image.open(io.BytesIO(get(NR + 'images/FB/' + i + '_00.png'))).convert('RGBA')); im.save(dest, 'WEBP', quality=80); return True
+        except Exception: return False
+    with ThreadPoolExecutor(8) as ex: ok = list(ex.map(one, cs))
+    for c, o in zip(cs, ok):
+        if o: DONE.add(c['id'])
+    print('Nikke images :', sum(ok), '/', len(cs))
+
+def gi_images(D, DONE):
+    """Genshin : illustrations complètes de paimon-moe (nom = nom de fichier exact)."""
+    from cards import portrait
+    from PIL import Image
+    PR = RAW + 'MadeBaruna/paimon-moe/main/static/images/characters/full/'
+    f = ROOT / 'data/cards.json'
+    if not f.exists(): return
+    d = json.load(open(f, encoding='utf-8')); cs = [c for c in (d.get('cards', d) if isinstance(d, dict) else d) if c.get('g') == 'gi' and not c.get('img')]
+    def one(c):
+        dest = D / (c['id'] + '.webp')
+        if dest.exists(): return True
+        try:
+            im = portrait(Image.open(io.BytesIO(get(PR + re.sub(r'[^a-z]', '', c['n'].lower()) + '.png'))).convert('RGBA')); im.save(dest, 'WEBP', quality=80); return True
+        except Exception: return False
+    with ThreadPoolExecutor(8) as ex: ok = list(ex.map(one, cs))
+    for c, o in zip(cs, ok):
+        if o: DONE.add(c['id'])
+    print('Genshin images :', sum(ok), '/', len(cs))
+
+ZZZ_ALIAS = {'soldat11': 'Soldier11', 'cesar': 'Caesar', 'bernice': 'Burnice', 'evelyne': 'Evelyn', 'viviane': 'Vivian', 'gachette': 'Trigger',
+             'soldat0anby': 'Soldier0Anby', 'sunniva': 'Sunna', 'billystellaire': 'StarlightBilly', 'clarette': 'Claret'}
+def zzz_images(D, DONE):
+    """Zenless Zone Zero : illustrations de genshin-optimizer (libs/zzz/assets), nom normalisé exact ou alias connu."""
+    from cards import portrait
+    from PIL import Image
+    ZR = RAW + 'frzyc/genshin-optimizer/master/libs/zzz/assets/src/gen/chars/'
+    nz = lambda s: re.sub(r'[^a-z0-9]', '', unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode().lower())
+    try:
+        import subprocess
+        names = [l for l in (D.parent.parent / 'data' / 'zzz_names.txt').read_text().split()] if (D.parent.parent / 'data' / 'zzz_names.txt').exists() else []
+    except Exception:
+        names = []
+    f = ROOT / 'data/cards.json'
+    if not f.exists(): return
+    d = json.load(open(f, encoding='utf-8')); cs = [c for c in (d.get('cards', d) if isinstance(d, dict) else d) if c.get('g') == 'zzz']
+    def one(c):
+        dest = D / (c['id'] + '.webp')
+        if dest.exists(): return True
+        k = nz(c['n']); folder = ZZZ_ALIAS.get(k) or ''.join(w for w in re.split(r'[\s&]+', unicodedata.normalize('NFKD', c['n']).encode('ascii', 'ignore').decode()) if w)
+        for fo in dict.fromkeys([ZZZ_ALIAS.get(k), folder, c['n'].replace(' ', '')]):
+            if not fo: continue
+            try:
+                im = portrait(Image.open(io.BytesIO(get(ZR + fo + '/full.png'))).convert('RGBA')); im.save(dest, 'WEBP', quality=80); return True
+            except Exception: pass
+        return False
+    with ThreadPoolExecutor(8) as ex: ok = list(ex.map(one, cs))
+    for c, o in zip(cs, ok):
+        if o: DONE.add(c['id'])
+    print('ZZZ images :', sum(ok), '/', len(cs))
+
 def main():
     from cards import portrait
     from PIL import Image
@@ -72,6 +176,10 @@ def main():
         c.pop('src', None); c.pop('src2', None); c.pop('src3', None)
         if o: c['img'] = f"img/cards/{c['id']}.webp"; DONE.add(c['id'])
         keep.append(c)   # une carte sans image reste jouable (carte dessinée) : elle ne disparaît pas
+    al_images(D, DONE)
+    nk_images(D, DONE)
+    gi_images(D, DONE)
+    zzz_images(D, DONE)
     json.dump(sorted(DONE), open(VF, 'w'))
     json.dump({'v': 1, 'cards': keep}, open(ROOT / 'data/cards_games5.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     from collections import Counter

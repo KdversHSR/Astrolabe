@@ -69,3 +69,8 @@ Accueil : puces en losanges aux couleurs de chaque site, coins nets, statistique
 ## v34–v35
 - v34 : correctif de la grosse barre rouge (étiquette NOUVEAU étirée sur mobile pendant la mise en valeur d'une carte).
 - v35 : 3 nouveaux jeux dans Foilvault (Blue Archive, Arknights, Azur Lane : 136 cartes, raretés estimées d'après la popularité ; images à récupérer via Run workflow, wikis Fandom) et « Albums par jeu » : à 25, 50, 75 et 100 % d'un jeu, on réclame des éclats et des boosters de ce jeu.
+
+## v36
+- Menu en deux niveaux : l'accueil ne montre que les 3 sites ; chaque site (Astrolabe, Foilvault, Bleach) a ensuite son propre menu.
+- Foilvault : palette « Nuit & jade », barre de pitié (Légendaire garantie), cartes plus centrées sur l'illustration.
+- Images ajoutées depuis des dépôts GitHub publics (script `scripts/gh_images.py`, lancé chaque lundi) : Blue Archive, Arknights, Azur Lane, Genshin, Zenless Zone Zero, Nikke (noms exacts seulement).
