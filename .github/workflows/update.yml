@@ -80,7 +80,7 @@ jobs:
       - name: Préparer le site
         run: |
           mkdir _site
-          for f in index.html style.css app.js config.js stats-config.js analytics.js og.png manifest.webmanifest sw.js favicon.svg favicon.ico fonts data img fiche sitemap.xml robots.txt; do [ -e "$f" ] && cp -r "$f" _site/; done; true
+          for f in google*.html index.html style.css app.js config.js stats-config.js analytics.js og.png manifest.webmanifest sw.js favicon.svg favicon.ico fonts data img fiche sitemap.xml robots.txt; do [ -e "$f" ] && cp -r "$f" _site/; done; true
       - uses: actions/configure-pages@v5
         id: pages
       - name: Adresse du site pour les aperçus de partage
