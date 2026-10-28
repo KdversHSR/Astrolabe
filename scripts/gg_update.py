@@ -18,6 +18,7 @@ SOURCES = {
     'ww': [('prydwen', 'https://www.prydwen.gg/page-data/wuthering-waves/tier-list/page-data.json')],
     'r99': [('prydwen', 'https://www.prydwen.gg/page-data/reverse-1999/tier-list/page-data.json')],
     'gi': [('html', 'https://genshin.gg/tier-list/')],
+    'ss': [('html', 'https://www.ldshop.gg/blog/starsavior/starsavior-tier-list.html'), ('html', 'https://driffle.com/blog/star-savior-tier-list/')],
     'nte': [('prydwen', 'https://www.prydwen.gg/page-data/neverness-to-everness/tier-list/page-data.json')],
 }
 try:

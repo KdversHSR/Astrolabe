@@ -81,3 +81,9 @@ Genshin Impact, Zenless Zone Zero, Wuthering Waves, Reverse: 1999, Neverness to 
 - Chaque jeu a sa propre direction artistique (couleurs, polices, illustration).
 - Mise à jour du lundi : `scripts/gg_update.py` relit des tier lists publiques (Prydwen, genshin.gg). Les adresses n'ont pas pu être testées depuis mon environnement : si une source change, le classement précédent est conservé et la raison est écrite dans `data/gg_tiers.json` (champ `status`). Pour changer une source sans toucher au code : créer `data/gg_sources.json` (ex. `{"zzz":[["prydwen","https://..."]]}`).
 - Tant qu'aucune source n'a répondu, les niveaux affichés sont l'estimation du site (popularité) et le site le dit.
+
+## v38
+- Onglet **Équipement** : armes et sets d'artéfacts (Genshin, en français), moteurs W et disques (ZZZ), avec icônes et effets. Source : dépôt open source genshin-optimizer (MIT), script `scripts/gg_equip.py` relancé chaque lundi. Pas de classement d'équipement (aucune source de tier list lisible trouvée).
+- Onglet **Bannières & événements** : `scripts/gg_banners.mjs` utilise le paquet open source `gacha-calendar-core` (MIT) qui lit les annonces officielles/wikis chinois. Les textes restent en chinois. Non testé d'ici (réseau bloqué) : si une source ne répond pas, la page le dit.
+- **Star Savior** : roster et tiers (44 personnages) recoupés à partir de deux tier lists publiques (ldshop.gg, driffle.com, juin 2026). Pas d'images.
+- Wuthering Waves, Reverse: 1999, Neverness to Everness : pas de source d'équipement ni d'images trouvée pour le moment.

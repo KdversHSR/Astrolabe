@@ -32,6 +32,16 @@ jobs:
         continue-on-error: true
         timeout-minutes: 10
         run: python scripts/bmh_update.py
+      - name: Bannières et événements (paquet gacha-calendar-core)
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          mkdir -p /tmp/gcc && cd /tmp/gcc && npm init -y >/dev/null && npm i gacha-calendar-core >/dev/null
+          cd "$GITHUB_WORKSPACE" && GCC_PATH=/tmp/gcc/node_modules/gacha-calendar-core/core.mjs node scripts/gg_banners.mjs
+      - name: Équipement (armes, artéfacts, moteurs W, disques)
+        continue-on-error: true
+        timeout-minutes: 15
+        run: python scripts/gg_equip.py
       - name: Tier lists des pages jeux (Genshin, ZZZ, WuWa, R1999, NTE)
         continue-on-error: true
         timeout-minutes: 10

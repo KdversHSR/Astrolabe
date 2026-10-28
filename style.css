@@ -1729,3 +1729,27 @@ body.gg-zzz .nv a,body.gg-zzz .gg-nav a,body.gg-zzz .gg-hero h1,body.gg-nte .gg-
 .gg-ww .gg-hero{border-radius:28px 6px 28px 6px}.gg-ww .gg-nav a{border-radius:999px}
 .gg-gi .gg-hero{border-color:var(--ac);box-shadow:0 0 0 4px #0a1122,0 0 0 5px #e8c77a55}.gg-gi .gg-nav a{clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);border-radius:0}
 .gg-ss .gg-hero{border-radius:26px}
+
+/* v38 — équipement et bannières des guides gacha */
+.gg-eqg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;align-items:start}
+.gg-eq{background:var(--s1);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+.gg-eq[open]{border-color:var(--ac);grid-column:span 2}
+.gg-eq summary{display:grid;grid-template-columns:56px 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;padding:10px 12px;cursor:pointer;list-style:none}
+.gg-eq summary::-webkit-details-marker{display:none}
+.gg-eqi{grid-row:span 2;width:56px;height:56px;border-radius:12px;background:radial-gradient(circle,var(--hl),transparent 70%),var(--s2);display:grid;place-items:center;overflow:hidden}
+.gg-eqi img{width:100%;height:100%;object-fit:contain}
+.gg-eq b{font-size:14px;line-height:1.2}.gg-eq small{color:var(--mu);font-size:12px}
+.gg-eq.r5 small,.gg-eq.r5 .gg-eqi{color:#ffd66b}.gg-eq.r5{border-color:#ffd66b44}.gg-eq.r4 small{color:#c79bff}
+.gg-eqd{padding:2px 14px 14px;font-size:13px;color:var(--tx)}.gg-eqd p{margin:6px 0}.gg-eqd b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--ac);color:#0a0a0a;font-size:12px;margin-right:6px}
+.gg-bnl{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.gg-bt{font:700 18px/1.3 var(--se);margin:4px 0}.gg-bd{color:var(--ac);font-size:13px;margin:0 0 8px}
+.gg-bn pre{white-space:pre-wrap;font:12px/1.5 var(--sf);color:var(--mu);margin:8px 0 0}
+@media(max-width:640px){.gg-eq[open]{grid-column:auto}}
+
+/* v39 — accueil : Foilvault seul en haut, guides gacha en dessous (Astrolabe et Bleach inclus) */
+.gg-as{--g-ac:#e0b050;--g-bd:#e0b05066;--g-hf:Cinzel,Georgia,serif}.gg-bl{--g-ac:#ff7a1a;--g-bd:#ff7a1a77;--g-hf:Impact,Haettenschweiler,sans-serif}
+.gg-hubc .bm-art,.gg-hubc .bm-ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1}
+.gg-hubc.gg-bl h3{text-transform:uppercase;letter-spacing:.03em}
+.hub-doors{grid-template-columns:1fr!important}
+.hub-door.d-fv h2{background:linear-gradient(100deg,#5fe0b0,#9be8c8 55%,#e6c46a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hub-door.d-fv{border-color:#5fe0b044}
