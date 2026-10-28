@@ -1,0 +1,1 @@
+Déposez ici une image nommée exactement comme l'identifiant de la carte (ex. p5x-masakiashiya.png) : le robot l'utilise en priorité.

@@ -1758,3 +1758,30 @@ body.gg-p5x .gg-hero h1,.gg-hubc.gg-p5x h3{text-transform:uppercase;letter-spaci
 .gg-vc b{display:block;margin-top:5px;font-weight:600;line-height:1.15}
 .gg-vb{margin:10px 0 0;font-size:12px;color:var(--mu)}
 @media(max-width:600px){.gg-vers{grid-template-columns:1fr}}
+/* v42 : pages jeux au format Honkai */
+.ggsite .gg-hero{margin-top:0}
+.gg-bnl2{display:grid;gap:12px}.gg-bnr{display:flex;gap:14px;align-items:center;background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:12px}
+.gg-bnc{display:flex;gap:8px}.gg-bnr small{display:block;color:var(--mu);font-size:12px;margin-top:3px}
+.gg-bnr .gg-vc{width:64px}.gg-bnr .gg-vc .gg-art{width:64px;height:76px}
+.gg-cd .gg-cdn{display:flex;align-items:baseline;gap:12px;margin:10px 0}.gg-cd .gg-cdn b{font:800 64px/1 var(--se);color:var(--ac)}.gg-cd .gg-cdn span{color:var(--mu)}
+.gg-rel{display:grid;gap:10px}.gg-relr{display:grid;grid-template-columns:minmax(150px,1.4fr) 100px auto 90px;gap:10px;align-items:center}
+.gg-relr select,.gg-relr input[type=number],.gg-cmpsel select{background:var(--s2);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:9px}
+.gg-cmpsel{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.gg-cmpg{display:grid;grid-template-columns:90px 1fr 1fr;gap:10px;text-align:center}.gg-cmpc b{display:block;margin-top:6px}
+.gg-cmpc .gg-dart{width:100px;height:120px;margin:0 auto}
+.gg-cmpt{width:100%;border-collapse:collapse;margin-top:10px}.gg-cmpt th{text-align:left;color:var(--mu);font-weight:600;width:90px;padding:8px 6px;vertical-align:top}.gg-cmpt td{padding:8px 6px;border-top:1px solid var(--bd);font-size:13px;text-align:center}
+.vt1 .gg-ini{display:grid;place-items:center;width:100%;aspect-ratio:3/4;font:700 22px var(--se);background:var(--s2);border-radius:10px;color:var(--mu)}
+@media(max-width:600px){.gg-relr{grid-template-columns:1fr 1fr}.gg-cmpg{grid-template-columns:1fr 1fr}.gg-cmpg>div:first-child{display:none}}
+/* v44 : Foilvault 2.0 — bandeau 7 jours + probabilités */
+.hc-lg7{align-items:stretch!important;text-align:center}
+.hc-lgs{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;width:100%;margin:10px 0 6px}
+.hc-ld{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;border:1px solid var(--bd);border-radius:10px;background:var(--s1);clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))}
+.hc-ld small{font:600 10px var(--mo);letter-spacing:.1em;color:var(--mu)}.hc-ld b{font:700 13px var(--se)}.hc-ld i{font-style:normal;font-size:11px;color:var(--ac)}
+.hc-ld.done{opacity:.55;background:color-mix(in srgb,var(--ac) 14%,var(--s1))}.hc-ld.done b{color:var(--ac)}
+.hc-ld.today{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac),0 0 18px color-mix(in srgb,var(--ac) 45%,transparent);background:color-mix(in srgb,var(--ac) 18%,var(--s1))}
+.hc-ld.big{background:linear-gradient(160deg,color-mix(in srgb,#ffcf5a 20%,var(--s1)),var(--s1))}.hc-ld.big i{color:#ffcf5a}
+@media(max-width:520px){.hc-lgs{gap:4px}.hc-ld b{font-size:11px}}
+.hc-odds .hc-osel{margin:8px 0;background:var(--s2);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;font:inherit}
+.hc-ot{overflow-x:auto}.hc-ot table{width:100%;border-collapse:collapse;font-size:13px}.hc-ot th{font:600 11px var(--mo);letter-spacing:.06em;text-transform:uppercase;color:var(--mu);text-align:left;padding:6px 8px;border-bottom:1px solid var(--bd)}.hc-ot td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--bd) 60%,transparent)}
+.hc-ofin{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.hc-ofin span{padding:5px 10px;border:1px solid var(--bd);border-radius:999px;font-size:12px}
+.hc-onote{margin:8px 0 0;padding-left:18px;color:var(--mu);font-size:12.5px;line-height:1.5}

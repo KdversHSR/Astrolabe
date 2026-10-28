@@ -258,6 +258,47 @@ def scrape_prydwen():
     return res
 
 
+HTML_SOURCES = ['https://www.pockettactics.com/honkai-star-rail/tier-list', 'https://pocketgamer.com/honkai-star-rail/tier-list/']
+_LAB = re.compile(r'^(SS|S\+|S|A\+|A|B\+|B|C|D)(\s*[-–]?\s*tier)?:?$', re.I)
+
+
+def parse_tiers_text(raw):
+    """Lit une page de tier list dans l'ordre du texte : une étiquette (SS, S+, S Tier…) puis les noms qui la suivent (un par cellule, ou séparés par des virgules)."""
+    raw = re.sub(r'<(script|style)[\s\S]*?</\1>', ' ', raw, flags=re.I)
+    toks = [re.sub(r'\s+', ' ', H.unescape(t)).strip() for t in re.split(r'<[^>]+>', raw)]
+    cur, res, seen = None, {}, set()
+    for t in toks:
+        if not t:
+            continue
+        parts = [p.strip() for p in t.split(',')] if len(t) > 40 or ',' in t else [t]
+        for p in parts:
+            if not p or len(p) > 45:
+                continue
+            m = _LAB.match(p)
+            if m:
+                cur = {'D': 'C', 'A+': 'A', 'B+': 'B'}.get(m[1].upper(), m[1].upper())
+                continue
+            if cur and p not in seen and not re.search(r'\d{3,}|tier list|updated|version', p, re.I):
+                seen.add(p)
+                res.setdefault(cur, []).append(p)
+    return res
+
+
+def scrape_html_tiers():
+    """Secours : pages de tier list publiques (Pocket Tactics, PocketGamer). On n'accepte que si assez de personnages sont rangés."""
+    errs = []
+    for url in HTML_SOURCES:
+        try:
+            res = parse_tiers_text(get_browser(url))
+            n = sum(len(v) for v in res.values())
+            if n >= 40 and 'SS' in res or n >= 40 and 'S+' in res:
+                return res, url.split('/')[2].replace('www.', '')
+            errs.append(f'{url.split("/")[2]} : {n} noms')
+        except Exception as e:
+            errs.append(f'{url.split("/")[2]} : {str(e)[:50]}')
+    raise RuntimeError(' ; '.join(errs))
+
+
 # ------------------------------------------------------------------ tendances (historique des classements)
 ORDER = ['SS', 'S+', 'S', 'A', 'B', 'C']
 
@@ -423,7 +464,17 @@ def main():
                 print('   tier list mise à jour depuis Prydwen (secours)')
             except Exception as e2:
                 ST['tiers_err'] += ' | Prydwen : ' + str(e2)[:160]
-                print('   Prydwen indisponible aussi, anciennes données conservées :', e2)
+                print('   Prydwen indisponible aussi :', e2)
+                try:
+                    hr, hsrc = scrape_html_tiers()
+                    tiers = {t: hr.get(t, []) for t in ('SS', 'S+', 'S', 'A', 'B', 'C')}
+                    ST['tiers'] = hsrc
+                    (DATA / 'seed_tiers.json').write_text(json.dumps({'overall': tiers, 'general': gen, 'endgame': eg, 'checked': datetime.date.today().isoformat()}, ensure_ascii=False, indent=1), 'utf-8')
+                    seed['checked'] = datetime.date.today().isoformat()
+                    print('   tier list mise à jour depuis', hsrc, '(secours)')
+                except Exception as e3:
+                    ST['tiers_err'] += ' | secours HTML : ' + str(e3)[:160]
+                    print('   Aucune source disponible, anciennes données conservées :', e3)
     ids_of = lambda d: {t: [i for i in (rid(n) for n in ns) if i] for t, ns in d.items()}
     tiers_out = {'ov': ids_of(tiers), **{k: ids_of(v) for k, v in gen.items()}, **{k: ids_of(v) for k, v in eg.items()}}
     inv = {m: {i: t for t, l in d.items() for i in l} for m, d in tiers_out.items()}
@@ -586,7 +637,7 @@ def main():
     sets.sort(key=lambda x: (x['pl'], x['n']))
     out = {'version': version, 'updated': datetime.date.today().isoformat(), 'chars': chars, 'lcs': lcs, 'sets': sets, 'tiers': tiers_out, 'trend': trend, 'trend_since': since, 'tnotes': tnotes, 'events': events, 'banners': bj, 'manual': manual}
     (DATA / 'data.json').write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), 'utf-8')
-    pb = [k for k, ok in (('tiers', ST['tiers'] == 'game8'), ('banners', ST['banners'] == 'auto'), ('schedule', ST['schedule'] == 'auto')) if not ok] if not a.no_scrape else []
+    pb = [k for k, ok in (('tiers', ST['tiers'] != 'seed'), ('banners', ST['banners'] == 'auto'), ('schedule', ST['schedule'] == 'auto')) if not ok] if not a.no_scrape else []
     (DATA / 'status.json').write_text(json.dumps({'updated': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'), 'chars': len(chars), 'lcs': len(lcs), 'sets': len(sets), 'builds': sum(1 for c in chars if c.get('b')), 'tiers': ST['tiers'], 'banners': ST['banners'], 'schedule': ST['schedule'], 'tiers_err': ST.get('tiers_err', ''), 'tiers_checked': seed.get('checked', ''), 'problems': pb}, ensure_ascii=False, indent=1), 'utf-8')
     print(f'   {len(chars)} personnages, {len(lcs)} cônes, {len(sets)} sets, {sum(1 for c in chars if "b" in c)} builds')
 

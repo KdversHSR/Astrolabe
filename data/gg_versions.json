@@ -3,6 +3,43 @@
   "src": "auto",
   "from": "paimon-moe",
   "checked": "2026-10-28",
+  "arcs": [
+   {
+    "id": "1",
+    "fr": "Mondstadt & Liyue",
+    "en": "Mondstadt & Liyue"
+   },
+   {
+    "id": "2",
+    "fr": "Inazuma",
+    "en": "Inazuma"
+   },
+   {
+    "id": "3",
+    "fr": "Sumeru",
+    "en": "Sumeru"
+   },
+   {
+    "id": "4",
+    "fr": "Fontaine",
+    "en": "Fontaine"
+   },
+   {
+    "id": "5",
+    "fr": "Natlan",
+    "en": "Natlan"
+   },
+   {
+    "id": "6",
+    "fr": "Nod-Krai",
+    "en": "Nod-Krai"
+   },
+   {
+    "id": "7",
+    "fr": "Version 7.x",
+    "en": "Version 7.x"
+   }
+  ],
   "v": [
    {
     "v": "1.0",
@@ -775,6 +812,1587 @@
      "When Warm Winds Cavort",
      "Void Star's Advent"
     ]
+   }
+  ],
+  "banners": [
+   {
+    "n": "Ballad in Goblets",
+    "s": "2020-09-28 00:00:00",
+    "e": "2020-10-18 18:00:00",
+    "feat": [
+     "Venti"
+    ],
+    "rare": [
+     "Barbara",
+     "Fischl",
+     "Xiangling"
+    ],
+    "v": "1.0"
+   },
+   {
+    "n": "Sparkling Steps",
+    "s": "2020-10-20 18:00:00",
+    "e": "2020-11-10 16:00:00",
+    "feat": [
+     "Klee"
+    ],
+    "rare": [
+     "Xingqiu",
+     "Sucrose",
+     "Noelle"
+    ],
+    "v": "1.0"
+   },
+   {
+    "n": "Farewell of Snezhnaya",
+    "s": "2020-11-11 06:00:00",
+    "e": "2020-12-01 16:00:00",
+    "feat": [
+     "Tartaglia"
+    ],
+    "rare": [
+     "Ningguang",
+     "Beidou",
+     "Diona"
+    ],
+    "v": "1.1"
+   },
+   {
+    "n": "Gentry of Hermitage",
+    "s": "2020-12-01 18:00:00",
+    "e": "2020-12-22 15:00:00",
+    "feat": [
+     "Zhongli"
+    ],
+    "rare": [
+     "Xinyan",
+     "Razor",
+     "Chongyun"
+    ],
+    "v": "1.1"
+   },
+   {
+    "n": "Secretum Secretorum",
+    "s": "2020-12-23 06:00:00",
+    "e": "2021-01-12 16:00:00",
+    "feat": [
+     "Albedo"
+    ],
+    "rare": [
+     "Fischl",
+     "Bennett",
+     "Sucrose"
+    ],
+    "v": "1.2"
+   },
+   {
+    "n": "Adrift in the Harbor",
+    "s": "2021-01-12 18:00:00",
+    "e": "2021-02-02 15:00:00",
+    "feat": [
+     "Ganyu"
+    ],
+    "rare": [
+     "Xingqiu",
+     "Xiangling",
+     "Noelle"
+    ],
+    "v": "1.2"
+   },
+   {
+    "n": "Invitation to Mundane Life",
+    "s": "2021-02-03 06:00:00",
+    "e": "2021-02-17 16:00:00",
+    "feat": [
+     "Xiao"
+    ],
+    "rare": [
+     "Diona",
+     "Xinyan",
+     "Beidou"
+    ],
+    "v": "1.3"
+   },
+   {
+    "n": "Dance of Lanterns",
+    "s": "2021-02-17 18:00:00",
+    "e": "2021-03-02 16:00:00",
+    "feat": [
+     "Keqing"
+    ],
+    "rare": [
+     "Barbara",
+     "Bennett",
+     "Ningguang"
+    ],
+    "v": "1.3"
+   },
+   {
+    "n": "Moment of Bloom",
+    "s": "2021-03-02 18:00:00",
+    "e": "2021-03-16 15:00:00",
+    "feat": [
+     "Hu Tao"
+    ],
+    "rare": [
+     "Xingqiu",
+     "Xiangling",
+     "Chongyun"
+    ],
+    "v": "1.3"
+   },
+   {
+    "n": "Ballad in Goblets",
+    "s": "2021-03-17 06:00:00",
+    "e": "2021-04-06 16:00:00",
+    "feat": [
+     "Venti"
+    ],
+    "rare": [
+     "Sucrose",
+     "Razor",
+     "Noelle"
+    ],
+    "v": "1.4"
+   },
+   {
+    "n": "Farewell of Snezhnaya",
+    "s": "2021-04-06 18:00:00",
+    "e": "2021-04-27 15:00:00",
+    "feat": [
+     "Tartaglia"
+    ],
+    "rare": [
+     "Rosaria",
+     "Fischl",
+     "Barbara"
+    ],
+    "v": "1.4"
+   },
+   {
+    "n": "Gentry of Hermitage",
+    "s": "2021-04-28 06:00:00",
+    "e": "2021-05-18 17:59:59",
+    "feat": [
+     "Zhongli"
+    ],
+    "rare": [
+     "Yanfei",
+     "Noelle",
+     "Diona"
+    ],
+    "v": "1.5"
+   },
+   {
+    "n": "Born of Ocean Swell",
+    "s": "2021-05-18 18:00:00",
+    "e": "2021-06-08 15:00:00",
+    "feat": [
+     "Eula"
+    ],
+    "rare": [
+     "Xingqiu",
+     "Beidou",
+     "Xinyan"
+    ],
+    "v": "1.5"
+   },
+   {
+    "n": "Sparkling Steps",
+    "s": "2021-06-09 06:00:00",
+    "e": "2021-06-29 17:59:59",
+    "feat": [
+     "Klee"
+    ],
+    "rare": [
+     "Fischl",
+     "Sucrose",
+     "Barbara"
+    ],
+    "v": "1.6"
+   },
+   {
+    "n": "Leaves in the Wind",
+    "s": "2021-06-29 18:00:00",
+    "e": "2021-07-20 14:59:59",
+    "feat": [
+     "Kaedehara Kazuha"
+    ],
+    "rare": [
+     "Bennett",
+     "Razor",
+     "Rosaria"
+    ],
+    "v": "1.6"
+   },
+   {
+    "n": "The Herons Court",
+    "s": "2021-07-21 06:00:00",
+    "e": "2021-08-10 17:59:59",
+    "feat": [
+     "Kamisato Ayaka"
+    ],
+    "rare": [
+     "Chongyun",
+     "Ningguang",
+     "Yanfei"
+    ],
+    "v": "2.0"
+   },
+   {
+    "n": "Tapestry of Golden Flames",
+    "s": "2021-08-10 18:00:00",
+    "e": "2021-08-31 14:59:59",
+    "feat": [
+     "Yoimiya"
+    ],
+    "rare": [
+     "Sayu",
+     "Diona",
+     "Xinyan"
+    ],
+    "v": "2.0"
+   },
+   {
+    "n": "Reign of Serenity",
+    "s": "2021-09-01 06:00:00",
+    "e": "2021-09-21 17:59:59",
+    "feat": [
+     "Raiden_shogun"
+    ],
+    "rare": [
+     "Xiangling",
+     "Sucrose",
+     "Kujou Sara"
+    ],
+    "v": "2.1"
+   },
+   {
+    "n": "Drifting Luminescence",
+    "s": "2021-09-21 18:00:00",
+    "e": "2021-10-12 14:59:59",
+    "feat": [
+     "Sangonomiya Kokomi"
+    ],
+    "rare": [
+     "Rosaria",
+     "Beidou",
+     "Xingqiu"
+    ],
+    "v": "2.1"
+   },
+   {
+    "n": "Farewell of Snezhnaya",
+    "s": "2021-10-13 06:00:00",
+    "e": "2021-11-02 17:59:59",
+    "feat": [
+     "Tartaglia"
+    ],
+    "rare": [
+     "Ningguang",
+     "Chongyun",
+     "Yanfei"
+    ],
+    "v": "2.2"
+   },
+   {
+    "n": "Moment of Bloom",
+    "s": "2021-11-02 18:00:00",
+    "e": "2021-11-23 14:59:59",
+    "feat": [
+     "Hu Tao"
+    ],
+    "rare": [
+     "Thoma",
+     "Diona",
+     "Sayu"
+    ],
+    "v": "2.2"
+   },
+   {
+    "n": "Secretum Secretorum",
+    "s": "2021-11-24 06:00:00",
+    "e": "2021-12-14 17:59:59",
+    "feat": [
+     "Albedo",
+     "Eula"
+    ],
+    "rare": [
+     "Rosaria",
+     "Noelle",
+     "Bennett"
+    ],
+    "v": "2.3"
+   },
+   {
+    "n": "Oni's Royale",
+    "s": "2021-12-14 18:00:00",
+    "e": "2022-01-04 17:59:59",
+    "feat": [
+     "Arataki Itto"
+    ],
+    "rare": [
+     "Gorou",
+     "Xiangling",
+     "Barbara"
+    ],
+    "v": "2.3"
+   },
+   {
+    "n": "The Transcendent One Returns",
+    "s": "2022-01-05 06:00:00",
+    "e": "2022-01-25 17:59:59",
+    "feat": [
+     "Shenhe",
+     "Xiao"
+    ],
+    "rare": [
+     "Yun Jin",
+     "Ningguang",
+     "Chongyun"
+    ],
+    "v": "2.4"
+   },
+   {
+    "n": "Gentry of Hermitage",
+    "s": "2022-01-25 18:00:00",
+    "e": "2022-02-15 14:59:59",
+    "feat": [
+     "Zhongli",
+     "Ganyu"
+    ],
+    "rare": [
+     "Xingqiu",
+     "Beidou",
+     "Yanfei"
+    ],
+    "v": "2.4"
+   },
+   {
+    "n": "Everbloom Violet",
+    "s": "2022-02-16 06:00:00",
+    "e": "2022-03-08 17:59:59",
+    "feat": [
+     "Yae Miko"
+    ],
+    "rare": [
+     "Thoma",
+     "Diona",
+     "Fischl"
+    ],
+    "v": "2.5"
+   },
+   {
+    "n": "Reign of Serenity",
+    "s": "2022-03-08 18:00:00",
+    "e": "2022-03-29 14:59:59",
+    "feat": [
+     "Raiden_shogun",
+     "Sangonomiya Kokomi"
+    ],
+    "rare": [
+     "Bennett",
+     "Xinyan",
+     "Kujou Sara"
+    ],
+    "v": "2.5"
+   },
+   {
+    "n": "Azure Excursion",
+    "s": "2022-03-30 06:00:00",
+    "e": "2022-04-19 17:59:59",
+    "feat": [
+     "Kamisato Ayato",
+     "Venti"
+    ],
+    "rare": [
+     "Yun Jin",
+     "Xiangling",
+     "Sucrose"
+    ],
+    "v": "2.6"
+   },
+   {
+    "n": "The Herons Court",
+    "s": "2022-04-19 18:00:00",
+    "e": "2022-05-31 05:59:59",
+    "feat": [
+     "Kamisato Ayaka"
+    ],
+    "rare": [
+     "Sayu",
+     "Razor",
+     "Rosaria"
+    ],
+    "v": "2.6"
+   },
+   {
+    "n": "Discerner of Enigmas",
+    "s": "2022-05-31 09:00:00",
+    "e": "2022-06-21 17:59:59",
+    "feat": [
+     "Yelan",
+     "Xiao"
+    ],
+    "rare": [
+     "Barbara",
+     "Noelle",
+     "Yanfei"
+    ],
+    "v": "2.7"
+   },
+   {
+    "n": "Oni's Royale",
+    "s": "2022-06-21 18:00:00",
+    "e": "2022-07-12 14:59:59",
+    "feat": [
+     "Arataki Itto"
+    ],
+    "rare": [
+     "Chongyun",
+     "Gorou",
+     "Kuki Shinobu"
+    ],
+    "v": "2.7"
+   },
+   {
+    "n": "Leaves in the Wind",
+    "s": "2022-07-13 06:00:00",
+    "e": "2022-08-02 17:59:59",
+    "feat": [
+     "Kaedehara Kazuha",
+     "Klee"
+    ],
+    "rare": [
+     "Ningguang",
+     "Thoma",
+     "Shikanoin Heizou"
+    ],
+    "v": "2.8"
+   },
+   {
+    "n": "Tapestry of Golden Flames",
+    "s": "2022-08-02 18:00:00",
+    "e": "2022-08-23 14:59:59",
+    "feat": [
+     "Yoimiya"
+    ],
+    "rare": [
+     "Yun Jin",
+     "Xinyan",
+     "Bennett"
+    ],
+    "v": "2.8"
+   },
+   {
+    "n": "Viridescent Vigil",
+    "s": "2022-08-24 06:00:00",
+    "e": "2022-09-09 17:59:59",
+    "feat": [
+     "Tighnari",
+     "Zhongli"
+    ],
+    "rare": [
+     "Collei",
+     "Fischl",
+     "Diona"
+    ],
+    "v": "3.0"
+   },
+   {
+    "n": "Adrift in the Harbor",
+    "s": "2022-09-09 18:00:00",
+    "e": "2022-09-27 14:59:59",
+    "feat": [
+     "Ganyu",
+     "Sangonomiya Kokomi"
+    ],
+    "rare": [
+     "Xingqiu",
+     "Sucrose",
+     "Dori"
+    ],
+    "v": "3.0"
+   },
+   {
+    "n": "Twilight Arbiter",
+    "s": "2022-09-28 06:00:00",
+    "e": "2022-10-14 17:59:59",
+    "feat": [
+     "Cyno",
+     "Venti"
+    ],
+    "rare": [
+     "Sayu",
+     "Candace",
+     "Kuki Shinobu"
+    ],
+    "v": "3.1"
+   },
+   {
+    "n": "Twirling Lotus",
+    "s": "2022-10-14 18:00:00",
+    "e": "2022-11-01 14:59:59",
+    "feat": [
+     "Nilou",
+     "Albedo"
+    ],
+    "rare": [
+     "Barbara",
+     "Xiangling",
+     "Beidou"
+    ],
+    "v": "3.1"
+   },
+   {
+    "n": "The Moongrass' Enlightenment",
+    "s": "2022-11-02 06:00:00",
+    "e": "2022-11-18 17:59:59",
+    "feat": [
+     "Nahida",
+     "Yoimiya"
+    ],
+    "rare": [
+     "Bennett",
+     "Razor",
+     "Noelle"
+    ],
+    "v": "3.2"
+   },
+   {
+    "n": "Everbloom Violet",
+    "s": "2022-11-18 18:00:00",
+    "e": "2022-12-06 14:59:59",
+    "feat": [
+     "Yae Miko",
+     "Tartaglia"
+    ],
+    "rare": [
+     "Thoma",
+     "Shikanoin Heizou",
+     "Layla"
+    ],
+    "v": "3.2"
+   },
+   {
+    "n": "From Ashes Reborn",
+    "s": "2022-12-07 06:00:00",
+    "e": "2022-12-27 17:59:59",
+    "feat": [
+     "Wanderer",
+     "Arataki Itto"
+    ],
+    "rare": [
+     "Faruzan",
+     "Yanfei",
+     "Gorou"
+    ],
+    "v": "3.3"
+   },
+   {
+    "n": "Reign of Serenity",
+    "s": "2022-12-27 18:00:00",
+    "e": "2023-01-17 14:59:59",
+    "feat": [
+     "Raiden_shogun",
+     "Kamisato Ayato"
+    ],
+    "rare": [
+     "Sayu",
+     "Rosaria",
+     "Kujou Sara"
+    ],
+    "v": "3.3"
+   },
+   {
+    "n": "Caution in Confidence",
+    "s": "2023-01-18 06:00:00",
+    "e": "2023-02-07 17:59:59",
+    "feat": [
+     "Alhaitham",
+     "Xiao"
+    ],
+    "rare": [
+     "Xinyan",
+     "Yun Jin",
+     "Yaoyao"
+    ],
+    "v": "3.4"
+   },
+   {
+    "n": "Moment of Bloom",
+    "s": "2023-02-07 18:00:00",
+    "e": "2023-02-28 14:59:59",
+    "feat": [
+     "Hu Tao",
+     "Yelan"
+    ],
+    "rare": [
+     "Beidou",
+     "Ningguang",
+     "Xingqiu"
+    ],
+    "v": "3.4"
+   },
+   {
+    "n": "Auric Blaze",
+    "s": "2023-03-01 06:00:00",
+    "e": "2023-03-21 17:59:59",
+    "feat": [
+     "Dehya",
+     "Cyno"
+    ],
+    "rare": [
+     "Bennett",
+     "Collei",
+     "Barbara"
+    ],
+    "v": "3.5"
+   },
+   {
+    "n": "The Transcendent One Returns",
+    "s": "2023-03-21 18:00:00",
+    "e": "2023-04-11 14:59:59",
+    "feat": [
+     "Shenhe",
+     "Kamisato Ayaka"
+    ],
+    "rare": [
+     "Diona",
+     "Sucrose",
+     "Mika"
+    ],
+    "v": "3.5"
+   },
+   {
+    "n": "The Moongrass' Enlightenment",
+    "s": "2023-04-12 06:00:00",
+    "e": "2023-05-02 17:59:59",
+    "feat": [
+     "Nahida",
+     "Nilou"
+    ],
+    "rare": [
+     "Kuki Shinobu",
+     "Dori",
+     "Layla"
+    ],
+    "v": "3.6"
+   },
+   {
+    "n": "Immaculate Pulse",
+    "s": "2023-05-02 18:00:00",
+    "e": "2023-05-23 14:59:59",
+    "feat": [
+     "Baizhu",
+     "Ganyu"
+    ],
+    "rare": [
+     "Kaveh",
+     "Candace",
+     "Fischl"
+    ],
+    "v": "3.6"
+   },
+   {
+    "n": "Tapestry of Golden Flames",
+    "s": "2023-05-24 06:00:00",
+    "e": "2023-06-13 17:59:59",
+    "feat": [
+     "Yoimiya",
+     "Yae Miko"
+    ],
+    "rare": [
+     "Kirara",
+     "Yun Jin",
+     "Chongyun"
+    ],
+    "v": "3.7"
+   },
+   {
+    "n": "Caution in Confidence",
+    "s": "2023-06-13 18:00:00",
+    "e": "2023-07-04 14:59:59",
+    "feat": [
+     "Alhaitham",
+     "Kaedehara Kazuha"
+    ],
+    "rare": [
+     "Yaoyao",
+     "Shikanoin Heizou",
+     "Xiangling"
+    ],
+    "v": "3.7"
+   },
+   {
+    "n": "Born of Ocean Swell",
+    "s": "2023-07-05 06:00:00",
+    "e": "2023-07-25 17:59:59",
+    "feat": [
+     "Eula",
+     "Klee"
+    ],
+    "rare": [
+     "Mika",
+     "Razor",
+     "Thoma"
+    ],
+    "v": "3.8"
+   },
+   {
+    "n": "Drifting Luminescence",
+    "s": "2023-07-25 18:00:00",
+    "e": "2023-08-15 17:59:59",
+    "feat": [
+     "Sangonomiya Kokomi",
+     "Wanderer"
+    ],
+    "rare": [
+     "Yanfei",
+     "Faruzan",
+     "Rosaria"
+    ],
+    "v": "3.8"
+   },
+   {
+    "n": "Conjuring Chiaroscuro",
+    "s": "2023-08-16 06:00:00",
+    "e": "2023-09-05 17:59:59",
+    "feat": [
+     "Lyney",
+     "Yelan"
+    ],
+    "rare": [
+     "Bennett",
+     "Barbara",
+     "Lynette"
+    ],
+    "v": "4.0"
+   },
+   {
+    "n": "Gentry of Hermitage",
+    "s": "2023-09-05 18:00:00",
+    "e": "2023-09-26 14:59:59",
+    "feat": [
+     "Tartaglia",
+     "Zhongli"
+    ],
+    "rare": [
+     "Freminet",
+     "Sayu",
+     "Noelle"
+    ],
+    "v": "4.0"
+   },
+   {
+    "n": "Decree of the Deeps",
+    "s": "2023-09-27 06:00:00",
+    "e": "2023-10-17 17:59:59",
+    "feat": [
+     "Neuvillette",
+     "Hu Tao"
+    ],
+    "rare": [
+     "Fischl",
+     "Xingqiu",
+     "Diona"
+    ],
+    "v": "4.1"
+   },
+   {
+    "n": "Tempestuous Destiny",
+    "s": "2023-10-17 18:00:00",
+    "e": "2023-11-07 14:59:59",
+    "feat": [
+     "Wriothesley",
+     "Venti"
+    ],
+    "rare": [
+     "Chongyun",
+     "Thoma",
+     "Dori"
+    ],
+    "v": "4.1"
+   },
+   {
+    "n": "Chanson of Many Waters",
+    "s": "2023-11-08 06:00:00",
+    "e": "2023-11-28 17:59:59",
+    "feat": [
+     "Furina",
+     "Baizhu"
+    ],
+    "rare": [
+     "Charlotte",
+     "Collei",
+     "Beidou"
+    ],
+    "v": "4.2"
+   },
+   {
+    "n": "Twilight Arbiter",
+    "s": "2023-11-28 18:00:00",
+    "e": "2023-12-19 14:59:59",
+    "feat": [
+     "Cyno",
+     "Kamisato Ayato"
+    ],
+    "rare": [
+     "Kuki Shinobu",
+     "Xiangling",
+     "Kirara"
+    ],
+    "v": "4.2"
+   },
+   {
+    "n": "In the Name of the Rosula",
+    "s": "2023-12-20 06:00:00",
+    "e": "2024-01-09 17:59:59",
+    "feat": [
+     "Navia",
+     "Kamisato Ayaka"
+    ],
+    "rare": [
+     "Sucrose",
+     "Candace",
+     "Rosaria"
+    ],
+    "v": "4.3"
+   },
+   {
+    "n": "Reign of Serenity",
+    "s": "2024-01-09 18:00:00",
+    "e": "2024-01-30 14:59:00",
+    "feat": [
+     "Raiden_shogun",
+     "Yoimiya"
+    ],
+    "rare": [
+     "Bennett",
+     "Kujou Sara",
+     "Chevreuse"
+    ],
+    "v": "4.3"
+   },
+   {
+    "n": "The Crane Soars Skyward",
+    "s": "2024-01-31 06:00:00",
+    "e": "2024-02-20 17:59:00",
+    "feat": [
+     "Xianyun",
+     "Nahida"
+    ],
+    "rare": [
+     "Gaming",
+     "Faruzan",
+     "Noelle"
+    ],
+    "v": "4.4"
+   },
+   {
+    "n": "Invitation to Mundane Life",
+    "s": "2024-02-20 18:00:00",
+    "e": "2024-03-12 14:59:00",
+    "feat": [
+     "Xiao",
+     "Yae Miko"
+    ],
+    "rare": [
+     "Yaoyao",
+     "Xinyan",
+     "Ningguang"
+    ],
+    "v": "4.4"
+   },
+   {
+    "n": "Of Silken Clouds Woven",
+    "s": "2024-03-13 06:00:00",
+    "e": "2024-04-02 17:59:00",
+    "feat": [
+     "Chiori",
+     "Arataki Itto"
+    ],
+    "rare": [
+     "Yun Jin",
+     "Gorou",
+     "Dori"
+    ],
+    "v": "4.5"
+   },
+   {
+    "n": "Decree of the Deeps",
+    "s": "2024-04-02 18:00:00",
+    "e": "2024-04-23 14:59:00",
+    "feat": [
+     "Neuvillette",
+     "Kaedehara Kazuha"
+    ],
+    "rare": [
+     "Barbara",
+     "Xingqiu",
+     "Yanfei"
+    ],
+    "v": "4.5"
+   },
+   {
+    "n": "The Hearth's Ashen Shadow",
+    "s": "2024-04-24 06:00:00",
+    "e": "2024-05-14 17:59:00",
+    "feat": [
+     "Arlecchino",
+     "Lyney"
+    ],
+    "rare": [
+     "Freminet",
+     "Lynette",
+     "Xiangling"
+    ],
+    "v": "4.6"
+   },
+   {
+    "n": "From Ashes Reborn",
+    "s": "2024-05-14 18:00:00",
+    "e": "2024-06-04 14:59:00",
+    "feat": [
+     "Wanderer",
+     "Baizhu"
+    ],
+    "rare": [
+     "Layla",
+     "Faruzan",
+     "Beidou"
+    ],
+    "v": "4.6"
+   },
+   {
+    "n": "Illuminating Lightning",
+    "s": "2024-06-05 06:00:00",
+    "e": "2024-06-25 17:59:00",
+    "feat": [
+     "Clorinde",
+     "Alhaitham"
+    ],
+    "rare": [
+     "Sethos",
+     "Bennett",
+     "Thoma"
+    ],
+    "v": "4.7"
+   },
+   {
+    "n": "Romaritime Meluserenity",
+    "s": "2024-06-25 18:00:00",
+    "e": "2024-07-16 14:59:00",
+    "feat": [
+     "Sigewinne",
+     "Furina"
+    ],
+    "rare": [
+     "Noelle",
+     "Gaming",
+     "Rosaria"
+    ],
+    "v": "4.7"
+   },
+   {
+    "n": "In the Name of the Rosula",
+    "s": "2024-07-17 06:00:00",
+    "e": "2024-08-06 17:59:00",
+    "feat": [
+     "Navia",
+     "Nilou"
+    ],
+    "rare": [
+     "Kirara",
+     "Kaveh",
+     "Ningguang"
+    ],
+    "v": "4.8"
+   },
+   {
+    "n": "Ambrosial Essence",
+    "s": "2024-08-06 18:00:00",
+    "e": "2024-08-27 14:59:00",
+    "feat": [
+     "Émilie",
+     "Yelan"
+    ],
+    "rare": [
+     "Yanfei",
+     "Xiangling",
+     "Razor"
+    ],
+    "v": "4.8"
+   },
+   {
+    "n": "Sharktacular Surfari",
+    "s": "2024-08-28 06:00:00",
+    "e": "2024-09-17 17:59:00",
+    "feat": [
+     "Mualani",
+     "Kaedehara Kazuha"
+    ],
+    "rare": [
+     "Kachina",
+     "Xinyan",
+     "Bennett"
+    ],
+    "v": "5.0"
+   },
+   {
+    "n": "Seeker of Flame-Wrought Secrets",
+    "s": "2024-09-17 18:00:00",
+    "e": "2024-10-08 14:59:00",
+    "feat": [
+     "Kinich",
+     "Raiden_shogun"
+    ],
+    "rare": [
+     "Thoma",
+     "Kujou Sara",
+     "Chevreuse"
+    ],
+    "v": "5.0"
+   },
+   {
+    "n": "Forgefire's Blessing",
+    "s": "2024-10-09 06:00:00",
+    "e": "2024-10-29 17:59:00",
+    "feat": [
+     "Xilonen",
+     "Chiori"
+    ],
+    "rare": [
+     "Dori",
+     "Candace",
+     "Collei"
+    ],
+    "v": "5.1"
+   },
+   {
+    "n": "The Moongrass' Enlightenment",
+    "s": "2024-10-29 18:00:00",
+    "e": "2024-11-19 14:59:00",
+    "feat": [
+     "Nahida",
+     "Hu Tao"
+    ],
+    "rare": [
+     "Sethos",
+     "Xingqiu",
+     "Kuki Shinobu"
+    ],
+    "v": "5.1"
+   },
+   {
+    "n": "Piercing Shot's Crimson Wake",
+    "s": "2024-11-20 06:00:00",
+    "e": "2024-12-10 17:59:00",
+    "feat": [
+     "Chasca",
+     "Lyney"
+    ],
+    "rare": [
+     "Ororon",
+     "Sucrose",
+     "Barbara"
+    ],
+    "v": "5.2"
+   },
+   {
+    "n": "Decree of the Deeps",
+    "s": "2024-12-10 18:00:00",
+    "e": "2024-12-31 14:59:00",
+    "feat": [
+     "Neuvillette",
+     "Zhongli"
+    ],
+    "rare": [
+     "Shikanoin Heizou",
+     "Fischl",
+     "Yaoyao"
+    ],
+    "v": "5.2"
+   },
+   {
+    "n": "Ancient Flame Ablaze",
+    "s": "2025-01-01 06:00:00",
+    "e": "2025-01-21 17:59:00",
+    "feat": [
+     "Mavuika",
+     "Citlali"
+    ],
+    "rare": [
+     "Kachina",
+     "Bennett",
+     "Diona"
+    ],
+    "v": "5.3"
+   },
+   {
+    "n": "The Hearth's Ashen Shadow",
+    "s": "2025-01-21 18:00:00",
+    "e": "2025-02-11 14:59:00",
+    "feat": [
+     "Arlecchino",
+     "Clorinde"
+    ],
+    "rare": [
+     "Lan Yan",
+     "Chevreuse",
+     "Rosaria"
+    ],
+    "v": "5.3"
+   },
+   {
+    "n": "Dawn's Drifting Reverie",
+    "s": "2025-02-12 06:00:00",
+    "e": "2025-03-04 17:59:00",
+    "feat": [
+     "Yumemizuki Mizuki",
+     "Sigewinne"
+    ],
+    "rare": [
+     "Gorou",
+     "Sayu",
+     "Xiangling"
+    ],
+    "v": "5.4"
+   },
+   {
+    "n": "Tempestuous Destiny",
+    "s": "2025-03-04 18:00:00",
+    "e": "2025-03-25 14:59:00",
+    "feat": [
+     "Wriothesley",
+     "Furina"
+    ],
+    "rare": [
+     "Charlotte",
+     "Chongyun",
+     "Mika"
+    ],
+    "v": "5.4"
+   },
+   {
+    "n": "Cornucopia of Contention",
+    "s": "2025-03-26 06:00:00",
+    "e": "2025-04-15 17:59:00",
+    "feat": [
+     "Varesa",
+     "Xianyun"
+    ],
+    "rare": [
+     "Iansan",
+     "Chevreuse",
+     "Gaming"
+    ],
+    "v": "5.5"
+   },
+   {
+    "n": "Forgefire's Blessing",
+    "s": "2025-04-15 18:00:00",
+    "e": "2025-05-06 14:59:00",
+    "feat": [
+     "Xilonen",
+     "Venti"
+    ],
+    "rare": [
+     "Faruzan",
+     "Beidou",
+     "Yanfei"
+    ],
+    "v": "5.5"
+   },
+   {
+    "n": "La Chanson Cerise",
+    "s": "2025-05-07 06:00:00",
+    "e": "2025-05-27 17:59:00",
+    "feat": [
+     "Escoffier",
+     "Navia"
+    ],
+    "rare": [
+     "Ifa",
+     "Ororon",
+     "Layla"
+    ],
+    "v": "5.6"
+   },
+   {
+    "n": "Seeker of Flame-Wrought Secrets",
+    "s": "2025-05-27 18:00:00",
+    "e": "2025-06-17 14:59:00",
+    "feat": [
+     "Kinich",
+     "Raiden_shogun"
+    ],
+    "rare": [
+     "Thoma",
+     "Kujou Sara",
+     "Lynette"
+    ],
+    "v": "5.6"
+   },
+   {
+    "n": "Void Star's Advent",
+    "s": "2025-06-18 06:00:00",
+    "e": "2025-07-08 17:59:00",
+    "feat": [
+     "Skirk",
+     "Shenhe"
+    ],
+    "rare": [
+     "Dahlia",
+     "Candace",
+     "Diona"
+    ],
+    "v": "5.7"
+   },
+   {
+    "n": "Ancient Flame Ablaze",
+    "s": "2025-07-08 18:00:00",
+    "e": "2025-07-29 14:59:00",
+    "feat": [
+     "Mavuika",
+     "Émilie"
+    ],
+    "rare": [
+     "Iansan",
+     "Yaoyao",
+     "Xiangling"
+    ],
+    "v": "5.7"
+   },
+   {
+    "n": "Astral Actuation",
+    "s": "2025-07-30 06:00:00",
+    "e": "2025-08-19 17:59:00",
+    "feat": [
+     "Ineffa",
+     "Citlali"
+    ],
+    "rare": [
+     "Sethos",
+     "Xingqiu",
+     "Fischl"
+    ],
+    "v": "5.8"
+   },
+   {
+    "n": "Sharktacular Surfari",
+    "s": "2025-08-19 18:00:00",
+    "e": "2025-09-09 14:59:00",
+    "feat": [
+     "Mualani",
+     "Chasca"
+    ],
+    "rare": [
+     "Ifa",
+     "Ororon",
+     "Bennett"
+    ],
+    "v": "5.8"
+   },
+   {
+    "n": "Moonsong of the Groves",
+    "s": "2025-09-10 06:00:00",
+    "e": "2025-09-30 17:59:00",
+    "feat": [
+     "Lauma",
+     "Nahida"
+    ],
+    "rare": [
+     "Barbara",
+     "Kuki Shinobu",
+     "Kaveh"
+    ],
+    "v": "6.0"
+   },
+   {
+    "n": "The Lone Light Knocks at Night",
+    "s": "2025-09-30 18:00:00",
+    "e": "2025-10-21 17:59:00",
+    "feat": [
+     "Flins",
+     "Yelan"
+    ],
+    "rare": [
+     "Aino",
+     "Sucrose",
+     "Dori"
+    ],
+    "v": "6.0"
+   },
+   {
+    "n": "Temptation of the Crimson Sands",
+    "s": "2025-10-22 06:00:00",
+    "e": "2025-11-11 17:59:00",
+    "feat": [
+     "Nefer",
+     "Furina"
+    ],
+    "rare": [
+     "Xingqiu",
+     "Collei",
+     "Yaoyao"
+    ],
+    "v": "6.1"
+   },
+   {
+    "n": "The Hearth's Ashen Shadow",
+    "s": "2025-11-11 18:00:00",
+    "e": "2025-12-02 14:59:00",
+    "feat": [
+     "Arlecchino",
+     "Zhongli"
+    ],
+    "rare": [
+     "Lan Yan",
+     "Rosaria",
+     "Yun Jin"
+    ],
+    "v": "6.1"
+   },
+   {
+    "n": "Rubedo, of White Stone Born",
+    "s": "2025-12-03 06:00:00",
+    "e": "2025-12-23 17:59:00",
+    "feat": [
+     "Durin",
+     "Venti"
+    ],
+    "rare": [
+     "Bennett",
+     "Faruzan",
+     "Jahoda"
+    ],
+    "v": "6.2"
+   },
+   {
+    "n": "Cornucopia of Contention",
+    "s": "2025-12-23 18:00:00",
+    "e": "2026-01-13 14:59:00",
+    "feat": [
+     "Varesa",
+     "Xilonen"
+    ],
+    "rare": [
+     "Iansan",
+     "Chevreuse",
+     "Gaming"
+    ],
+    "v": "6.2"
+   },
+   {
+    "n": "Somnias a Luna",
+    "s": "2026-01-14 06:00:00",
+    "e": "2026-02-03 17:59:00",
+    "feat": [
+     "Columbina",
+     "Ineffa"
+    ],
+    "rare": [
+     "Fischl",
+     "Sethos",
+     "Ifa"
+    ],
+    "v": "6.3"
+   },
+   {
+    "n": "Harmonious Abundance",
+    "s": "2026-02-03 18:00:00",
+    "e": "2026-02-24 14:59:00",
+    "feat": [
+     "Zibai",
+     "Neuvillette"
+    ],
+    "rare": [
+     "Illuga",
+     "Aino",
+     "Gorou"
+    ],
+    "v": "6.3"
+   },
+   {
+    "n": "The Northerly Wind's Song of Triumph",
+    "s": "2026-02-25 06:00:00",
+    "e": "2026-03-17 17:59:00",
+    "feat": [
+     "Varka",
+     "Flins"
+    ],
+    "rare": [
+     "Bennett",
+     "Xiangling",
+     "Sucrose"
+    ],
+    "v": "6.4"
+   },
+   {
+    "n": "Void Star's Advent",
+    "s": "2026-03-17 18:00:00",
+    "e": "2026-04-07 14:59:00",
+    "feat": [
+     "Skirk",
+     "Escoffier"
+    ],
+    "rare": [
+     "Dahlia",
+     "Candace",
+     "Charlotte"
+    ],
+    "v": "6.4"
+   },
+   {
+    "n": "Ya-hoho! Compendium",
+    "s": "2026-04-08 06:00:00",
+    "e": "2026-04-28 17:59:00",
+    "feat": [
+     "Linnea",
+     "Chasca"
+    ],
+    "rare": [
+     "Illuga",
+     "Aino",
+     "Noelle"
+    ],
+    "v": "6.5"
+   },
+   {
+    "n": "Moonsong of the Groves",
+    "s": "2026-04-28 18:00:00",
+    "e": "2026-05-19 14:59:00",
+    "feat": [
+     "Lauma",
+     "Nefer"
+    ],
+    "rare": [
+     "Xingqiu",
+     "Kirara",
+     "Jahoda"
+    ],
+    "v": "6.5"
+   },
+   {
+    "n": "Angel's Reverie",
+    "s": "2026-05-20 06:00:00",
+    "e": "2026-06-09 17:59:00",
+    "feat": [
+     "Nicole",
+     "Durin"
+    ],
+    "rare": [
+     "Prune",
+     "Fischl",
+     "Razor"
+    ],
+    "v": "6.6"
+   },
+   {
+    "n": "Frostedge Nocturne",
+    "s": "2026-06-09 18:00:00",
+    "e": "2026-06-30 14:59:00",
+    "feat": [
+     "Lohen",
+     "Mavuika"
+    ],
+    "rare": [
+     "Mika",
+     "Xiangling",
+     "Bennett"
+    ],
+    "v": "6.6"
+   },
+   {
+    "n": "To the Looking-Glass the Mademoiselle Said",
+    "s": "2026-07-01 06:00:00",
+    "e": "2026-07-21 17:59:00",
+    "feat": [
+     "Sandrone",
+     "Citlali"
+    ],
+    "rare": [
+     "Beidou",
+     "Diona",
+     "Freminet"
+    ],
+    "v": "6.7"
+   },
+   {
+    "n": "Somnias a Luna",
+    "s": "2026-07-21 18:00:00",
+    "e": "2026-08-11 14:59:00",
+    "feat": [
+     "Columbina",
+     "Raiden_shogun"
+    ],
+    "rare": [
+     "Jahoda",
+     "Ororon",
+     "Sethos"
+    ],
+    "v": "6.7"
+   },
+   {
+    "n": "Swan's Shadow in Silken Ice",
+    "s": "2026-08-12 06:00:00",
+    "e": "2026-09-01 17:59:00",
+    "feat": [
+     "Odette",
+     "Arlecchino"
+    ],
+    "rare": [
+     "Alyosha",
+     "Sucrose",
+     "Lynette"
+    ],
+    "v": "7.0"
+   },
+   {
+    "n": "The Lone Light Knocks at Night",
+    "s": "2026-09-01 18:00:00",
+    "e": "2026-09-22 14:59:00",
+    "feat": [
+     "Flins",
+     "Ineffa"
+    ],
+    "rare": [
+     "Aino",
+     "Iansan",
+     "Lan Yan"
+    ],
+    "v": "7.0"
+   },
+   {
+    "n": "When Warm Winds Cavort",
+    "s": "2026-09-23 06:00:00",
+    "e": "2026-10-13 17:59:59",
+    "feat": [
+     "Vesna",
+     "Vodyanitsa"
+    ],
+    "rare": [
+     "Diona",
+     "Faruzan",
+     "Chongyun"
+    ],
+    "v": "7.1"
+   },
+   {
+    "n": "Void Star's Advent",
+    "s": "2026-10-13 18:00:00",
+    "e": "2026-11-03 14:59:59",
+    "feat": [
+     "Skirk",
+     "Escoffier"
+    ],
+    "rare": [
+     "Dahlia",
+     "Candace",
+     "Mika"
+    ],
+    "v": "7.1"
    }
   ]
  },

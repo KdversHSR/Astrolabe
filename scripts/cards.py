@@ -295,6 +295,31 @@ def build(art=False):
     for c in out:
         if not c.get('img') and (ROOT / f"img/cards/{c['id']}.webp").exists(): c['img'] = f"img/cards/{c['id']}.webp"
         if c.get('img') and not (ROOT / c['img']).exists(): c.pop('img')
+    # images déposées à la main : img/manual/<id>.(webp|png|jpg) (priorité sur tout le reste) ; ids dans data/img_report.json
+    for c in out:
+        for ext in ('webp', 'png', 'jpg', 'jpeg'):
+            f = ROOT / 'img/manual' / f"{c['id']}.{ext}"
+            if f.exists(): c['img'] = f"img/manual/{c['id']}.{ext}"; break
+    # Star Savior (cartes de data/gg_extra.json) : même dépôt manuel
+    try:
+        XP = ROOT / 'data/gg_extra.json'; X = json.load(open(XP, encoding='utf-8'))
+        for g_, L_ in X.items():
+            for c in L_:
+                for ext in ('webp', 'png', 'jpg', 'jpeg'):
+                    f = ROOT / 'img/manual' / f"{c['id']}.{ext}"
+                    if f.exists(): c['img'] = f"img/manual/{c['id']}.{ext}"; break
+        json.dump(X, open(XP, 'w'), ensure_ascii=False, indent=1)
+    except Exception as e: print('gg_extra images manuelles ignorées :', e)
+    # table id -> image, conservée d'une semaine à l'autre : une image trouvée un jour n'est jamais perdue
+    try:
+        MP = ROOT / 'data/img_map.json'
+        try: prev = json.load(open(MP, encoding='utf-8'))
+        except Exception: prev = {}
+        mp = {c['id']: c['img'] for c in out if c.get('img')}
+        for k_, v_ in prev.items():
+            if k_ not in mp and (ROOT / v_).exists(): mp[k_] = v_
+        json.dump(mp, open(MP, 'w'), ensure_ascii=False, separators=(',', ':'))
+    except Exception as e: print('img_map ignoré :', e)
     # raretés d'après les tier lists actuelles (data/card_tiers.json) -> champ q (0 commune … 4 légendaire)
 
     seen = set(); out = [c for c in out if not (c['id'] in seen or seen.add(c['id']))]
@@ -336,7 +361,7 @@ def build(art=False):
     json.dump({'v': 1, 'cards': out}, open(ROOT / 'data/cards.json', 'w'), ensure_ascii=False, separators=(',', ':'))
     from collections import Counter
     rep_ = {g: [c['ne'] for c in out if c['g'] == g and not c.get('img')] for g in sorted({c['g'] for c in out})}
-    json.dump({g: {'total': sum(1 for c in out if c['g'] == g), 'sans_image': v} for g, v in rep_.items()}, open(ROOT / 'data/img_report.json', 'w'), ensure_ascii=False, indent=1)
+    json.dump({g: {'total': sum(1 for c in out if c['g'] == g), 'sans_image': v, 'ids': [c['id'] for c in out if c['g'] == g and not c.get('img')]} for g, v in rep_.items()}, open(ROOT / 'data/img_report.json', 'w'), ensure_ascii=False, indent=1)
     print('cartes sans image :', {g: len(v) for g, v in rep_.items() if v})
     print(len(out), 'cartes', dict(Counter(c['g'] for c in out)), 'avec image :', sum(1 for c in out if c.get('img')))
 

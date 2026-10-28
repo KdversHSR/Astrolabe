@@ -93,3 +93,19 @@ Genshin Impact, Zenless Zone Zero, Wuthering Waves, Reverse: 1999, Neverness to 
 - Nouvel onglet « Versions » pour chaque jeu (Genshin : généré automatiquement chaque lundi depuis paimon-moe ; autres jeux : `data/gg_versions_manual.json`, saisie vérifiée à la main, jamais inventée).
 - Nouveau jeu : Persona 5: The Phantom X (`#/p5x`).
 - Nouvelle étape du workflow : `scripts/gg_versions.py`.
+
+## v42
+- Menu des jeux aligné sur Honkai : Base de données / Classements / End game / Outils / Guides / Communauté.
+- Résumé de version au format Honkai (frise, lecture, spoilers, personnages en vedette).
+- Genshin : bannières, compte à rebours et prochaine version générés depuis paimon-moe ; évaluateur d'artéfacts avec les vraies valeurs de sous-statistiques.
+- Onglets sans source fiable : message « pas encore de données » (rien d'inventé).
+
+## v43
+- Les fichiers produits par le robot (cards.json, gg_tiers.json, gg_banners.json, gg_versions.json, data.json, status.json, img_report.json, calc.json, bmh.json) ne sont plus dans le zip : vos mises à jour du lundi ne sont plus écrasées.
+- `data/img_map.json` (créé par le robot) : une image trouvée n'est plus jamais perdue.
+- Images à la main : déposez `img/manual/<identifiant>.png` (les identifiants sont dans `data/img_report.json`, champ `ids`).
+- Tier lists : Prydwen ne répond plus (erreur 410). Nouvelles sources : PocketGamer, Pocket Tactics, Icy Veins (ZZZ, WuWa, Reverse 1999, NTE, Persona 5 X, Honkai Star Rail en secours).
+
+## v44 — Foilvault 2.0
+- Bandeau de connexion sur 7 jours (récompenses de la semaine, jour 7 doré).
+- Panneau « Probabilités des boosters » : taux par rareté et par finition, chance d'avoir une Légendaire, pitié.

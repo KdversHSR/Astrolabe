@@ -14,13 +14,16 @@ BROWSER = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KH
 GGMAP = {'SS': 'SS', 'T0': 'SS', 'EX': 'SS', 'T0.5': 'S', 'S+': 'S', 'S': 'S', 'T1': 'S', 'T1.5': 'A', 'A+': 'A', 'A': 'A', 'T2': 'A', 'B+': 'B', 'B': 'B', 'T3': 'B', 'C': 'C', 'T4': 'C', 'T5': 'D', 'D': 'D'}
 # Adresses par défaut (à vérifier/ajuster : je n'ai pas pu les tester depuis mon environnement, seul GitHub y est accessible).
 SOURCES = {
-    'zzz': [('prydwen', 'https://www.prydwen.gg/page-data/zenless/tier-list/page-data.json')],
-    'ww': [('prydwen', 'https://www.prydwen.gg/page-data/wuthering-waves/tier-list/page-data.json')],
-    'r99': [('prydwen', 'https://www.prydwen.gg/page-data/reverse-1999/tier-list/page-data.json')],
+    'zzz': [('html', 'https://www.pocketgamer.com/zenless-zone-zero/tier-list'), ('prydwen', 'https://www.prydwen.gg/page-data/zenless/tier-list/page-data.json')],
+    'ww': [('html', 'https://pocketgamer.com/wuthering-waves/tier-list'), ('prydwen', 'https://www.prydwen.gg/page-data/wuthering-waves/tier-list/page-data.json')],
+    'r99': [('html', 'https://www.pockettactics.com/reverse-1999/tier-list'), ('prydwen', 'https://www.prydwen.gg/page-data/reverse-1999/tier-list/page-data.json')],
     'gi': [('html', 'https://genshin.gg/tier-list/')],
     'ss': [('html', 'https://www.ldshop.gg/blog/starsavior/starsavior-tier-list.html'), ('html', 'https://driffle.com/blog/star-savior-tier-list/')],
-    'nte': [('prydwen', 'https://www.prydwen.gg/page-data/neverness-to-everness/tier-list/page-data.json')],
+    'nte': [('html', 'https://www.icy-veins.com/neverness-to-everness/tier-list'), ('prydwen', 'https://www.prydwen.gg/page-data/neverness-to-everness/tier-list/page-data.json')],
+    'p5x': [('html', 'https://www.pocketgamer.com/persona-5-the-phantom-x/tier-list'), ('html', 'https://www.pockettactics.com/persona-5-phantom-x/tier-list')],
 }
+# « S+ » veut dire « au-dessus de S » : selon le jeu on le range en SS (p5x) ou en S
+PLUS = {'p5x': 'SS'}
 try:
     SOURCES.update({k: [tuple(x) for x in v] for k, v in json.load(open(ROOT / 'data/gg_sources.json', encoding='utf-8')).items()})
 except Exception:
@@ -66,25 +69,51 @@ def parse_prydwen(raw, names):
     return found
 
 
-LABEL = re.compile(r'^(SS|S\+|S|A\+|A|B\+|B|C|D|EX|T0\.5|T0|T1\.5|T1|T2|T3|T4|T5)(\s*(-|–)?\s*tier)?$', re.I)
+LABEL = re.compile(r'^(?:tier\s+)?(SS|S\+|S|A\+|A|B\+|B|C|D|EX|T0\.5|T0|T1\.5|T1|T2|T3|T4|T5)(?:\s*(?:-|–)?\s*tier)?:?$', re.I)
 
 
-def parse_html(raw, names):
-    """Lit le texte de la page dans l'ordre : une étiquette de tier (S, A, T0…) puis les noms qui la suivent."""
+def wkey(s):
+    """Clé « sac de mots » : « Kotone (Frostgale) » et « Frostgale Kotone » donnent la même clé."""
+    w = re.findall(r'[a-z0-9]+', unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode().lower())
+    w = [x for x in w if x not in ('the', 'of', 'a', 'and')]
+    return ' '.join(sorted(w))
+
+
+def parse_html(raw, names, g=None):
+    """Lit le texte de la page dans l'ordre : une étiquette de tier (S, A, T0, Tier S…) puis les noms qui la suivent (une cellule par nom, ou séparés par des virgules)."""
     raw = re.sub(r'<(script|style)[\s\S]*?</\1>', ' ', raw, flags=re.I)
     raw = re.sub(r'<img[^>]*?alt="([^"]*)"[^>]*>', r'<b>\1</b>', raw, flags=re.I)
     toks = [re.sub(r'\s+', ' ', t).strip() for t in re.split(r'<[^>]+>', raw)]
+    wk = {}
+    for k, v in names.items():
+        wk.setdefault(wkey(v), v)
+    base = {}
+    for v in set(names.values()):
+        base.setdefault(wkey(re.sub(r'\(.*?\)', ' ', v)), []).append(v)
+    for k, l in base.items():
+        if len(l) == 1:
+            wk.setdefault(k, l[0])      # « Ann Takamaki » -> « Ann Takamaki (Panther) » seulement s'il n'y a pas d'ambiguïté
     cur, found = None, {}
     for t in toks:
-        if not t or len(t) > 40:
+        if not t:
             continue
-        m = LABEL.match(t)
-        if m and t.upper() in GGMAP or (m and m.group(1).upper() in GGMAP):
-            cur = GGMAP[m.group(1).upper()]
-            continue
-        k = nz(re.sub(r'\b(tier list|icon)\b', '', t, flags=re.I))
-        if cur and k in names:
-            found.setdefault(names[k], cur)
+        parts = [p.strip() for p in t.split(',')] if (',' in t or len(t) > 40) else [t]
+        for p in parts:
+            if not p or len(p) > 45:
+                continue
+            m = LABEL.match(p)
+            if m and m.group(1).upper() in GGMAP:
+                lab = m.group(1).upper()
+                cur = PLUS.get(g, 'S') if lab == 'S+' else GGMAP[lab]
+                if lab == 'S+' and g not in PLUS:
+                    cur = 'S'
+                continue
+            if not cur:
+                continue
+            k = nz(re.sub(r'\b(tier list|icon)\b', '', p, flags=re.I))
+            hit = names.get(k) or wk.get(wkey(re.sub(r'\b(tier list|icon)\b', '', p, flags=re.I)))
+            if hit:
+                found.setdefault(hit, cur)
     return found
 
 
@@ -104,7 +133,7 @@ def main():
         for kind, url in srcs:
             try:
                 raw = get(url)
-                res = parse_prydwen(raw, names) if kind == 'prydwen' else parse_html(raw, names)
+                res = parse_prydwen(raw, names) if kind == 'prydwen' else parse_html(raw, names, g)
                 cov = len(set(res)) / len(ro)
                 if cov < .3:
                     why.append(f'{url.split("/")[2]} : seulement {len(res)}/{len(ro)} reconnus')
