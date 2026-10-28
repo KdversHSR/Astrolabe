@@ -1,13 +1,15 @@
 {
- "updated": "2026-10-25T13:22:21Z",
+ "updated": "2026-10-28T19:15:53Z",
  "chars": 93,
  "lcs": 170,
  "sets": 62,
  "builds": 93,
  "tiers": "seed",
- "banners": "manual",
- "schedule": "manual",
- "tiers_err": "",
+ "banners": "auto",
+ "schedule": "auto",
+ "tiers_err": "Game8 bloque le robot : page reçue de 2045 octets au lieu de plus de 100 000 | Prydwen : HTTP Error 410: Gone",
  "tiers_checked": "2026-10-25",
- "problems": []
+ "problems": [
+  "tiers"
+ ]
 }
