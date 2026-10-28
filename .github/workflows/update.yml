@@ -62,6 +62,10 @@ jobs:
         continue-on-error: true
         timeout-minutes: 10
         run: python scripts/bleach_art.py
+      - name: Pages indexables par Google (fiches, plan du site)
+        continue-on-error: true
+        timeout-minutes: 5
+        run: python scripts/seo.py
       - name: Prévenir en cas d'échec
         if: failure()
         env:
@@ -71,12 +75,12 @@ jobs:
         run: |
           git config user.name "astrolabe-bot"
           git config user.email "astrolabe-bot@users.noreply.github.com"
-          git add -A data img
+          git add -A data img fiche sitemap.xml robots.txt
           git diff --cached --quiet || (git commit -m "Mise à jour automatique des données" && git push)
       - name: Préparer le site
         run: |
           mkdir _site
-          cp -r index.html style.css app.js config.js manifest.webmanifest sw.js favicon.svg favicon.ico fonts data img _site/
+          for f in index.html style.css app.js config.js stats-config.js analytics.js og.png manifest.webmanifest sw.js favicon.svg favicon.ico fonts data img fiche sitemap.xml robots.txt; do [ -e "$f" ] && cp -r "$f" _site/; done; true
       - uses: actions/configure-pages@v5
         id: pages
       - name: Adresse du site pour les aperçus de partage

@@ -109,3 +109,12 @@ Genshin Impact, Zenless Zone Zero, Wuthering Waves, Reverse: 1999, Neverness to 
 ## v44 — Foilvault 2.0
 - Bandeau de connexion sur 7 jours (récompenses de la semaine, jour 7 doré).
 - Panneau « Probabilités des boosters » : taux par rareté et par finition, chance d'avoir une Légendaire, pitié.
+
+## v45 — Rendre le site visible (gratuit)
+- **Pages Google** : le robot génère une page par personnage (`fiche/`), un `sitemap.xml` et un `robots.txt` (script `seo.py`).
+- **Aperçus de partage** (Discord, X, WhatsApp…) : image `og.png` + balises dans `index.html`.
+- **Statistiques gratuites sans cookies** : GoatCounter. Créez un compte sur goatcounter.com, puis écrivez votre code dans `stats-config.js` (crayon sur github.com).
+- **Foilvault** : bouton « Partager » en fin de tirage (image de votre tirage).
+- Onglets vides masqués dans les menus des jeux (adresses directes toujours valides).
+- Google Search Console (gratuit) : ajoutez le site puis envoyez `…/Astrolabe/sitemap.xml`.
+- Ne pas téléverser `config.js` ni les fichiers du robot : ils ne sont plus dans le zip.

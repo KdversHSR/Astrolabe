@@ -1840,10 +1840,25 @@ const HC = (() => {
     ov.classList.add('spot'); if (long) { ov.classList.add('flash'); setTimeout(() => ov.classList.remove('flash'), 700); }
     setTimeout(() => sparks($('.rt-sc', sp) || sp, e.c, long ? 46 : 24), 250); let fin = false; const end = () => { if (fin) return; fin = true; clearTimeout(tm); sp.removeEventListener('click', end); sp.classList.add('out'); setTimeout(() => { sp.hidden = true; sp.innerHTML = ''; sp.className = 'rt-spot'; if (ov.isConnected) ov.classList.remove('spot'); R.busy = false; res(); }, 260); };
     const tm = setTimeout(end, auto ? (long ? 2300 : 1500) : (long ? 5000 : 3500)); setTimeout(() => sp.addEventListener('click', end), 450); }); }
+  // image « mon tirage » à partager (canvas, aucune donnée envoyée)
+  async function shareImg() { if (!cur || !cur.res) return; const res = cur.res.slice(); const W = 1200, H = 630, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+    const bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, '#080a14'); bg.addColorStop(1, '#0d2a26'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.fillStyle = '#7fe0c0'; g.font = '600 24px sans-serif'; g.fillText('FOILVAULT', 48, 56); g.fillStyle = '#fff'; g.font = '800 40px sans-serif'; g.fillText(L('Mon tirage', 'My pull'), 48, 104);
+    const cw = 200, ch = 280, gap = 28, x0 = (W - (res.length * cw + (res.length - 1) * gap)) / 2;
+    const load = src => new Promise(r => { if (!src) return r(null); const im = new Image(); im.onload = () => r(im); im.onerror = () => r(null); im.src = src; });
+    for (let i = 0; i < res.length; i++) { const x = res[i], c = byC[x.id], e = fx(x), px = x0 + i * (cw + gap), py = 150, im = await load(c.img);
+      g.save(); g.beginPath(); g.roundRect(px, py, cw, ch, 14); g.clip(); g.fillStyle = '#10142a'; g.fillRect(px, py, cw, ch);
+      if (im) { const r = Math.max(cw / im.width, ch / im.height), w = im.width * r, h = im.height * r; g.drawImage(im, px + (cw - w) / 2, py, w, h); } else { g.fillStyle = e.c + '55'; g.fillRect(px, py, cw, ch); g.fillStyle = '#fff'; g.font = '700 72px sans-serif'; g.textAlign = 'center'; g.fillText((nm(c)[0] || '?').toUpperCase(), px + cw / 2, py + ch / 2 + 24); g.textAlign = 'left'; }
+      const sh = g.createLinearGradient(0, py + ch - 90, 0, py + ch); sh.addColorStop(0, 'transparent'); sh.addColorStop(1, '#000c'); g.fillStyle = sh; g.fillRect(px, py + ch - 90, cw, 90); g.restore();
+      g.strokeStyle = RAR[x.r].c; g.lineWidth = 4; g.beginPath(); g.roundRect(px, py, cw, ch, 14); g.stroke();
+      g.fillStyle = '#fff'; g.font = '700 17px sans-serif'; const t = nm(c); g.fillText(t.length > 20 ? t.slice(0, 19) + '…' : t, px + 10, py + ch - 28); g.fillStyle = RAR[x.r].c; g.font = '600 14px sans-serif'; g.fillText(L(RAR[x.r].fr, RAR[x.r].en) + (x.f ? ' · ' + L(FIN[x.f].fr, FIN[x.f].en) : ''), px + 10, py + ch - 9); }
+    g.fillStyle = '#9aa6c8'; g.font = '500 22px sans-serif'; g.fillText(L('Ouvre tes boosters gratuits sur ', 'Open your free boosters on ') + location.host + location.pathname.replace(/\/$/, ''), 48, 570);
+    cv.toBlob(async b => { if (!b) return; const f = new File([b], 'foilvault-tirage.png', { type: 'image/png' }); try { if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: 'Foilvault' }); return; } } catch (e) { return; }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'foilvault-tirage.png'; document.body.appendChild(a); a.click(); a.remove(); toast(L('Image enregistrée', 'Image saved')); }, 'image/png'); }
   function rtFinish() { const ov = $('#hcov'); if (!ov || !cur || cur.R.fin) return; cur.R.fin = true; const res = cur.res, pk = cur.pk, nw = res.filter(x => x.isNew).length, dp = res.filter(x => x.dup).length, m = Math.max(...res.map(x => x.r));
     $('.rt-title', ov).innerHTML = `${L('Votre tirage', 'Your pull')} <small>${nw ? nw + ' ' + L(nw > 1 ? 'nouvelles' : 'nouvelle', 'new') : ''}${nw && dp ? ' · ' : ''}${dp ? dp + ' ' + L(dp > 1 ? 'doublons' : 'doublon', dp > 1 ? 'duplicates' : 'duplicate') : ''} · ${L(RAR[m].fr, RAR[m].en)}</small>`;
     $('.rt-hint2', ov).textContent = L('Touchez une carte pour la voir en grand', 'Tap a card to see it up close');
-    $('.rt-act', ov).innerHTML = `${cur.dv ? `<button class="btn" data-hc="selldup" id="hcsd">${L('Vendre les doublons', 'Sell duplicates')} (+${cur.dv} ✦)</button>` : ''}<button class="btn pri" data-hc="again" ${stockOf(pk) ? '' : 'disabled'}>${L('Ouvrir un autre', 'Open another')} (${stockOf(pk)})</button><button class="btn" data-hc="close">${L('Fermer', 'Close')}</button>`;
+    $('.rt-act', ov).innerHTML = `${cur.dv ? `<button class="btn" data-hc="selldup" id="hcsd">${L('Vendre les doublons', 'Sell duplicates')} (+${cur.dv} ✦)</button>` : ''}<button class="btn" data-hc="share">${L('Partager', 'Share')}</button><button class="btn pri" data-hc="again" ${stockOf(pk) ? '' : 'disabled'}>${L('Ouvrir un autre', 'Open another')} (${stockOf(pk)})</button><button class="btn" data-hc="close">${L('Fermer', 'Close')}</button>`;
     const bm = res.reduce((a, x) => x.r > a.r || (x.r === a.r && x.f > a.f) ? x : a, res[0]); if (m >= 3) sparks($('.rt-row', ov), RAR[m].c, 20); }
   async function skipAll() { const ov = $('#hcov'); if (!ov || !cur || !cur.R) return; const C = cur, R = cur.R; if (!R.cut) { R.skipAfter = 1; const pk = $('.rt-pack', ov); if (pk) pk.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' })); await rtDelay(red() ? 40 : 900); }
     if (R.all) return; R.all = true; const btn = $('#rtall', ov); if (btn) btn.disabled = true; for (let i = 0; i < C.res.length; i++) { while (R.busy && cur === C) await rtDelay(80); if (cur !== C) return; await rtReveal(i, true); if (cur !== C) return; await rtDelay(C.res[i].r >= 3 ? 150 : 300); } }
@@ -2050,6 +2065,7 @@ const HC = (() => {
       else if (k === 'snd') { G.snd = !G.snd; save(); head(); if (G.snd) SFX.click(); }
       else if (k === 'mil') { const g = b.dataset.g, i = +b.dataset.i, m = MIL[i]; if (m && GAMES[g]) { const tot = CD.filter(c => c.g === g).length, n = own().filter(x => byC[x].g === g).length, cl = G.mil[g] = G.mil[g] || []; if (tot && n / tot * 100 >= m[0] - 1e-9 && !cl.includes(i)) { cl.push(i); credit(m[1]); if (m[2]) G.inv[g] = (G.inv[g] || 0) + m[2]; SFX.coin(); save(); toast(L(`Album ${GAMES[g][0]} ${m[0]} % : +${m[1]} ✦${m[2] ? ' et ' + m[2] + ' booster(s)' : ''}`, `${GAMES[g][0]} album ${m[0]}%: +${m[1]} ✦${m[2] ? ' and ' + m[2] + ' booster(s)' : ''}`)); mount(); } } }
       else if (k === 'login') { if (!G.lg.c) { G.lg.c = true; credit(lgReward(G.lg.n)); SFX.coin(); checkAch(); save(); mount(); } }
+      else if (k === 'share') { shareImg(); }
       else if (k === 'selldup') { let tot = 0; cur.res.forEach(x => { if (x.dup) tot += sellDup(x.id, x.f); }); if (tot) { SFX.coin(); toast('+' + tot + ' ✦'); } checkAch(); save(); head(); b.remove(); }
       else if (k === 'sellall') { if (!SELL.conf) { SELL.conf = 1; clearTimeout(SELL.t); SELL.t = setTimeout(() => { SELL.conf = 0; if ($('#hcr')) mount(); }, 5000); return mount(); } SELL.conf = 0; let tot = 0; own().forEach(i => { if (byC[i].R > SELL.cap) return; [0, 1, 2, 3].forEach(f => { if (SELL.keep && f >= 2) return; while (G.col[i].f[f] > 1) tot += sellDup(i, f); }); }); if (tot) { SFX.coin(); toast(L('Doublons vendus : +', 'Duplicates sold: +') + tot + ' ✦'); } checkAch(); save(); mount(); }
       else if (k === 'exp') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(G)], { type: 'application/json' })); a.download = 'foilvault.json'; a.click(); }
@@ -2342,9 +2358,12 @@ const GG = (() => {
     zzz: [['shiyu', 'Défense Shiyu', 'Shiyu Defense', 'Mode à nœuds critiques : plusieurs escouades, chaque nœud avec ses propres règles et ennemis.', 'Critical Node mode: several squads, each node with its own rules and enemies.'], ['assault', 'Assaut mortel', 'Deadly Assault', 'Combats de boss notés selon le temps et les bonus, avec des rangs à atteindre.', 'Boss fights scored on time and bonuses, with ranks to reach.']],
     ww: [['tower', 'Tour de l’adversité', 'Tower of Adversity', 'Défis à étages par zone, avec des étoiles à gagner ; les ennemis et les bonus changent à chaque rotation.', 'Floor-based challenges by zone with stars to earn; enemies and buffs change each rotation.']]
   };
+  // onglets masqués tant qu'aucune donnée vérifiée n'existe pour ce jeu (les adresses directes restent accessibles)
+  const HIDE = k => new Set(['teamtier', 'geartier', ...(k === 'gi' ? [] : ['relic']), ...(['gi', 'nte'].includes(k) ? [] : ['countdown', 'next']), ...(k === 'ss' ? ['versions'] : []), ...(ENDG[k] ? [] : ['end'])]);
   const NAVG = k => {
     const s = G[k].slug, h = (t, x) => '#/' + s + (t ? '/' + t : '') + (x ? '/' + x : '');
     const eg = ENDG[k] ? ENDG[k].map(m => [h('end', m[0]), 'orbit', L(m[1], m[2])]) : [[h('end'), 'orbit', L('Modes de fin de jeu', 'End-game modes')]];
+    const hd = HIDE(k);
     return [
       [L('Base de données', 'Database'), [[h('persos'), 'users', L('Personnages', 'Characters')], ...DBT[k].map(d => [h(d[0]), d[3], L(d[1], d[2])])]],
       [L('Classements', 'Rankings'), [[h('tier'), 'crown', 'Tier list'], [h('teamtier'), 'swords', L('Tier list équipes', 'Team tier list')], [h('geartier'), 'gem', L('Tier list équipement', 'Gear tier list')], [h('countdown'), 'clock', L('Compte à rebours', 'Countdown')], [h('banners'), 'spark', L('Bannières', 'Banners')]]],
@@ -2352,7 +2371,7 @@ const GG = (() => {
       [L('Outils', 'Tools'), [[h('relic'), 'shield', L('Évaluateur d’équipement', 'Gear checker')], [h('compare'), 'cmp', L('Comparateur', 'Compare')], [h('calc'), 'calc', L('Calculateur', 'Calculator')], [h('plan'), 'dice', L('Tirages', 'Pull planner')], [h('equipe'), 'team', L('Équipes', 'Teams')]]],
       [L('Guides', 'Guides'), [[h('next'), 'star', L('Prochaine version', 'Next version')], [h('versions'), 'book', L('Résumé de version', 'Version recap')], [h('events'), 'cal', L('Événements', 'Events')], [h('guide'), 'book', L('Aides', 'Help')]]],
       [L('Communauté', 'Community'), [['#/social', 'share', L('Réseau social', 'Social')], ['#/community', 'users', L('Joueurs', 'Players')], ['#/stats', 'chart', L('Statistiques', 'Statistics')]]]
-    ];
+    ].map(g => [g[0], g[1].filter(x => !hd.has(String(x[0]).split('/').pop()))]).filter(g => g[1].length);
   };
   window.__GGNAV = k => [['', [['#/' + G[k].slug, 'home', L('Accueil', 'Home')]]], ...NAVG(k)];
   window.__GGTABS = k => NAVG(k).flatMap(g => g[1]);
