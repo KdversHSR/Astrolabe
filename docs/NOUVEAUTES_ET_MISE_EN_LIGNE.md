@@ -74,3 +74,10 @@ Accueil : puces en losanges aux couleurs de chaque site, coins nets, statistique
 - Menu en deux niveaux : l'accueil ne montre que les 3 sites ; chaque site (Astrolabe, Foilvault, Bleach) a ensuite son propre menu.
 - Foilvault : palette « Nuit & jade », barre de pitié (Légendaire garantie), cartes plus centrées sur l'illustration.
 - Images ajoutées depuis des dépôts GitHub publics (script `scripts/gh_images.py`, lancé chaque lundi) : Blue Archive, Arknights, Azur Lane, Genshin, Zenless Zone Zero, Nikke (noms exacts seulement).
+
+## v37 — Guides gacha (6 nouvelles pages)
+Genshin Impact, Zenless Zone Zero, Wuthering Waves, Reverse: 1999, Neverness to Everness, Star Savior (page en préparation).
+- Onglets de chaque jeu : Accueil, Personnages (filtres), fiches, Tier list, Équipes, Tirages (probabilités avec pitié et 50/50), Ma collection, Mécaniques & sources.
+- Chaque jeu a sa propre direction artistique (couleurs, polices, illustration).
+- Mise à jour du lundi : `scripts/gg_update.py` relit des tier lists publiques (Prydwen, genshin.gg). Les adresses n'ont pas pu être testées depuis mon environnement : si une source change, le classement précédent est conservé et la raison est écrite dans `data/gg_tiers.json` (champ `status`). Pour changer une source sans toucher au code : créer `data/gg_sources.json` (ex. `{"zzz":[["prydwen","https://..."]]}`).
+- Tant qu'aucune source n'a répondu, les niveaux affichés sont l'estimation du site (popularité) et le site le dit.

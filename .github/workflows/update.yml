@@ -32,6 +32,10 @@ jobs:
         continue-on-error: true
         timeout-minutes: 10
         run: python scripts/bmh_update.py
+      - name: Tier lists des pages jeux (Genshin, ZZZ, WuWa, R1999, NTE)
+        continue-on-error: true
+        timeout-minutes: 10
+        run: python scripts/gg_update.py
       - name: Rosters et images Blue Archive / Arknights
         continue-on-error: true
         timeout-minutes: 15
