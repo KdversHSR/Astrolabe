@@ -1,0 +1,951 @@
+{
+ "gi": {
+  "src": "auto",
+  "from": "paimon-moe",
+  "checked": "2026-10-28",
+  "v": [
+   {
+    "v": "1.0",
+    "d": "2020-09-28",
+    "e": "2020-11-10",
+    "feat": [
+     "Venti",
+     "Klee"
+    ],
+    "ban": [
+     "Ballad in Goblets",
+     "Sparkling Steps"
+    ]
+   },
+   {
+    "v": "1.1",
+    "d": "2020-11-11",
+    "e": "2020-12-22",
+    "feat": [
+     "Tartaglia",
+     "Zhongli"
+    ],
+    "ban": [
+     "Farewell of Snezhnaya",
+     "Gentry of Hermitage"
+    ]
+   },
+   {
+    "v": "1.2",
+    "d": "2020-12-23",
+    "e": "2021-02-02",
+    "feat": [
+     "Albedo",
+     "Ganyu"
+    ],
+    "ban": [
+     "Secretum Secretorum",
+     "Adrift in the Harbor"
+    ]
+   },
+   {
+    "v": "1.3",
+    "d": "2021-02-03",
+    "e": "2021-03-16",
+    "feat": [
+     "Xiao",
+     "Keqing",
+     "Hu Tao"
+    ],
+    "ban": [
+     "Invitation to Mundane Life",
+     "Dance of Lanterns",
+     "Moment of Bloom"
+    ]
+   },
+   {
+    "v": "1.4",
+    "d": "2021-03-17",
+    "e": "2021-04-27",
+    "feat": [
+     "Venti",
+     "Tartaglia"
+    ],
+    "ban": [
+     "Ballad in Goblets",
+     "Farewell of Snezhnaya"
+    ]
+   },
+   {
+    "v": "1.5",
+    "d": "2021-04-28",
+    "e": "2021-06-08",
+    "feat": [
+     "Zhongli",
+     "Eula"
+    ],
+    "ban": [
+     "Gentry of Hermitage",
+     "Born of Ocean Swell"
+    ]
+   },
+   {
+    "v": "1.6",
+    "d": "2021-06-09",
+    "e": "2021-07-20",
+    "feat": [
+     "Klee",
+     "Kaedehara Kazuha"
+    ],
+    "ban": [
+     "Sparkling Steps",
+     "Leaves in the Wind"
+    ]
+   },
+   {
+    "v": "2.0",
+    "d": "2021-07-21",
+    "e": "2021-08-31",
+    "feat": [
+     "Kamisato Ayaka",
+     "Yoimiya"
+    ],
+    "ban": [
+     "The Herons Court",
+     "Tapestry of Golden Flames"
+    ]
+   },
+   {
+    "v": "2.1",
+    "d": "2021-09-01",
+    "e": "2021-10-12",
+    "feat": [
+     "Raiden_shogun",
+     "Sangonomiya Kokomi"
+    ],
+    "ban": [
+     "Reign of Serenity",
+     "Drifting Luminescence"
+    ]
+   },
+   {
+    "v": "2.2",
+    "d": "2021-10-13",
+    "e": "2021-11-23",
+    "feat": [
+     "Tartaglia",
+     "Hu Tao"
+    ],
+    "ban": [
+     "Farewell of Snezhnaya",
+     "Moment of Bloom"
+    ]
+   },
+   {
+    "v": "2.3",
+    "d": "2021-11-24",
+    "e": "2022-01-04",
+    "feat": [
+     "Albedo",
+     "Eula",
+     "Arataki Itto"
+    ],
+    "ban": [
+     "Secretum Secretorum",
+     "Oni's Royale"
+    ]
+   },
+   {
+    "v": "2.4",
+    "d": "2022-01-05",
+    "e": "2022-02-15",
+    "feat": [
+     "Shenhe",
+     "Xiao",
+     "Zhongli",
+     "Ganyu"
+    ],
+    "ban": [
+     "The Transcendent One Returns",
+     "Gentry of Hermitage"
+    ]
+   },
+   {
+    "v": "2.5",
+    "d": "2022-02-16",
+    "e": "2022-03-29",
+    "feat": [
+     "Yae Miko",
+     "Raiden_shogun",
+     "Sangonomiya Kokomi"
+    ],
+    "ban": [
+     "Everbloom Violet",
+     "Reign of Serenity"
+    ]
+   },
+   {
+    "v": "2.6",
+    "d": "2022-03-30",
+    "e": "2022-05-31",
+    "feat": [
+     "Kamisato Ayato",
+     "Venti",
+     "Kamisato Ayaka"
+    ],
+    "ban": [
+     "Azure Excursion",
+     "The Herons Court"
+    ]
+   },
+   {
+    "v": "2.7",
+    "d": "2022-05-31",
+    "e": "2022-07-12",
+    "feat": [
+     "Yelan",
+     "Xiao",
+     "Arataki Itto"
+    ],
+    "ban": [
+     "Discerner of Enigmas",
+     "Oni's Royale"
+    ]
+   },
+   {
+    "v": "2.8",
+    "d": "2022-07-13",
+    "e": "2022-08-23",
+    "feat": [
+     "Kaedehara Kazuha",
+     "Klee",
+     "Yoimiya"
+    ],
+    "ban": [
+     "Leaves in the Wind",
+     "Tapestry of Golden Flames"
+    ]
+   },
+   {
+    "v": "3.0",
+    "d": "2022-08-24",
+    "e": "2022-09-27",
+    "feat": [
+     "Tighnari",
+     "Zhongli",
+     "Ganyu",
+     "Sangonomiya Kokomi"
+    ],
+    "ban": [
+     "Viridescent Vigil",
+     "Adrift in the Harbor"
+    ]
+   },
+   {
+    "v": "3.1",
+    "d": "2022-09-28",
+    "e": "2022-11-01",
+    "feat": [
+     "Cyno",
+     "Venti",
+     "Nilou",
+     "Albedo"
+    ],
+    "ban": [
+     "Twilight Arbiter",
+     "Twirling Lotus"
+    ]
+   },
+   {
+    "v": "3.2",
+    "d": "2022-11-02",
+    "e": "2022-12-06",
+    "feat": [
+     "Nahida",
+     "Yoimiya",
+     "Yae Miko",
+     "Tartaglia"
+    ],
+    "ban": [
+     "The Moongrass' Enlightenment",
+     "Everbloom Violet"
+    ]
+   },
+   {
+    "v": "3.3",
+    "d": "2022-12-07",
+    "e": "2023-01-17",
+    "feat": [
+     "Wanderer",
+     "Arataki Itto",
+     "Raiden_shogun",
+     "Kamisato Ayato"
+    ],
+    "ban": [
+     "From Ashes Reborn",
+     "Reign of Serenity"
+    ]
+   },
+   {
+    "v": "3.4",
+    "d": "2023-01-18",
+    "e": "2023-02-28",
+    "feat": [
+     "Alhaitham",
+     "Xiao",
+     "Hu Tao",
+     "Yelan"
+    ],
+    "ban": [
+     "Caution in Confidence",
+     "Moment of Bloom"
+    ]
+   },
+   {
+    "v": "3.5",
+    "d": "2023-03-01",
+    "e": "2023-04-11",
+    "feat": [
+     "Dehya",
+     "Cyno",
+     "Shenhe",
+     "Kamisato Ayaka"
+    ],
+    "ban": [
+     "Auric Blaze",
+     "The Transcendent One Returns"
+    ]
+   },
+   {
+    "v": "3.6",
+    "d": "2023-04-12",
+    "e": "2023-05-23",
+    "feat": [
+     "Nahida",
+     "Nilou",
+     "Baizhu",
+     "Ganyu"
+    ],
+    "ban": [
+     "The Moongrass' Enlightenment",
+     "Immaculate Pulse"
+    ]
+   },
+   {
+    "v": "3.7",
+    "d": "2023-05-24",
+    "e": "2023-07-04",
+    "feat": [
+     "Yoimiya",
+     "Yae Miko",
+     "Alhaitham",
+     "Kaedehara Kazuha"
+    ],
+    "ban": [
+     "Tapestry of Golden Flames",
+     "Caution in Confidence"
+    ]
+   },
+   {
+    "v": "3.8",
+    "d": "2023-07-05",
+    "e": "2023-08-15",
+    "feat": [
+     "Eula",
+     "Klee",
+     "Sangonomiya Kokomi",
+     "Wanderer"
+    ],
+    "ban": [
+     "Born of Ocean Swell",
+     "Drifting Luminescence"
+    ]
+   },
+   {
+    "v": "4.0",
+    "d": "2023-08-16",
+    "e": "2023-09-26",
+    "feat": [
+     "Lyney",
+     "Yelan",
+     "Tartaglia",
+     "Zhongli"
+    ],
+    "ban": [
+     "Conjuring Chiaroscuro",
+     "Gentry of Hermitage"
+    ]
+   },
+   {
+    "v": "4.1",
+    "d": "2023-09-27",
+    "e": "2023-11-07",
+    "feat": [
+     "Neuvillette",
+     "Hu Tao",
+     "Wriothesley",
+     "Venti"
+    ],
+    "ban": [
+     "Decree of the Deeps",
+     "Tempestuous Destiny"
+    ]
+   },
+   {
+    "v": "4.2",
+    "d": "2023-11-08",
+    "e": "2023-12-19",
+    "feat": [
+     "Furina",
+     "Baizhu",
+     "Cyno",
+     "Kamisato Ayato"
+    ],
+    "ban": [
+     "Chanson of Many Waters",
+     "Twilight Arbiter"
+    ]
+   },
+   {
+    "v": "4.3",
+    "d": "2023-12-20",
+    "e": "2024-01-30",
+    "feat": [
+     "Navia",
+     "Kamisato Ayaka",
+     "Raiden_shogun",
+     "Yoimiya"
+    ],
+    "ban": [
+     "In the Name of the Rosula",
+     "Reign of Serenity"
+    ]
+   },
+   {
+    "v": "4.4",
+    "d": "2024-01-31",
+    "e": "2024-03-12",
+    "feat": [
+     "Xianyun",
+     "Nahida",
+     "Xiao",
+     "Yae Miko"
+    ],
+    "ban": [
+     "The Crane Soars Skyward",
+     "Invitation to Mundane Life"
+    ]
+   },
+   {
+    "v": "4.5",
+    "d": "2024-03-13",
+    "e": "2024-04-23",
+    "feat": [
+     "Chiori",
+     "Arataki Itto",
+     "Neuvillette",
+     "Kaedehara Kazuha"
+    ],
+    "ban": [
+     "Of Silken Clouds Woven",
+     "Decree of the Deeps"
+    ]
+   },
+   {
+    "v": "4.6",
+    "d": "2024-04-24",
+    "e": "2024-06-04",
+    "feat": [
+     "Arlecchino",
+     "Lyney",
+     "Wanderer",
+     "Baizhu"
+    ],
+    "ban": [
+     "The Hearth's Ashen Shadow",
+     "From Ashes Reborn"
+    ]
+   },
+   {
+    "v": "4.7",
+    "d": "2024-06-05",
+    "e": "2024-07-16",
+    "feat": [
+     "Clorinde",
+     "Alhaitham",
+     "Sigewinne",
+     "Furina"
+    ],
+    "ban": [
+     "Illuminating Lightning",
+     "Romaritime Meluserenity"
+    ]
+   },
+   {
+    "v": "4.8",
+    "d": "2024-07-17",
+    "e": "2024-08-27",
+    "feat": [
+     "Navia",
+     "Nilou",
+     "Émilie",
+     "Yelan"
+    ],
+    "ban": [
+     "In the Name of the Rosula",
+     "Ambrosial Essence"
+    ]
+   },
+   {
+    "v": "5.0",
+    "d": "2024-08-28",
+    "e": "2024-10-08",
+    "feat": [
+     "Mualani",
+     "Kaedehara Kazuha",
+     "Kinich",
+     "Raiden_shogun"
+    ],
+    "ban": [
+     "Sharktacular Surfari",
+     "Seeker of Flame-Wrought Secrets"
+    ]
+   },
+   {
+    "v": "5.1",
+    "d": "2024-10-09",
+    "e": "2024-11-19",
+    "feat": [
+     "Xilonen",
+     "Chiori",
+     "Nahida",
+     "Hu Tao"
+    ],
+    "ban": [
+     "Forgefire's Blessing",
+     "The Moongrass' Enlightenment"
+    ]
+   },
+   {
+    "v": "5.2",
+    "d": "2024-11-20",
+    "e": "2024-12-31",
+    "feat": [
+     "Chasca",
+     "Lyney",
+     "Neuvillette",
+     "Zhongli"
+    ],
+    "ban": [
+     "Piercing Shot's Crimson Wake",
+     "Decree of the Deeps"
+    ]
+   },
+   {
+    "v": "5.3",
+    "d": "2025-01-01",
+    "e": "2025-02-11",
+    "feat": [
+     "Mavuika",
+     "Citlali",
+     "Arlecchino",
+     "Clorinde"
+    ],
+    "ban": [
+     "Ancient Flame Ablaze",
+     "The Hearth's Ashen Shadow"
+    ]
+   },
+   {
+    "v": "5.4",
+    "d": "2025-02-12",
+    "e": "2025-03-25",
+    "feat": [
+     "Yumemizuki Mizuki",
+     "Sigewinne",
+     "Wriothesley",
+     "Furina"
+    ],
+    "ban": [
+     "Dawn's Drifting Reverie",
+     "Tempestuous Destiny"
+    ]
+   },
+   {
+    "v": "5.5",
+    "d": "2025-03-26",
+    "e": "2025-05-06",
+    "feat": [
+     "Varesa",
+     "Xianyun",
+     "Xilonen",
+     "Venti"
+    ],
+    "ban": [
+     "Cornucopia of Contention",
+     "Forgefire's Blessing"
+    ]
+   },
+   {
+    "v": "5.6",
+    "d": "2025-05-07",
+    "e": "2025-06-17",
+    "feat": [
+     "Escoffier",
+     "Navia",
+     "Kinich",
+     "Raiden_shogun"
+    ],
+    "ban": [
+     "La Chanson Cerise",
+     "Seeker of Flame-Wrought Secrets"
+    ]
+   },
+   {
+    "v": "5.7",
+    "d": "2025-06-18",
+    "e": "2025-07-29",
+    "feat": [
+     "Skirk",
+     "Shenhe",
+     "Mavuika",
+     "Émilie"
+    ],
+    "ban": [
+     "Void Star's Advent",
+     "Ancient Flame Ablaze"
+    ]
+   },
+   {
+    "v": "5.8",
+    "d": "2025-07-30",
+    "e": "2025-09-09",
+    "feat": [
+     "Ineffa",
+     "Citlali",
+     "Mualani",
+     "Chasca"
+    ],
+    "ban": [
+     "Astral Actuation",
+     "Sharktacular Surfari"
+    ]
+   },
+   {
+    "v": "6.0",
+    "d": "2025-09-10",
+    "e": "2025-10-21",
+    "feat": [
+     "Lauma",
+     "Nahida",
+     "Flins",
+     "Yelan"
+    ],
+    "ban": [
+     "Moonsong of the Groves",
+     "The Lone Light Knocks at Night"
+    ]
+   },
+   {
+    "v": "6.1",
+    "d": "2025-10-22",
+    "e": "2025-12-02",
+    "feat": [
+     "Nefer",
+     "Furina",
+     "Arlecchino",
+     "Zhongli"
+    ],
+    "ban": [
+     "Temptation of the Crimson Sands",
+     "The Hearth's Ashen Shadow"
+    ]
+   },
+   {
+    "v": "6.2",
+    "d": "2025-12-03",
+    "e": "2026-01-13",
+    "feat": [
+     "Durin",
+     "Venti",
+     "Varesa",
+     "Xilonen"
+    ],
+    "ban": [
+     "Rubedo, of White Stone Born",
+     "Cornucopia of Contention"
+    ]
+   },
+   {
+    "v": "6.3",
+    "d": "2026-01-14",
+    "e": "2026-02-24",
+    "feat": [
+     "Columbina",
+     "Ineffa",
+     "Zibai",
+     "Neuvillette"
+    ],
+    "ban": [
+     "Somnias a Luna",
+     "Harmonious Abundance"
+    ]
+   },
+   {
+    "v": "6.4",
+    "d": "2026-02-25",
+    "e": "2026-04-07",
+    "feat": [
+     "Varka",
+     "Flins",
+     "Skirk",
+     "Escoffier"
+    ],
+    "ban": [
+     "The Northerly Wind's Song of Triumph",
+     "Void Star's Advent"
+    ]
+   },
+   {
+    "v": "6.5",
+    "d": "2026-04-08",
+    "e": "2026-05-19",
+    "feat": [
+     "Linnea",
+     "Chasca",
+     "Lauma",
+     "Nefer"
+    ],
+    "ban": [
+     "Ya-hoho! Compendium",
+     "Moonsong of the Groves"
+    ]
+   },
+   {
+    "v": "6.6",
+    "d": "2026-05-20",
+    "e": "2026-06-30",
+    "feat": [
+     "Nicole",
+     "Durin",
+     "Lohen",
+     "Mavuika"
+    ],
+    "ban": [
+     "Angel's Reverie",
+     "Frostedge Nocturne"
+    ]
+   },
+   {
+    "v": "6.7",
+    "d": "2026-07-01",
+    "e": "2026-08-11",
+    "feat": [
+     "Sandrone",
+     "Citlali",
+     "Columbina",
+     "Raiden_shogun"
+    ],
+    "ban": [
+     "To the Looking-Glass the Mademoiselle Said",
+     "Somnias a Luna"
+    ]
+   },
+   {
+    "v": "7.0",
+    "d": "2026-08-12",
+    "e": "2026-09-22",
+    "feat": [
+     "Odette",
+     "Arlecchino",
+     "Flins",
+     "Ineffa"
+    ],
+    "ban": [
+     "Swan's Shadow in Silken Ice",
+     "The Lone Light Knocks at Night"
+    ]
+   },
+   {
+    "v": "7.1",
+    "d": "2026-09-23",
+    "e": "2026-11-03",
+    "feat": [
+     "Vesna",
+     "Vodyanitsa",
+     "Skirk",
+     "Escoffier"
+    ],
+    "ban": [
+     "When Warm Winds Cavort",
+     "Void Star's Advent"
+    ]
+   }
+  ]
+ },
+ "ww": {
+  "note": [
+   "Saisie manuelle partielle (sources publiques recoupées). Les versions suivantes seront ajoutées au fil des vérifications.",
+   "Partial manual entry (cross-checked public sources). Later versions are added as they get verified."
+  ],
+  "v": [
+   {
+    "v": "1.0",
+    "feat": [
+     "Jiyan",
+     "Yinlin"
+    ],
+    "t": [
+     "Lancement",
+     "Launch"
+    ]
+   },
+   {
+    "v": "1.1",
+    "feat": [
+     "Jinhsi",
+     "Changli"
+    ]
+   }
+  ],
+  "src": "manual"
+ },
+ "nte": {
+  "note": [
+   "Saisie manuelle d’après des calendriers publics ; les noms peuvent varier selon la traduction et la 1.2 est à confirmer.",
+   "Manual entry from public schedules; names may vary by translation and 1.2 is to be confirmed."
+  ],
+  "v": [
+   {
+    "v": "1.0",
+    "d": "2026-04-29",
+    "feat": [
+     "Nanally",
+     "Hotori"
+    ],
+    "t": [
+     "Lancement",
+     "Launch"
+    ]
+   },
+   {
+    "v": "1.1",
+    "d": "2026-05-28",
+    "feat": [
+     "Lacrimosa",
+     "Chaos"
+    ],
+    "note": [
+     "Première collaboration Porsche.",
+     "First Porsche collaboration."
+    ]
+   },
+   {
+    "v": "1.2",
+    "d": "2026-07-07",
+    "feat": [
+     "Iroi",
+     "Zhenhong"
+    ],
+    "note": [
+     "À confirmer : les calendriers se contredisent.",
+     "To confirm: schedules disagree."
+    ]
+   },
+   {
+    "v": "1.3",
+    "d": "2026-08-19",
+    "feat": [
+     "Zankou",
+     "Linko"
+    ]
+   }
+  ],
+  "src": "manual"
+ },
+ "r99": {
+  "note": [
+   "Une seule version saisie pour l’instant (calendrier ldshop).",
+   "Only one version entered so far (ldshop schedule)."
+  ],
+  "v": [
+   {
+    "v": "3.7",
+    "d": "2026-04-30",
+    "feat": [
+     "Rhiannon",
+     "Nautika",
+     "Ms. Stranger"
+    ]
+   }
+  ],
+  "src": "manual"
+ },
+ "p5x": {
+  "note": [
+   "Saisie manuelle partielle d’après la presse spécialisée.",
+   "Partial manual entry from specialist press."
+  ],
+  "v": [
+   {
+    "v": "Lancement",
+    "d": "2025-08-04",
+    "feat": [
+     "Makoto Niijima",
+     "Yumi Shiina"
+    ],
+    "t": [
+     "Lancement global",
+     "Global launch"
+    ]
+   },
+   {
+    "v": "2.6",
+    "feat": [
+     "Haru Okumura"
+    ],
+    "note": [
+     "Haru « Noir » rejoint l’équipe.",
+     "Haru “Noir” joins the party."
+    ]
+   },
+   {
+    "v": "4.4",
+    "feat": [],
+    "t": [
+     "1er anniversaire",
+     "1st anniversary"
+    ],
+    "note": [
+     "Collaboration Hatsune Miku.",
+     "Hatsune Miku collaboration."
+    ]
+   }
+  ],
+  "src": "manual"
+ },
+ "zzz": {
+  "note": [
+   "Seules les dates de sortie de quelques versions sont saisies ; les personnages restent à compléter.",
+   "Only a few release dates are entered; characters are still to be filled in."
+  ],
+  "v": [
+   {
+    "v": "1.2",
+    "d": "2024-09-25"
+   },
+   {
+    "v": "1.4",
+    "d": "2024-12-18"
+   },
+   {
+    "v": "1.7",
+    "d": "2025-04-23"
+   },
+   {
+    "v": "2.0",
+    "d": "2025-06-06",
+    "t": [
+     "Premier anniversaire",
+     "First anniversary"
+    ]
+   }
+  ],
+  "src": "manual"
+ }
+}

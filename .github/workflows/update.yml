@@ -46,6 +46,10 @@ jobs:
         continue-on-error: true
         timeout-minutes: 10
         run: python scripts/gg_update.py
+      - name: Résumés des versions (Genshin auto + fichier manuel)
+        continue-on-error: true
+        timeout-minutes: 5
+        run: python scripts/gg_versions.py
       - name: Rosters et images Blue Archive / Arknights
         continue-on-error: true
         timeout-minutes: 15

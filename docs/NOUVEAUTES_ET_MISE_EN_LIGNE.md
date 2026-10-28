@@ -87,3 +87,9 @@ Genshin Impact, Zenless Zone Zero, Wuthering Waves, Reverse: 1999, Neverness to 
 - Onglet **Bannières & événements** : `scripts/gg_banners.mjs` utilise le paquet open source `gacha-calendar-core` (MIT) qui lit les annonces officielles/wikis chinois. Les textes restent en chinois. Non testé d'ici (réseau bloqué) : si une source ne répond pas, la page le dit.
 - **Star Savior** : roster et tiers (44 personnages) recoupés à partir de deux tier lists publiques (ldshop.gg, driffle.com, juin 2026). Pas d'images.
 - Wuthering Waves, Reverse: 1999, Neverness to Everness : pas de source d'équipement ni d'images trouvée pour le moment.
+
+## v41
+- Écran d'ouverture supprimé.
+- Nouvel onglet « Versions » pour chaque jeu (Genshin : généré automatiquement chaque lundi depuis paimon-moe ; autres jeux : `data/gg_versions_manual.json`, saisie vérifiée à la main, jamais inventée).
+- Nouveau jeu : Persona 5: The Phantom X (`#/p5x`).
+- Nouvelle étape du workflow : `scripts/gg_versions.py`.
