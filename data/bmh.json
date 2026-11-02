@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-28",
+ "updated": "2026-11-02",
  "launch": "2026-10-28",
  "events": [
   {
@@ -60,7 +60,7 @@
   }
  ],
  "check": {
-  "date": "2026-10-28",
+  "date": "2026-11-02",
   "status": "aucune source exploitable (0 pages essayées) : estimation conservée",
   "source": "",
   "status_en": "no usable source: estimate kept"
