@@ -2,7 +2,7 @@
  "gi": {
   "src": "auto",
   "from": "paimon-moe",
-  "checked": "2026-11-02",
+  "checked": "2026-11-09",
   "arcs": [
    {
     "id": "1",
@@ -811,6 +811,18 @@
     "ban": [
      "When Warm Winds Cavort",
      "Void Star's Advent"
+    ]
+   },
+   {
+    "v": "7.2",
+    "d": "2026-11-04",
+    "e": "2026-11-24",
+    "feat": [
+     "Mitya",
+     "Furina"
+    ],
+    "ban": [
+     "Myriad Patterns Unfold"
     ]
    }
   ],
@@ -2393,6 +2405,21 @@
      "Mika"
     ],
     "v": "7.1"
+   },
+   {
+    "n": "Myriad Patterns Unfold",
+    "s": "2026-11-04 06:00:00",
+    "e": "2026-11-24 17:59:59",
+    "feat": [
+     "Mitya",
+     "Furina"
+    ],
+    "rare": [
+     "Valeriy",
+     "Charlotte",
+     "Rosaria"
+    ],
+    "v": "7.2"
    }
   ]
  },
